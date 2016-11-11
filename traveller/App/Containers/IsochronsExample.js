@@ -20,7 +20,7 @@ import earcut from 'earcut'
 * https://console.developers.google.com/apis/api/maps_android_backend/
 *************************************************************/
 
-// Daniel - default values
+// Daniel - default
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE = 37.78825;
@@ -115,7 +115,8 @@ class MapviewExample extends React.Component {
     *************************************************************/
     const locations = [
       { title: 'Location A', latitude: 37.78825, longitude: -122.4324 },
-      { title: 'Location B', latitude: 37.75825, longitude: -122.4624 }
+      { title: 'Location B', latitude: 37.75825, longitude: -122.4624 },
+      { title: 'Hack Reactor', latitude: 37.78369, longitude: -122.4089 },
     ]
     /* ***********************************************************
     * STEP 2
