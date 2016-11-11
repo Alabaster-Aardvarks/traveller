@@ -1,28 +1,18 @@
-import React from 'react'
+// @flow
+
+import React, { PropTypes } from 'react'
 import { Text, TouchableOpacity } from 'react-native'
 import MapView from 'react-native-maps'
 import Styles from './Styles/MapCalloutStyle'
-import ExamplesRegistry from '../Services/ExamplesRegistry'
-
-// Example
-ExamplesRegistry.add('Map Callout', () =>
-  <MapCallout
-    location={{
-      title: 'Callout Example'
-    }}
-    onPress={() => window.alert('That tickles!')}
-  />
-)
-
-type MapCalloutProps = {
-  location: Object,
-  onPress: () => void
-}
 
 export default class MapCallout extends React.Component {
-  props: MapCalloutProps
+  props: {
+    location: Object,
+    onPress: () => void
+  }
+  onPress: () => void
 
-  constructor (props: MapCalloutProps) {
+  constructor (props) {
     super(props)
     this.onPress = this.props.onPress.bind(this, this.props.location)
   }

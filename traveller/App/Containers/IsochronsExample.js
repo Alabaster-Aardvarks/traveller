@@ -186,7 +186,7 @@ class MapviewExample extends React.Component {
     *************************************************************/
 
     return (
-      <MapView.Marker draggable key={location.title} coordinate={{latitude: location.latitude, longitude: location.longitude}}>
+      <MapView.Marker pinColor={'green'} draggable key={location.title} coordinate={{latitude: location.latitude, longitude: location.longitude}}>
         <MapCallout location={location} onPress={this.calloutPress} />
       </MapView.Marker>
     )

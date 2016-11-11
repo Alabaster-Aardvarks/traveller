@@ -30,6 +30,10 @@ export default class PresentationScreen extends React.Component {
             Isochrones
           </RoundedButton>
 
+          <RoundedButton onPress={NavigationActions.testMapView}>
+            Test Map View
+          </RoundedButton>
+
           <RoundedButton onPress={NavigationActions.componentExamples}>
             Component Examples Screen
           </RoundedButton>
