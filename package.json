@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha spec",
     "start": "node server/server.js",
     "start-dev": "nodemon server/server.js"
   },
@@ -26,5 +26,11 @@
     "express": "^4.14.0",
     "morgan": "^1.7.0",
     "request": "^2.78.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6",
+    "supertest": "^2.0.1"
   }
 }
