@@ -5,7 +5,7 @@
 | Method | Uri          | Comment          | 
 |--------|--------------|------------------|
 | GET    | api/museum   | Nearby Museums   |
-| POST   | api/park     | Nearby Parks     |
+| GET    | api/park     | Nearby Parks     |
 | GET    | api/bank     | Nearby Banks     |
 
 ### Setup Server Enviroment
