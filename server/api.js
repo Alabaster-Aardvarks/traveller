@@ -6,10 +6,10 @@ const router = express.Router();
 //in the future we can do (/'endpoint', check Redis for result, googleAPIController)
 router.get('/museum', (req, res) => {
   // console.log('look for coordinates in here', req);
-  googleController.getMuseumData(37, -122, (data) =>{
+  googleController.getMuseumData(37.7825177, -122.4106772, (data) =>{
     console.log('answer', data);
     if (data === null) {
-      res.status(204).send('our response'); 
+      res.status(204).end(); 
     } else {
       console.log('our response');
       res.status(200).json(data); 
