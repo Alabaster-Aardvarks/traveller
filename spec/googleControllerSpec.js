@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const app = require('../server.js');
 const googleController = require('../server/googleController.js');
 
-describe('getMuseumData', () => {
+describe('getData', () => {
    
   //should have longitude and latitude as parameters
   //it should ahve a callback as a third parameter
