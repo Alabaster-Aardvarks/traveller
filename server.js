@@ -1,7 +1,7 @@
 //for API keys - create a .env file for google API
 require('dotenv').config();
 
-//middlware
+//middleware
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
