@@ -15,7 +15,7 @@
 > git clone 
 > cd 
 > npm install [or] yarn install
-> create .env file and enter Google Places API KEY
+> touch .env [Google Places API KEY goes here]
 > npm start [or] npm test [or] npm run start-dev
 ```
 ### Application Structure
@@ -28,9 +28,9 @@
 |- example.env                //Sample of .env file, which must be written 
 |- server.js                  //Server configuration file 
 |- server/          
-  |- api.js                   //server endpoint router
+  |- api.js                   //general endpoint router
+  |- isoRouter.js             //router for query strings
   |- googleController.js      //data manipulation of Google Places API results
-  |- tools.js                 //generic helper functions
 |- package.json               //Dependencies for the server
 |- .gitignore
 ```
