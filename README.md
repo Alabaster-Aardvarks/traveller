@@ -9,7 +9,7 @@
 | GET    | api/bank     | Nearby Banks                     |
 | GET    | isochrone/   | Query endpoint for Isochrone JSON|
 
-### Setup Server Enviroment
+### Setup Server Environment
 
 ```sh
 > git clone 
