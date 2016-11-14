@@ -2,11 +2,12 @@
 
 ### API
 
-| Method | Uri          | Comment          | 
-|--------|--------------|------------------|
-| GET    | api/museum   | Nearby Museums   |
-| GET    | api/park     | Nearby Parks     |
-| GET    | api/bank     | Nearby Banks     |
+| Method | Uri          | Comment                 | 
+|--------|--------------|-------------------------|
+| GET    | api/museum   | Nearby Museums          |
+| GET    | api/park     | Nearby Parks            |
+| GET    | api/bank     | Nearby Banks            |
+| GET    | isochrone/   | Query for Isochrone JSON|
 
 ### Setup Server Enviroment
 
