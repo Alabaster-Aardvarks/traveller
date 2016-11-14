@@ -15,7 +15,7 @@
 > cd 
 > npm install [or] yarn install
 > create .env file and enter Google Places API KEY
-> npm start [or] npm test [or] npm run dev-start
+> npm start [or] npm test [or] npm run start-dev
 ```
 ### Application Structure
 
