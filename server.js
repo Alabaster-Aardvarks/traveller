@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const placeRouter = require('./server/api');
 const isoRouter = require('./server/isoRouter');
+import Redis from '(redisng');
 
 // Don't enable CORS in production.
 if (/^(dev|test)$/.test(process.env.NODE_ENV)) {
@@ -27,7 +28,6 @@ app.use(bodyParser.json());
 // /api should be the home for all of our API endpoints
 app.use('/places', placeRouter);
 app.use('/isochrone', isoRouter);
-
 //404 all other routes
 app.use('*', (req, res) => {
   res.status(404).send();
