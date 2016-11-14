@@ -9,7 +9,8 @@ const cors = require('cors');
 const betterErrors = require('better-express-errors');
 const bodyParser = require('body-parser');
 const app = express();
-const router = require('./server/api');
+const placeRouter = require('./server/api');
+const isoRouter = require('./server/isoRouter');
 
 // Don't enable CORS in production.
 if (/^(dev|test)$/.test(process.env.NODE_ENV)) {
@@ -23,8 +24,9 @@ if (process.env.NODE_ENV !== 'test') {
 
 app.use(bodyParser.json());
 
-// /api should be the home for all of our endpoints
-app.use('/api', router);
+// /api should be the home for all of our API endpoints
+app.use('/places', placeRouter);
+app.use('/isochrone', isoRouter);
 
 //404 all other routes
 app.use('*', (req, res) => {
