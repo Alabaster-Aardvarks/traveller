@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/Alabaster-Aardvarks/Traveller/issues"
   },
-  "homepage": "https://github.com/Alabaster-Aardvarks/Traveller#readme"
+  "homepage": "https://github.com/Alabaster-Aardvarks/Traveller#readme",
+  "dependencies": {}
 }
