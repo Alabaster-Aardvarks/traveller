@@ -6,9 +6,9 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import Styles from './Styles/MapviewExampleStyle'
 import { loadIsochron } from './isochron'
-import Svg, { Circle, Rect, Path } from 'react-native-svg'
+// import Svg, { Circle, Rect, Path } from 'react-native-svg'
 //import { geojson } from './geoJSON'
-import earcut from 'earcut'
+// import earcut from 'earcut'
 
 /* ***********************************************************
 * IMPORTANT!!! Before you get started, if you are going to support Android,
