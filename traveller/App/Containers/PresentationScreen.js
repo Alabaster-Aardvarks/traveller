@@ -30,6 +30,10 @@ export default class PresentationScreen extends React.Component {
             Isochrones
           </RoundedButton>
 
+          <RoundedButton onPress={NavigationActions.testMapView}>
+            Test Map View
+          </RoundedButton>
+
           <RoundedButton onPress={NavigationActions.componentExamples}>
             Component Examples Screen
           </RoundedButton>
@@ -51,7 +55,7 @@ export default class PresentationScreen extends React.Component {
           </RoundedButton>
 
           <View style={styles.centered}>
-            <Text style={styles.subtitle}>Made with ❤️ by Infinite Red</Text>
+            <Text style={styles.subtitle}>Made with ❤️ by Alabaster Aardvarks</Text>
           </View>
 
         </ScrollView>
