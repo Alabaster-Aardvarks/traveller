@@ -2,35 +2,51 @@
 
 ### API
 
-| Method | Uri          | Comment                          | 
-|--------|--------------|----------------------------------|
-| GET    | api/museum   | Nearby Museums                   |
-| GET    | api/park     | Nearby Parks                     |
-| GET    | api/bank     | Nearby Banks                     |
-| GET    | isochrone/   | Query endpoint for Isochrone JSON|
+| Method | Uri           | Comment                           | 
+|--------|---------------|-----------------------------------|
+| GET    | places/museum | Nearby Museums                    |
+| GET    | places/park   | Nearby Parks                      |
+| GET    | places/bank   | Nearby Banks                      |
+| GET    | iso/          | Query endpoint for Isochrone JSON |
 
 ### Setup Server Environment
 
 ```sh
 > git clone 
-> cd 
+> cd server
 > npm install [or] yarn install
 > touch .env [Google Places API KEY goes here]
 > npm start [or] npm test [or] npm run start-dev
 ```
-### Application Structure
+
+### iOS Client Environment (from project root after cloning)
+
+```sh 
+> cd traveller
+> yarn install [or] npm install
+> npm install (yarn will not install one of the dependencies)
+> cd ios
+> pod install
+> cd ..
+> react-native run-ios
+```
+
+### Server Structure
 
 ```
-|- ?                          //iOS app (react native stuff here)
-|- spec/                      //Server Tests
-  |- apiSpec.js               //API integration tests
-  |- googleControllerSpec.js  //Google Places API Controller unit tests
-|- example.env                //Sample of .env file, which must be written 
-|- server.js                  //Server configuration file 
-|- server/          
-  |- api.js                   //general endpoint router
-  |- isoRouter.js             //router for query strings
-  |- googleController.js      //data manipulation of Google Places API results
-|- package.json               //Dependencies for the server
-|- .gitignore
-```
+|- server               
+  |- server.js                  //Configuration for Express Server
+  |- controller/                //External API Controllers
+    |- placesController.js      //Google Places API Handler
+  |- node_modules/              //Server dependencies
+  |- router/          
+    |- placesRouter.js          //Google Places API routes
+    |- isoRouter.js             //router for isochronal query strings
+  |- package.json               //Dependencies for the server
+  |- spec                       //Server-side tests
+    |- placesAPISpec.js         //Integration Tests for Google Places API
+    |- placesControllerSpec.js  //Unit tests for Google Places API                
+  |- .gitignore
+|- example.env                  //follow this format to hide api keys in .env
+|- .env                         //API keys live here
+ ```
