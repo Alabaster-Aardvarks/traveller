@@ -5,10 +5,8 @@ import MapView from 'react-native-maps'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import Styles from './Styles/MapviewExampleStyle'
-import { loadIsochron } from './isochron'
-import Svg, { Circle, Rect, Path } from 'react-native-svg'
-//import { geojson } from './geoJSON'
-import earcut from 'earcut'
+import { updateIsochrons, setUpdateIsochronsFn, setUpdateIsochronsStateFn,
+         isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
 
 /* ***********************************************************
 * IMPORTANT!!! Before you get started, if you are going to support Android,
@@ -20,84 +18,30 @@ import earcut from 'earcut'
 * https://console.developers.google.com/apis/api/maps_android_backend/
 *************************************************************/
 
-// Daniel - default values
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const LATITUDE = 37.78825;
-const LONGITUDE = -122.4324;
-const LATITUDE_DELTA = 0.0922;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
-const findColor = function (ratio, opacity) {
-    var r = 255;
-    var g = 255;
-    if (ratio < 1/2) {
-        r = Math.ceil(255 * ratio * 2);
-    } else {
-        g = Math.ceil(255 * (1 - ratio) * 2);
-    }
-    //var hex = sprintf('%02x%02x%02x', r, g, 0);
-    return `rgba(${r}, ${g}, 0, ${opacity})`;
-};
-
-function fillColor (index, opacity) {
-  return findColor(index/5.0, opacity);
+const COORDINATE_PRECISION = 0.001
+const roundCoordinate = coord => {
+  return ( Math.ceil( Math.abs(coord) / COORDINATE_PRECISION ) * COORDINATE_PRECISION ) * Math.sign(coord)
 }
 
-//console.tron.log('first' + JSON.stringify(geojson.isochrones[0].geojson.coordinates));
-let tesselate = false;
-let polys = [];
-loadIsochron()
-.then(isochrones => {
-  //console.tron.log(isochrones);
-  for (let v = 0; v < (tesselate ? Math.min(4, isochrones.length) : isochrones.length); v++) {
-    //if (v !== 3) { continue; }
-    let geojson = isochrones[v];
-    //console.tron.log(geojson);
-    for (let i = 0; i < geojson.coordinates.length; i++) {
-      //console.tron.display({ name: 'coordinates', value: geojson.coordinates[i] });
-      if (!tesselate) {
-        let poly = [];
-        let holes = [];
-        for (let a = 0; a < geojson.coordinates[i].length; a++) {
-          let coordinates = geojson.coordinates[i][a];
-          let p = [];
-          for (let c = 0; c < coordinates.length; c++) {
-            p.push({ longitude: coordinates[c][0], latitude: coordinates[c][1] });
-          }
-          if (a === 0) { // polygon
-            poly = p;
-          } else { // hole (inner polygon)
-            holes.push(p);
-          }
-        }
-        if (holes.length) {
-          //console.tron.display({ name: 'holes', value: holes });
-        }
-        polys.push({ index: v, poly: poly, holes: holes });
-      } else {
-        let poly = [];
-        let data = earcut.flatten(geojson.coordinates[i]);
-        let result = earcut(data.vertices, data.holes, data.dimensions);
-        let triangles = [];
-        for (let r = 0; r < result.length; r++) {
-          let index = result[r];
-          triangles.push([ data.vertices[index * data.dimensions], data.vertices[index * data.dimensions + 1] ]);
-        }
-        for (let ts = 0; triangles && ts < triangles.length; ts += 3) {
-          let t = triangles.slice(ts, ts + 3);
-          polys.push({
-            index: v,
-            poly: [ { longitude: t[0][0], latitude: t[0][1] },
-                    { longitude: t[1][0], latitude: t[1][1] },
-                    { longitude: t[2][0], latitude: t[2][1] } ]
-          });
-        }
-      }
-    }
-  }
-})
-.catch(err => console.tron.log(err));
+// FIXME: hook this up to current time/location/duration settings (also save those settings somewhere)
+const DATETIME = '20161109T184927'
+const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
+const LATITUDE = roundCoordinate(37.7825177)
+const LONGITUDE = roundCoordinate(-122.4106772)
+const LATITUDE_DELTA = roundCoordinate(0.1)
+
+const { width, height } = Dimensions.get('window')
+const ASPECT_RATIO = width / height
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
+const mapProvider = MapView.PROVIDER_GOOGLE
+
+// start loading isochrons on load
+updateIsochrons({ params: {
+  latitude: LATITUDE,
+  longitude: LONGITUDE,
+  durations: DURATIONS,
+  dateTime: DATETIME
+}})
 
 class MapviewExample extends React.Component {
   /* ***********************************************************
@@ -128,14 +72,52 @@ class MapviewExample extends React.Component {
         latitude: LATITUDE,
         longitude: LONGITUDE,
         latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
       },
       locations,
       showUserLocation: true,
-      zoom: 11
+      zoom: 11,
+      isochronDurations: DURATIONS,
+      polygonsState: ISOCHRON_NOT_LOADED,
+      dateTime: DATETIME,
+      polygons: []
     }
     this.renderMapMarkers = this.renderMapMarkers.bind(this)
     this.onRegionChange = this.onRegionChange.bind(this)
+  }
+
+  componentDidMount () {
+    //console.tron.display({ name: 'componentDidMount', value: 'mounted' })
+    setUpdateIsochronsFn(this.updatePolygonsData.bind(this))
+    setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
+
+    // delay to give time for the UI to render the map
+    setTimeout(() => this.updatePolygons({
+      isochrons: {
+        latitude: this.state.region.latitude,
+        longitude: this.state.region.longitude,
+        durations: this.state.isochronDurations,
+        dateTime: this.state.dateTime
+      }
+    }), 500)
+  }
+  componentWillUnmount () {
+    //console.tron.display({ name: 'componentWillUnmount', value: 'about to unmount' })
+    setUpdateIsochronsFn(null)
+    setUpdateIsochronsStateFn(null)
+  }
+
+  updatePolygons (params) {
+    updateIsochrons({ params: params.isochrons })
+  }
+
+  updatePolygonsData (polygons) {
+    //console.tron.display({ name: 'updatePolygonsData', value: 'polygon update' })
+    this.setState({ polygons: polygons });
+  }
+  updatePolygonsState (state) {
+    //console.tron.display({ name: 'updatePolygonsState', value: state })
+    this.setState({ polygonsState: state })
   }
 
   componentWillReceiveProps (newProps) {
@@ -190,44 +172,37 @@ class MapviewExample extends React.Component {
       </MapView.Marker>
     )
   }
+
   render () {
-    // StyleSheet.absoluteFill
-    const coordinates = [ { latitude: LATITUDE, longitude: LONGITUDE },
-                          { latitude: LATITUDE + 0.015, longitude: LONGITUDE - 0.015 },
-                          { latitude: LATITUDE - 0.015, longitude: LONGITUDE - 0.005 } ];
-    /*const coordinates = [ [ { latitude: LATITUDE, longitude: LONGITUDE },
-                            { latitude: LATITUDE + 0.015, longitude: LONGITUDE - 0.015 },
-                            { latitude: LATITUDE - 0.015, longitude: LONGITUDE - 0.005 } ],
-                          [ { latitude: LATITUDE, longitude: LONGITUDE },
-                            { latitude: LATITUDE + 0.015*0.5, longitude: LONGITUDE - 0.015*0.5 },
-                            { latitude: LATITUDE - 0.015*0.5, longitude: LONGITUDE - 0.005*0.5 } ]
-                        ];*/
-    //           <MapView.Polygon coordinates={coordinates} fillColor='rgba(200,0,200,0.7)' key={0}/>
+    // wait for all polygons to be loaded
+    const polygonsCount = (this.state.polygons && this.state.polygonsState === ISOCHRON_LOADED) ? this.state.polygons.length : 0;
 
     return (
       <View style={Styles.container}>
         <MapView
           ref='map'
-          provider={MapView.PROVIDER_GOOGLE}
+          provider={mapProvider}
           style={Styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
           showsUserLocation={this.state.showUserLocation}
         >
-          {this.state.locations.map((location) => this.renderMapMarkers(location))}
-          {polys.map((poly, index) => {
-            return (
-              <MapView.Polygon
-                style={{ zIndex: (10-poly.index)}}
-                coordinates={poly.poly}
-                holes={poly.holes}
-                fillColor={ fillColor(poly.index, tesselate ? 0.35 : 0.35) }
-                strokeWidth={1}
-                strokeColor={ tesselate ? 'rgba(0,0,0,0)' : 'rgba(85, 85, 85, 0.8)' }
-                key={index}
-                zIndex={10-poly.index} />
-            )
-          })}
+          {this.state.locations.map(location => this.renderMapMarkers(location))}
+          { polygonsCount === 0 ? undefined : this.state.polygons.map((pArray, arrayIndex) => {
+              return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
+                return (
+                  <MapView.Polygon
+                    coordinates={ p.polygon }
+                    holes={ p.holes }
+                    fillColor={ isochronFillColor(p.index, (p.index === 2) ? 0.5 : 0.2) }
+                    strokeWidth={ 1 }
+                    strokeColor={ 'rgba(85, 85, 85, 0.8)' }
+                    key={ arrayIndex * 1000 + index }
+                  />
+                )
+              })
+            })
+          }
         </MapView>
         <View style={[styles.bubble, styles.latlng]}>
           <Text style={{ textAlign: 'center' }}>
