@@ -8,7 +8,7 @@ const path = require('path');
 const cors = require('cors');
 const betterErrors = require('better-express-errors');
 const bodyParser = require('body-parser');
-const placeRouter = require('./router/placeRouter');
+const placesRouter = require('./router/placesRouter');
 const isoRouter = require('./router/isoRouter');
 const Redis = require('redisng');
 const app = express();
@@ -26,7 +26,7 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(bodyParser.json());
 
 // /api should be the home for all of our API endpoints
-app.use('/places', placeRouter);
+app.use('/places', placesRouter);
 app.use('/iso', isoRouter);
 //404 all other routes
 app.use('*', (req, res) => {
