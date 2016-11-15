@@ -1,5 +1,5 @@
 // @flow
-
+// from Daniel's branch, probably will be overwritten('hopefully')
 import React from 'react'
 import { connect } from 'react-redux'
 import { View } from 'react-native'
