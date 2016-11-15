@@ -48,9 +48,9 @@ class ListviewGridExample extends React.Component {
     // ]
 
     const dataObjects = [
-      {title: 'Banks', description: '$$$'},
-      {title: 'Transport', description: 'Vroom'},
-      {title: 'Medical', description: 'Oh noes!'},
+      {title: 'Banks', description: '💵'},
+      {title: 'Transit', description: '🚎'},
+      {title: 'Medical', description: '🚑'},
     ]
 
     /* ***********************************************************

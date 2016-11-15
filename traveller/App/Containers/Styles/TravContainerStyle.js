@@ -8,7 +8,6 @@ export default StyleSheet.create({
   travContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    zIndex: 10,
   },
   container: {
     flex: 1,

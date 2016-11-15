@@ -73,7 +73,9 @@ class TravContainer extends React.Component {
       <View style={styles.container}>
         <MapView
           provider={MapView.PROVIDER_GOOGLE}
-          style={styles.map}
+          // style={styles.map}
+          width={width}
+          height={height * 0.6}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
           showsUserLocation={this.state.showUserLocation}
@@ -82,8 +84,7 @@ class TravContainer extends React.Component {
           </MapView>
         <View style={styles.travContainer}>
         </View>
-        {/* <Text>Here is some important text that does absolutely nothing. Amazing. -Nick Lathen 2016</Text> */}
-        <ScrollView style={styles.container}>
+        <ScrollView height={height * 0.4}>
           {/* <AlertMessage
             title='Options Appear Here'
           /> */}
