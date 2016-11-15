@@ -10,6 +10,7 @@ import AlertMessage from '../Components/AlertMessage'
 import MapView from 'react-native-maps'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
+import ListviewGridExample from './ListviewGridExample'
 
 
 // Default values
@@ -22,7 +23,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 // Styles
 import styles from './Styles/TravContainerStyle'
-import Styles from './Styles/MapviewExampleStyle'
+// import Styles from './Styles/MapviewExampleStyle'
 
 
 class TravContainer extends React.Component {
@@ -69,23 +70,24 @@ class TravContainer extends React.Component {
                           { latitude: LATITUDE - 0.015, longitude: LONGITUDE - 0.005 } ];
 
     return (
-      <View style={Styles.container}>
+      <View style={styles.container}>
         <MapView
           provider={MapView.PROVIDER_GOOGLE}
-          style={Styles.map}
+          style={styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
           showsUserLocation={this.state.showUserLocation}
           >
             {this.state.locations.map((location) => this.renderMapMarkers(location))}
           </MapView>
+        <View style={styles.travContainer}>
+        </View>
+        {/* <Text>Here is some important text that does absolutely nothing. Amazing. -Nick Lathen 2016</Text> */}
         <ScrollView style={styles.container}>
-        </ScrollView>
-        <Text>Here is some important text that does absolutely nothing. Amazing. -Nick Lathen 2016</Text>
-        <ScrollView style={styles.container}>
-          <AlertMessage
-            title='Dejavu'
-          />
+          {/* <AlertMessage
+            title='Options Appear Here'
+          /> */}
+          <ListviewGridExample />
         </ScrollView>
       </View>
     )
