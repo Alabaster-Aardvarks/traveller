@@ -26,7 +26,7 @@ const LONGITUDE = -122.4106772;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const DATETIME = '20161109T184927';
-const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600 ];
+const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ];
 const mapProvider = MapView.PROVIDER_GOOGLE;
 
 // start loading isochrons on load

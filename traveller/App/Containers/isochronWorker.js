@@ -2,60 +2,91 @@ import { create } from 'apisauce'
 import { encode } from 'base-64'
 import { self } from 'react-native-workers'
 
-let debug = false;
+const debug = false;
 
 // get message from application
 self.onmessage = messageString => {
   let message = JSON.parse(messageString)
 
   if (message.id === 'start') {
-    //if (debug) { self.postMessage(JSON.stringify({ id: 'log', log: message.params })) }
+    if (debug) { self.postMessage(JSON.stringify({ id: 'log', log: message.params })) }
     loadIsochron(message.params)
   } else {
     self.postMessage(JSON.stringify({ id: 'error', error: 'Isochron worker unknown message: ' + messageString }))
   }
 }
 
-// Navitia API token
-const token = '3a8b7ce9-ef1a-4ff5-b65a-5cffcafcfc47';
+const useBoundaryDuration = true
+const token = process.env.NAVITIA_TOKEN || '3a8b7ce9-ef1a-4ff5-b65a-5cffcafcfc47' // navitia API token
+const navitiaUrl = 'https://api.navitia.io/v1'
+const serverUrl = process.env.ISOCHRON_SERVER_URL || navitiaUrl
+const api = create({ baseURL: serverUrl })
+const useNavitia = serverUrl.match(/api\.navitia/) ? true : false
+const serverEndpointUrl = '/navitia'
 
 // Set API headers
-const api = create({ baseURL: 'https://api.navitia.io/v1' });
-api.setHeaders({ 'Authorization': 'Basic ' + encode(token) });
+api.setHeaders({ 'Authorization': 'Basic ' + encode(token) })
 
 const loadIsochron = params => {
 
   // isochron starting point
   let latitude = params.latitude
   let longitude = params.longitude
-  let durations = params.durations
+  let durations = useBoundaryDuration ? [ params.durations ] : params.durations
   let dateTime = params.dateTime
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'params', log: params })) }
 
   let duration_step = 600 // default to 10 minutes
 
   // get region based on location
-  return api.get(`/coord/${longitude};${latitude}`)
+  const navitiaRegionUrl = `/coord/${longitude};${latitude}`
+  const regionUrl = useNavitia ? navitiaRegionUrl : serverEndpointUrl
+  const regionQuery = useNavitia ? null : { params: `${navitiaUrl}${navitiaRegionUrl}` }
+
+  return api.get(regionUrl, regionQuery)
   .then(resp => {
+    if (!resp.ok) {
+      self.postMessage(JSON.stringify({ id: 'error', error: 'Navitia region not found [' + resp.problem + ']' }))
+      return
+    }
+
     let region = resp.data.regions[0]
     if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'region', log: region })) }
 
     return Promise.all(
       durations.map((duration, index) => {
-        if (index < durations.length - 1) {
-          duration_step = durations[index + 1] - duration
+        let durationQuery = ''
+        if (Array.isArray(duration)) {
+          duration.map((d, i) => {
+            durationQuery += (i === 0) ? `&min_duration=${d}` : `&boundary_duration[]=${d}`
+          })
+        } else {
+          if (index === 0) { return }
+          let minDuration = durations[index - 1]
+          let maxDuration = duration
+          durationQuery += `&min_duration=${minDuration}&max_duration=${maxDuration}`
         }
-        let minDuration = duration
-        let maxDuration = minDuration + duration_step
 
         // Navitia query for this isochron
         //https://api.navitia.io/v1/coverage/us-ca/isochrones?from=-122.4106772%3B37.7825177&datetime=20161109T184927&boundary_duration%5B%5D=600&boundary_duration%5B%5D=1200&boundary_duration%5B%5D=1800&boundary_duration%5B%5D=2400&boundary_duration%5B%5D=3000&boundary_duration%5B%5D=3600&
-        let url = `/coverage/${region}/isochrones?from=${longitude};${latitude}`
-                  + `&datetime=${dateTime}`
-                  + `&max_duration=${maxDuration}&min_duration=${minDuration}`
+        let navitiaIsochronUrl = `/coverage/${region}/isochrones?from=${longitude};${latitude}&datetime=${dateTime}${durationQuery}`
+        let url = useNavitia ? navitiaIsochronUrl : serverEndpointUrl
+        let query = useNavitia ? null : { params: `${navitiaUrl}${navitiaIsochronUrl}` }
 
-        return api.get(url)
-        .then(resp => drawIsochron(resp.data.isochrones[0], index)) // we have only one isochrone
+        return api.get(url, query)
+        .then(resp => {
+          if (!resp.ok) {
+            self.postMessage(JSON.stringify({ id: 'error', error: 'Request to ' + url + ' failed [' + resp.problem + ']' }))
+            return
+          }
+
+          if (Array.isArray(duration)) {
+            duration.shift() // remove first entry
+            duration.map((d, idx) => drawIsochron(resp.data.isochrones[idx], idx))
+          } else {
+            drawIsochron(resp.data.isochrones[0], index - 1) // we have only one isochrone
+          }
+        })
       })
     )
     .then(() => self.postMessage(JSON.stringify({ id: 'done' })))

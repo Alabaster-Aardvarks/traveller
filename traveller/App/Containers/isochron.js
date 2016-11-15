@@ -18,14 +18,12 @@ export const setUpdateIsochronsStateFn = updateFn => {
   updateIsochronsState = updateFn
 }
 
-console.tron.log('here')
-
 export const updateIsochrons = args => {
   let params = args.params
   let argString = JSON.stringify(params)
 
   if (argString === savedArgString && (isochronsState === LOADING || isochronsState === LOADED)) {
-    //console.tron.display({ name: 'updateIsochrons', value: isochronsState })
+    console.tron.display({ name: 'updateIsochrons', value: isochronsState })
     updateIsochronsState && updateIsochronsState(isochronsState)
     updatePolygonsData && updatePolygonsData(savedPolygons) // update with saved data
     return
@@ -51,7 +49,7 @@ export const updateIsochrons = args => {
   worker.onmessage = messageString => {
     let message = JSON.parse(messageString)
     if (message.id === 'update') {
-      console.tron.display({ name: 'update from worker', value: message.polygons })
+      console.tron.display({ name: 'isochron update from worker', value: message.polygons.length })
       savedPolygons[message.index] = message.polygons // update saved isochrons
       updatePolygonsData && updatePolygonsData(savedPolygons)
     } else if (message.id === 'done') {
