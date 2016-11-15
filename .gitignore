@@ -30,6 +30,7 @@ DerivedData
 project.xcworkspace
 *.dat*
 Pods/
+*.xcodeproj/
 
 # Android/IJ
 #
