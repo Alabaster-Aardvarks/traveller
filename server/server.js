@@ -9,7 +9,7 @@ const cors = require('cors');
 const betterErrors = require('better-express-errors');
 const bodyParser = require('body-parser');
 const placesRouter = require('./router/placesRouter');
-const isoRouter = require('./router/isoRouter');
+const navitiaRouter = require('./router/navitiaRouter');
 const Redis = require('redisng');
 const app = express();
 
@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 
 // /api should be the home for all of our API endpoints
 app.use('/places', placesRouter);
-app.use('/iso', isoRouter);
+app.use('/navitia', navitiaRouter);
 //404 all other routes
 app.use('*', (req, res) => {
   res.status(404).send();
