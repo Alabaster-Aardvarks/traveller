@@ -1,0 +1,38 @@
+{
+  "name": "traveller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha spec",
+    "start": "node server.js",
+    "start-dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alabaster-Aardvarks/Traveller.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Alabaster-Aardvarks/Traveller/issues"
+  },
+  "homepage": "https://github.com/Alabaster-Aardvarks/Traveller#readme",
+  "dependencies": {
+    "better-express-errors": "^1.0.2",
+    "body-parser": "^1.15.2",
+    "cors": "^2.8.1",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "morgan": "^1.7.0",
+    "redisng": "^2.0.0",
+    "request": "^2.78.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2",
+    "nodemon": "^1.11.0",
+    "sinon": "^1.17.6",
+    "supertest": "^2.0.1"
+  }
+}
