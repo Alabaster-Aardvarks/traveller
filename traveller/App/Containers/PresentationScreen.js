@@ -1,3 +1,4 @@
+// @flow		
 
 import React from 'react'
 import { ScrollView, Text, Image, View } from 'react-native'
