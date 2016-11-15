@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha server/spec",
+    "start": "node server/server.js",
+    "dev-start": "nodemon server/server.js",
+    "multi": "concurrently --kill-others  'npm run dev-start' "
   },
   "repository": {
     "type": "git",
@@ -16,5 +19,24 @@
     "url": "https://github.com/Alabaster-Aardvarks/Traveller/issues"
   },
   "homepage": "https://github.com/Alabaster-Aardvarks/Traveller#readme",
-  "dependencies": {}
+  "dependencies": {
+    "base-64": "^0.1.0",
+    "body-parser": "^1.15.2",
+    "cors": "^2.8.1",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "qs": "^6.3.0",
+    "redisng": "^2.0.0",
+    "request": "^2.78.0"
+  },
+  "devDependencies": {
+    "better-express-errors": "^1.0.2",
+    "chai": "^3.5.0",
+    "concurrently": "^3.1.0",
+    "mocha": "^3.1.2",
+    "morgan": "^1.7.0",
+    "nodemon": "^1.11.0",
+    "sinon": "^1.17.6",
+    "supertest": "^2.0.1"
+  }
 }
