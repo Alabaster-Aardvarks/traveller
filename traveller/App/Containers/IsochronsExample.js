@@ -6,7 +6,7 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import Styles from './Styles/MapviewExampleStyle'
 import { updateIsochrons, setUpdateIsochronsFn, setUpdateIsochronsStateFn,
-         fillColor, NOT_LOADED, LOADING, LOADED } from './isochron'
+         isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
 
 /* ***********************************************************
 * IMPORTANT!!! Before you get started, if you are going to support Android,
@@ -18,16 +18,22 @@ import { updateIsochrons, setUpdateIsochronsFn, setUpdateIsochronsStateFn,
 * https://console.developers.google.com/apis/api/maps_android_backend/
 *************************************************************/
 
-// Daniel - default values
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const LATITUDE = 37.7825177;
-const LONGITUDE = -122.4106772;
-const LATITUDE_DELTA = 0.0922;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const DATETIME = '20161109T184927';
-const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ];
-const mapProvider = MapView.PROVIDER_GOOGLE;
+const COORDINATE_PRECISION = 0.001
+const roundCoordinate = coord => {
+  return ( Math.ceil( Math.abs(coord) / COORDINATE_PRECISION ) * COORDINATE_PRECISION ) * Math.sign(coord)
+}
+
+// FIXME: hook this up to current time/location/duration settings (also save those settings somewhere)
+const DATETIME = '20161109T184927'
+const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
+const LATITUDE = roundCoordinate(37.7825177)
+const LONGITUDE = roundCoordinate(-122.4106772)
+const LATITUDE_DELTA = roundCoordinate(0.1)
+
+const { width, height } = Dimensions.get('window')
+const ASPECT_RATIO = width / height
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
+const mapProvider = MapView.PROVIDER_GOOGLE
 
 // start loading isochrons on load
 updateIsochrons({ params: {
@@ -72,7 +78,7 @@ class MapviewExample extends React.Component {
       showUserLocation: true,
       zoom: 11,
       isochronDurations: DURATIONS,
-      polygonsState: NOT_LOADED,
+      polygonsState: ISOCHRON_NOT_LOADED,
       dateTime: DATETIME,
       polygons: []
     }
@@ -169,7 +175,7 @@ class MapviewExample extends React.Component {
 
   render () {
     // wait for all polygons to be loaded
-    const polygonsCount = (this.state.polygons && this.state.polygonsState === LOADED) ? this.state.polygons.length : 0;
+    const polygonsCount = (this.state.polygons && this.state.polygonsState === ISOCHRON_LOADED) ? this.state.polygons.length : 0;
 
     return (
       <View style={Styles.container}>
@@ -188,7 +194,7 @@ class MapviewExample extends React.Component {
                   <MapView.Polygon
                     coordinates={ p.polygon }
                     holes={ p.holes }
-                    fillColor={ fillColor(p.index, (p.index === 2) ? 0.5 : 0.2) }
+                    fillColor={ isochronFillColor(p.index, (p.index === 2) ? 0.5 : 0.2) }
                     strokeWidth={ 1 }
                     strokeColor={ 'rgba(85, 85, 85, 0.8)' }
                     key={ arrayIndex * 1000 + index }

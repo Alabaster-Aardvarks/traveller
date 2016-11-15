@@ -2,7 +2,8 @@ import { create } from 'apisauce'
 import { encode } from 'base-64'
 import { self } from 'react-native-workers'
 
-const debug = false;
+const debug = false // enable log messages for debug
+const useBoundaryDuration = false // if true, will fetch all isochrons at once, otherwise one by one
 
 // get message from application
 self.onmessage = messageString => {
@@ -16,7 +17,6 @@ self.onmessage = messageString => {
   }
 }
 
-const useBoundaryDuration = true
 const token = process.env.NAVITIA_TOKEN || '3a8b7ce9-ef1a-4ff5-b65a-5cffcafcfc47' // navitia API token
 const navitiaUrl = 'https://api.navitia.io/v1'
 const serverUrl = process.env.ISOCHRON_SERVER_URL || navitiaUrl
@@ -24,7 +24,7 @@ const api = create({ baseURL: serverUrl })
 const useNavitia = serverUrl.match(/api\.navitia/) ? true : false
 const serverEndpointUrl = '/navitia'
 
-// Set API headers
+// set API headers
 api.setHeaders({ 'Authorization': 'Basic ' + encode(token) })
 
 const loadIsochron = params => {
@@ -41,7 +41,7 @@ const loadIsochron = params => {
   // get region based on location
   const navitiaRegionUrl = `/coord/${longitude};${latitude}`
   const regionUrl = useNavitia ? navitiaRegionUrl : serverEndpointUrl
-  const regionQuery = useNavitia ? null : { params: `${navitiaUrl}${navitiaRegionUrl}` }
+  const regionQuery = useNavitia ? null : { params: { url: `${navitiaUrl}${navitiaRegionUrl}` } }
 
   return api.get(regionUrl, regionQuery)
   .then(resp => {
@@ -61,7 +61,7 @@ const loadIsochron = params => {
             durationQuery += (i === 0) ? `&min_duration=${d}` : `&boundary_duration[]=${d}`
           })
         } else {
-          if (index === 0) { return }
+          if (index === 0) { return } // first duration is min duration
           let minDuration = durations[index - 1]
           let maxDuration = duration
           durationQuery += `&min_duration=${minDuration}&max_duration=${maxDuration}`
@@ -71,7 +71,7 @@ const loadIsochron = params => {
         //https://api.navitia.io/v1/coverage/us-ca/isochrones?from=-122.4106772%3B37.7825177&datetime=20161109T184927&boundary_duration%5B%5D=600&boundary_duration%5B%5D=1200&boundary_duration%5B%5D=1800&boundary_duration%5B%5D=2400&boundary_duration%5B%5D=3000&boundary_duration%5B%5D=3600&
         let navitiaIsochronUrl = `/coverage/${region}/isochrones?from=${longitude};${latitude}&datetime=${dateTime}${durationQuery}`
         let url = useNavitia ? navitiaIsochronUrl : serverEndpointUrl
-        let query = useNavitia ? null : { params: `${navitiaUrl}${navitiaIsochronUrl}` }
+        let query = useNavitia ? null : { params: { url: `${navitiaUrl}${navitiaIsochronUrl}` } }
 
         return api.get(url, query)
         .then(resp => {

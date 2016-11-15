@@ -1,12 +1,12 @@
 import { Worker } from 'react-native-workers'
 
-export const NOT_LOADED = 'NOT_LOADED'
-export const LOADING = 'LOADING'
-export const LOADED = 'LOADED'
+export const ISOCHRON_NOT_LOADED = 'ISOCHRON_NOT_LOADED'
+export const ISOCHRON_LOADING = 'ISOCHRON_LOADING'
+export const ISOCHRON_LOADED = 'ISOCHRON_LOADED'
 
 let savedArgString = ''
 let savedPolygons = []
-let isochronsState = NOT_LOADED
+let isochronsState = ISOCHRON_NOT_LOADED
 let updatePolygonsData = null
 let updateIsochronsState = null
 let worker
@@ -22,7 +22,7 @@ export const updateIsochrons = args => {
   let params = args.params
   let argString = JSON.stringify(params)
 
-  if (argString === savedArgString && (isochronsState === LOADING || isochronsState === LOADED)) {
+  if (argString === savedArgString && (isochronsState === ISOCHRON_LOADING || isochronsState === ISOCHRON_LOADED)) {
     console.tron.display({ name: 'updateIsochrons', value: isochronsState })
     updateIsochronsState && updateIsochronsState(isochronsState)
     updatePolygonsData && updatePolygonsData(savedPolygons) // update with saved data
@@ -31,7 +31,7 @@ export const updateIsochrons = args => {
   // save arguments string
   savedArgString = argString
 
-  isochronsState = NOT_LOADED
+  isochronsState = ISOCHRON_NOT_LOADED
   updateIsochronsState && updateIsochronsState(isochronsState)
   // reset isochrons (to avoid weird display)
   savedPolygons = []
@@ -41,7 +41,7 @@ export const updateIsochrons = args => {
     worker && worker.terminate() // terminate worker if it was running
   }
 
-  isochronsState = LOADING
+  isochronsState = ISOCHRON_LOADING
   updateIsochronsState && updateIsochronsState(isochronsState)
   // create worker and send it some work
   worker = new Worker('./App/Containers/isochronWorker.js')
@@ -53,7 +53,7 @@ export const updateIsochrons = args => {
       savedPolygons[message.index] = message.polygons // update saved isochrons
       updatePolygonsData && updatePolygonsData(savedPolygons)
     } else if (message.id === 'done') {
-      isochronsState = LOADED
+      isochronsState = ISOCHRON_LOADED
       updateIsochronsState && updateIsochronsState(isochronsState)
     } else if (message.id === 'log') {
       console.tron.display({ name: 'Isochron worker ' + message.name, value: message.log })
@@ -79,6 +79,6 @@ const findColor = (ratio, opacity) => {
   return `rgba(${r}, ${g}, 0, ${opacity})`;
 };
 
-export const fillColor = (index, opacity) => {
+export const isochronFillColor = (index, opacity) => {
   return findColor(index / 5.0, opacity);
 }
