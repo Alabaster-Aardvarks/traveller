@@ -5,6 +5,10 @@
 #Environmental Variables
 .env
 
+#testing logs
+.nyc_output
+
+
 # Xcode
 #
 build/
