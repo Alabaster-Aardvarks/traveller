@@ -7,8 +7,7 @@
     "test": "mocha server/spec",
     "start": "node server/server.js",
     "dev-start": "nodemon server/server.js",
-    "multi": "concurrently --kill-others  'npm run dev-start' 'node traveller/node_modules/react-native/local-cli/cli.js start'"
-
+    "multi": "concurrently --kill-others  'npm run dev-start' "
   },
   "repository": {
     "type": "git",
