@@ -6,8 +6,8 @@
 .env
 
 #testing logs
-.nyc_output
-
+*.nyc_output
+/.nyc_output
 
 # Xcode
 #
