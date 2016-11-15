@@ -1,4 +1,4 @@
-// @flow
+/ @flow
 
 import React from 'react'
 import { ScrollView, Text, Image, View } from 'react-native'
@@ -30,10 +30,6 @@ export default class PresentationScreen extends React.Component {
             Isochrones
           </RoundedButton>
 
-          <RoundedButton onPress={NavigationActions.testMapView}>
-            Test Map View
-          </RoundedButton>
-
           <RoundedButton onPress={NavigationActions.componentExamples}>
             Component Examples Screen
           </RoundedButton>
@@ -55,7 +51,7 @@ export default class PresentationScreen extends React.Component {
           </RoundedButton>
 
           <View style={styles.centered}>
-            <Text style={styles.subtitle}>Made with ❤️ by Alabaster Aardvarks</Text>
+            <Text style={styles.subtitle}>Made with ❤️ by Infinite Red</Text>
           </View>
 
         </ScrollView>
