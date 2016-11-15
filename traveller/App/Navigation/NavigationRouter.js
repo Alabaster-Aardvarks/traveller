@@ -21,6 +21,8 @@ import APITestingScreen from '../Containers/APITestingScreen'
 import ThemeScreen from '../Containers/ThemeScreen'
 import DeviceInfoScreen from '../Containers/DeviceInfoScreen'
 import TravContainer from '../Containers/TravContainer'
+import TravScreen from '../Containers/TravScreen'
+
 
 /* **************************
 * Documentation: https://github.com/aksonov/react-native-router-flux
@@ -35,6 +37,7 @@ class NavigationRouter extends Component {
             <Scene initial key='presentationScreen' component={PresentationScreen} title='Ignite' renderLeftButton={NavItems.hamburgerButton} />
             <Scene key='isochronExamples' component={IsochronsExample} title='Isochrones' />
             <Scene key='travContainer' component={TravContainer} title='Traveller Alpha' />
+            <Scene key='travScreen' component={TravScreen} title='Traveller Alpha' />
             <Scene key='componentExamples' component={AllComponentsScreen} title='Components' />
             <Scene key='usageExamples' component={UsageExamplesScreen} title='Usage' rightTitle='Example' onRight={() => window.alert('Example Pressed')} />
             <Scene key='login' component={LoginScreen} title='Login' hideNavBar />

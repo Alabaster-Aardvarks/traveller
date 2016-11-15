@@ -31,7 +31,11 @@ export default class PresentationScreen extends React.Component {
           </RoundedButton>
 
           <RoundedButton onPress={NavigationActions.travContainer}>
-            Traveller Alpha
+            Traveller Alpha Container
+          </RoundedButton>
+
+          <RoundedButton onPress={NavigationActions.travScreen}>
+            Traveller Alpha Screen
           </RoundedButton>
 
           <RoundedButton onPress={NavigationActions.componentExamples}>
