@@ -9,6 +9,10 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
+  actionButtonIcon: {
+    fontSize: 25,
+    color: 'white',
+  },
   container: {
     flex: 1,
     // justifyContent: 'flex-end',

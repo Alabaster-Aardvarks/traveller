@@ -81,7 +81,7 @@ class ListviewGridExample extends React.Component {
   _renderRow (rowData) {
     return (
       <View style={styles.row}>
-        <Text style={styles.boldLabel}>{rowData.title}</Text>
+        <Text onPress={ () => window.alert(`${rowData.title} Button Pressed! ${rowData.description}`) } style={styles.boldLabel}>{rowData.title}</Text>
         <Text style={styles.label}>{rowData.description}</Text>
       </View>
     )

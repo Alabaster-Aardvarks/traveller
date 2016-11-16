@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, Slider } from 'react-native'
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
 import { Actions as NavigationActions } from 'react-native-router-flux'
@@ -11,6 +11,9 @@ import MapView from 'react-native-maps'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import ListviewGridExample from './ListviewGridExample'
+
+import ActionButton from 'react-native-action-button';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 // Default values
@@ -75,21 +78,26 @@ class TravContainer extends React.Component {
           provider={MapView.PROVIDER_GOOGLE}
           // style={styles.map}
           width={width}
-          height={height * 0.6}
+          height={height * 0.78}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
           showsUserLocation={this.state.showUserLocation}
           >
             {this.state.locations.map((location) => this.renderMapMarkers(location))}
           </MapView>
-        <View style={styles.travContainer}>
-        </View>
-        <ScrollView height={height * 0.4}>
-          {/* <AlertMessage
-            title='Options Appear Here'
-          /> */}
-          <ListviewGridExample />
-        </ScrollView>
+
+          <ActionButton buttonColor="rgba(231,76,60,1)" degrees={180} icon={<Icon name='ios-compass-outline' style={styles.actionButtonIcon}></Icon>}>
+          <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => console.tron.log("New Task tapped!")}>
+            <Icon name="md-search" />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#3498db' title="Notifications" onPress={() => console.tron.log("Noifications Tapped!")}>
+            <Icon name="md-notifications-off" />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1abc9c' title="All Tasks" onPress={() => console.tron.log('All Tasks Tapped!')}>
+            <Icon name="md-done-all" />
+          </ActionButton.Item>
+        </ActionButton>
+        <Slider step={0.25} />
       </View>
     )
   }
