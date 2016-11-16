@@ -31,6 +31,11 @@ class DrawerContent extends Component {
     NavigationActions.deviceInfo()
   }
 
+  handlePressSettings = () => {
+    this.toggleDrawer()
+    NavigationActions.settings()
+  }
+
   render () {
     return (
       <ScrollView style={styles.container}>
