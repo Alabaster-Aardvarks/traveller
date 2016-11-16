@@ -13,7 +13,8 @@ import MapCallout from '../Components/MapCallout'
 import ListviewGridExample from './ListviewGridExample'
 
 import ActionButton from 'react-native-action-button';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome';
+// import FaIcon from 'react-native-vector-icons/FontAwesome';
 
 
 // Default values
@@ -78,7 +79,7 @@ class TravContainer extends React.Component {
           provider={MapView.PROVIDER_GOOGLE}
           // style={styles.map}
           width={width}
-          height={height * 0.78}
+          height={height}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
           showsUserLocation={this.state.showUserLocation}
@@ -86,18 +87,26 @@ class TravContainer extends React.Component {
             {this.state.locations.map((location) => this.renderMapMarkers(location))}
           </MapView>
 
-          <ActionButton buttonColor="rgba(231,76,60,1)" degrees={180} icon={<Icon name='ios-compass-outline' style={styles.actionButtonIcon}></Icon>}>
+          <ActionButton buttonColor="rgba(231,76,60,1)"
+            degrees={90}
+            icon={<Icon name='search'
+            style={styles.actionButton}></Icon>}
+            spacing={10}
+          >
           <ActionButton.Item buttonColor='#9b59b6' title="Banks" onPress={() => console.tron.log("New Task tapped!")}>
-            <Icon name="fa-glass" />
+            <Icon name="university" style={styles.actionButtonIcon}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' title="Transit" onPress={() => console.tron.log("Noifications Tapped!")}>
-            <Icon name="md-notifications-off" />
+            <Icon name="bus" style={styles.actionButtonIcon} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title="Medical" onPress={() => console.tron.log('All Tasks Tapped!')}>
-            <Icon name="md-done-all" />
+          <ActionButton.Item buttonColor='#ff6b6b' title="Medical" onPress={() => console.tron.log('All Tasks Tapped!')}>
+            <Icon name="ambulance" style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1abc9c' title="Settings" onPress={() => console.tron.log('All Tasks Tapped!')}>
+            <Icon name="cog" style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
-        <Slider step={0.27} style={{marginTop: 25}} />
+        {/* <Slider step={0.27} style={{marginTop: 0}} /> */}
       </View>
     )
   }
