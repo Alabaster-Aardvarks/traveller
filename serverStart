@@ -1,0 +1,4 @@
+cd traveller
+react-native run-ios
+cd ..
+npm run dev-start

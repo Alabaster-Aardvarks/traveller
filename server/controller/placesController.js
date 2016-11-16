@@ -13,6 +13,7 @@ const getData = (place, lat, long, callback) => {
       return callback(err, null);
     }
     //google has responded
+    console.log(body);
     const data = JSON.parse(body);
     return callback(err, data.results);
   });
