@@ -10,7 +10,7 @@ export default StyleSheet.create({
     justifyContent: 'flex-end',
   },
   actionButtonIcon: {
-    fontSize: 25,
+    fontSize: 30,
     color: 'white',
   },
   container: {

@@ -87,17 +87,17 @@ class TravContainer extends React.Component {
           </MapView>
 
           <ActionButton buttonColor="rgba(231,76,60,1)" degrees={180} icon={<Icon name='ios-compass-outline' style={styles.actionButtonIcon}></Icon>}>
-          <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => console.tron.log("New Task tapped!")}>
-            <Icon name="md-search" />
+          <ActionButton.Item buttonColor='#9b59b6' title="Banks" onPress={() => console.tron.log("New Task tapped!")}>
+            <Icon name="fa-glass" />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title="Notifications" onPress={() => console.tron.log("Noifications Tapped!")}>
+          <ActionButton.Item buttonColor='#3498db' title="Transit" onPress={() => console.tron.log("Noifications Tapped!")}>
             <Icon name="md-notifications-off" />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title="All Tasks" onPress={() => console.tron.log('All Tasks Tapped!')}>
+          <ActionButton.Item buttonColor='#1abc9c' title="Medical" onPress={() => console.tron.log('All Tasks Tapped!')}>
             <Icon name="md-done-all" />
           </ActionButton.Item>
         </ActionButton>
-        <Slider step={0.25} />
+        <Slider step={0.27} style={{marginTop: 25}} />
       </View>
     )
   }
