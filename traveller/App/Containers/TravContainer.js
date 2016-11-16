@@ -11,10 +11,8 @@ import MapView from 'react-native-maps'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import ListviewGridExample from './ListviewGridExample'
-
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/FontAwesome';
-// import FaIcon from 'react-native-vector-icons/FontAwesome';
 
 
 // Default values
@@ -27,16 +25,36 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 // Styles
 import styles from './Styles/TravContainerStyle'
-// import Styles from './Styles/MapviewExampleStyle'
 
 
 class TravContainer extends React.Component {
   constructor (props) {
 
     super(props)
-    const locations = [ { title: 'Hack Reactor', latitude: 37.783697, longitude: -122.408966 } ];
-    const region = calculateRegion(locations, { latPadding: 0.05, longPadding: 0.05 });
+    let locations = [];
+
+    const getCurrentLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+
+          let initialPosition = JSON.stringify(position);
+          this.setState({initialPosition});
+
+          locationsObj = {
+            title: 'Starting Location',
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          locations.push(locationsObj);
+        },
+        (error) => alert(JSON.stringify(error)),
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+      )
+    }
+
     this.state = {
+      initialPosition: 'unknown',
+      lastPosition: 'unknown',
       region: {
         latitude: LATITUDE,
         longitude: LONGITUDE,
@@ -44,12 +62,17 @@ class TravContainer extends React.Component {
         longitudeDelta: LONGITUDE_DELTA,
       },
       locations,
-      showUserLocation: true,
-      zoom: 11
+      showUserLocation: false,
+      // zoom: 11
     }
+
+    getCurrentLocation()
+    const region = calculateRegion(locations, { latPadding: 0.05, longPadding: 0.05 });
     this.renderMapMarkers = this.renderMapMarkers.bind(this)
     this.onRegionChange = this.onRegionChange.bind(this)
+
   }
+
 
   calloutPress (location) {
     console.tron.log(location)
@@ -57,7 +80,7 @@ class TravContainer extends React.Component {
 
   renderMapMarkers (location) {
     return (
-      <MapView.Marker key={location.title} coordinate={{latitude: location.latitude, longitude: location.longitude}}>
+      <MapView.Marker pinColor='#183446' draggable key={location.title} coordinate={{latitude: location.latitude, longitude: location.longitude}}>
         <MapCallout location={location} onPress={this.calloutPress} />
       </MapView.Marker>
     )
