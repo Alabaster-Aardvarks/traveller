@@ -6,7 +6,6 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const cors = require('cors');
-const betterErrors = require('better-express-errors');
 const bodyParser = require('body-parser');
 const placesRouter = require('./router/placesRouter');
 const navitiaRouter = require('./router/navitiaRouter');
@@ -36,7 +35,6 @@ app.use('*', (req, res) => {
 const port = process.env.PORT || 3000;
 
 app.listen(port);
-app.use(betterErrors(app));
 
 console.log(`Server listening on port: ${port}`);
 module.exports = app;
