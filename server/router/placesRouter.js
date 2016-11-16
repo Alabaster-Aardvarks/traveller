@@ -19,6 +19,7 @@ placesRouter.get('/museum', (req, res) => {
         //data was not found
         res.sendStatus(204); 
       } else {
+        console.log(data);
         //data is found
         res.status(200).json(data); 
       }
@@ -39,6 +40,7 @@ placesRouter.get('/park', (req, res) => {
         res.sendStatus(204); 
       } else {
         //data is found
+        console.log(data);
         res.status(200).json(data); 
       }
     }
@@ -47,6 +49,7 @@ placesRouter.get('/park', (req, res) => {
 
 placesRouter.get('/bank', (req, res) => {
   // console.log('look for coordinates in here', req);
+  console.log(process.env.GOOGLEKEY);
   placesController.getData('bank', 37.7825177, -122.4106772, (err, data) =>{
     if (err) {
       //parsing error
@@ -58,6 +61,7 @@ placesRouter.get('/bank', (req, res) => {
         res.sendStatus(204); 
       } else {
         //data is found
+        console.log(data);
         res.status(200).json(data); 
       }
     }
