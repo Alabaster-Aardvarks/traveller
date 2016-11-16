@@ -22,7 +22,7 @@ export const updateIsochrons = args => {
   let params = args.params
   let argString = JSON.stringify(params)
 
-  if (argString === savedArgString && (isochronsState === ISOCHRON_LOADING || isochronsState === ISOCHRON_LOADED)) {
+  if (!params.force && (argString === savedArgString && (isochronsState === ISOCHRON_LOADING || isochronsState === ISOCHRON_LOADED))) {
     console.tron.display({ name: 'updateIsochrons', value: isochronsState })
     updateIsochronsState && updateIsochronsState(isochronsState)
     updatePolygonsData && updatePolygonsData(savedPolygons) // update with saved data

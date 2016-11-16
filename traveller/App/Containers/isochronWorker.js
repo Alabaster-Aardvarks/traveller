@@ -41,7 +41,7 @@ const loadIsochron = params => {
   // get region based on location
   const navitiaRegionUrl = `/coord/${longitude};${latitude}`
   const regionUrl = useNavitia ? navitiaRegionUrl : serverEndpointUrl
-  const regionQuery = useNavitia ? null : { params: { url: `${navitiaUrl}${navitiaRegionUrl}` } }
+  const regionQuery = useNavitia ? null : { url: `${navitiaUrl}${navitiaRegionUrl}` }
 
   return api.get(regionUrl, regionQuery)
   .then(resp => {
@@ -71,7 +71,7 @@ const loadIsochron = params => {
         //https://api.navitia.io/v1/coverage/us-ca/isochrones?from=-122.4106772%3B37.7825177&datetime=20161109T184927&boundary_duration%5B%5D=600&boundary_duration%5B%5D=1200&boundary_duration%5B%5D=1800&boundary_duration%5B%5D=2400&boundary_duration%5B%5D=3000&boundary_duration%5B%5D=3600&
         let navitiaIsochronUrl = `/coverage/${region}/isochrones?from=${longitude};${latitude}&datetime=${dateTime}${durationQuery}`
         let url = useNavitia ? navitiaIsochronUrl : serverEndpointUrl
-        let query = useNavitia ? null : { params: { url: `${navitiaUrl}${navitiaIsochronUrl}` } }
+        let query = useNavitia ? null : { url: `${navitiaUrl}${navitiaIsochronUrl}` }
 
         return api.get(url, query)
         .then(resp => {
@@ -115,6 +115,7 @@ const drawIsochron = (isochron, index) => {
         holes.push(p)
       }
     }
+    // FIXME? remove index from each polygon, not used right now
     polygons.push({ index: index, polygon: polygon, holes: holes })
     if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'polygons', log: polygons })) }
   }
