@@ -21,16 +21,12 @@
   },
   "homepage": "https://github.com/Alabaster-Aardvarks/Traveller#readme",
   "dependencies": {
-    "apisauce": "^0.6.0",
     "axios": "^0.15.2",
-    "base-64": "^0.1.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
-    "got": "^6.6.3",
     "qs": "^6.3.0",
-    "redisng": "^2.0.0",
     "request": "^2.78.0"
   },
   "devDependencies": {
