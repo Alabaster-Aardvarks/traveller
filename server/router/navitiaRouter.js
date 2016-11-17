@@ -2,11 +2,22 @@
 const express = require('express');
 const navitiaController = require('../controller/navitiaController');
 const navitiaRouter = express.Router(); 
+const redis = require('../service/redis');
 
 navitiaRouter.get('*', (req, res) => {
-  navitiaController.getIso(req.query.url, req.headers.authorization)
-  .then(data => res.status(200).json(data))
-  .catch(err => res.sendStatus(500));
+  redis.getRedisIso(req.query.url)
+  .then(result => {
+    if (result !== null) {
+      res.status(200).json(JSON.parse(result));
+    } else {
+      navitiaController.getIso(req.query.url, req.headers.authorization)
+      .then(data => {
+        redis.setRedisIso(req.query.url, data);
+        res.status(200).json(data);
+      }).catch(err => res.sendStatus(500));
+    }
+  }).catch(err =>res.sendStatus(500));
+   
 });
 
 module.exports = navitiaRouter;
