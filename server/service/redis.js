@@ -8,8 +8,8 @@ redis.config('set', 'maxmemory-policy', 'allkeys-lru');
 
 const setRedisIso = (url, data) => {
   let value = JSON.stringify(data);
-  redis.set(url, value).
-  catch(error=>error);
+  redis.set(url, value)
+  .catch(error=>error);
 };
 
 const getRedisIso = (url) => {
