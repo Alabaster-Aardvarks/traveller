@@ -33,10 +33,10 @@ const loadIsochron = params => {
   let latitude = params.latitude
   let longitude = params.longitude
   let durations = useBoundaryDuration ? [ params.durations ] : params.durations
-  let dateTime = params.dateTime
+  let dateTime = params.dateTime.replace(/\.\d{3}/,'').replace(/[-:]*/g, '').replace(/Z$/, '') // remove second decimals, separators, and ending Z
+  let downSamplingCoordinates = params.downSamplingCoordinates
+  self.postMessage(JSON.stringify({ id: 'log', name: 'params', log: params }))
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'params', log: params })) }
-
-  let duration_step = 600 // default to 10 minutes
 
   // get region based on location
   const navitiaRegionUrl = `/coord/${longitude};${latitude}`
@@ -84,7 +84,7 @@ const loadIsochron = params => {
             duration.shift() // remove first entry
             duration.map((d, idx) => drawIsochron(resp.data.isochrones[idx], idx))
           } else {
-            drawIsochron(resp.data.isochrones[0], index - 1) // we have only one isochrone
+            drawIsochron(resp.data.isochrones[0], index - 1, downSamplingCoordinates) // we have only one isochrone
           }
         })
       })
@@ -94,7 +94,7 @@ const loadIsochron = params => {
   .catch(err => self.postMessage(JSON.stringify({ id: 'error', error: 'Navitia region not found [' + err + ']' })))
 }
 
-const drawIsochron = (isochron, index) => {
+const drawIsochron = (isochron, index, downSamplingCoordinates) => {
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'index', log: index })) }
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'isochron', log: isochron })) }
   let geojson = isochron.geojson
@@ -106,8 +106,10 @@ const drawIsochron = (isochron, index) => {
     for (let a = 0; a < geojson.coordinates[i].length; a++) {
       let coordinates = geojson.coordinates[i][a]
       let p = []
+      let keep = 0;
       for (let c = 0; c < coordinates.length; c++) {
-        p.push({ longitude: coordinates[c][0], latitude: coordinates[c][1] })
+        if (keep === 0) { p.push({ longitude: coordinates[c][0], latitude: coordinates[c][1] }) }
+        keep = ++keep % (downSamplingCoordinates - 1)
       }
       if (a === 0) { // polygon
         polygon = p
