@@ -33,7 +33,12 @@ export const updateIsochrons = args => {
   let params = args.params
   let argString = JSON.stringify(params)
 
-  if (params.skip) { return }
+  if (params.skip) {
+    // pretend isochrons are loaded
+    isochronsState = ISOCHRON_LOADED
+    updateIsochronsState && updateIsochronsState(isochronsState)
+    return
+  }
 
   if (!params.force && (argString === savedArgString && (isochronsState === ISOCHRON_LOADING || isochronsState === ISOCHRON_LOADED))) {
     console.tron.display({ name: 'updateIsochrons', value: isochronsState })
@@ -53,7 +58,7 @@ export const updateIsochrons = args => {
   isochronsState = ISOCHRON_LOADING
   updateIsochronsState && updateIsochronsState(isochronsState)
   // create worker and send it some work
-  worker = new Worker('./App/Containers/isochronWorker.js')
+  worker = new Worker('./App/Workers/isochronWorker.js')
 
   worker.onmessage = messageString => {
     let message = JSON.parse(messageString)
