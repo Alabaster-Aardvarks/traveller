@@ -9,7 +9,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const placesRouter = require('./router/placesRouter');
 const navitiaRouter = require('./router/navitiaRouter');
-const Redis = require('redisng');
 const app = express();
 
 // Don't enable CORS in production.
