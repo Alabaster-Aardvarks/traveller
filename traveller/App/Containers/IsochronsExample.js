@@ -69,8 +69,7 @@ class MapviewExample extends React.Component {
     * a latitude and longitude as well as any additional information you wish to display.
     *************************************************************/
     const locations = [
-      { title: 'Location A', latitude: 37.78825, longitude: -122.4324 },
-      { title: 'Location B', latitude: 37.75825, longitude: -122.4624 }
+      { title: 'Hack Reactor', latitude: 37.783697, longitude: -122.408966 },
     ]
     /* ***********************************************************
     * STEP 2
@@ -186,7 +185,7 @@ class MapviewExample extends React.Component {
     *************************************************************/
 
     return (
-      <MapView.Marker draggable key={location.title} coordinate={{latitude: location.latitude, longitude: location.longitude}}>
+      <MapView.Marker key={location.title} coordinate={{latitude: location.latitude, longitude: location.longitude}}>
         <MapCallout location={location} onPress={this.calloutPress} />
       </MapView.Marker>
     )

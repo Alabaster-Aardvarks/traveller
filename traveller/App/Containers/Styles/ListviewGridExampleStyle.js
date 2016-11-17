@@ -10,14 +10,23 @@ export default StyleSheet.create({
     marginTop: Metrics.navBarHeight,
     backgroundColor: Colors.background
   },
+  // row: {
+  //   width: 100,
+  //   height: 100,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   margin: Metrics.baseMargin,
+  //   backgroundColor: Colors.fire,
+  //   borderRadius: Metrics.smallMargin
+  // },
   row: {
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
     justifyContent: 'center',
     alignItems: 'center',
     margin: Metrics.baseMargin,
     backgroundColor: Colors.fire,
-    borderRadius: Metrics.smallMargin
+    borderRadius: 45
   },
   boldLabel: {
     fontWeight: 'bold',
