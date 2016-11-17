@@ -31,26 +31,6 @@ class TravContainer extends React.Component {
   constructor (props) {
 
     super(props)
-    let locations = [];
-
-    const getCurrentLocation = () => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-
-          let initialPosition = JSON.stringify(position);
-          this.setState({initialPosition});
-
-          locationsObj = {
-            title: 'Starting Location',
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          };
-          locations.push(locationsObj);
-        },
-        (error) => alert(JSON.stringify(error)),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-      )
-    }
 
     this.state = {
       initialPosition: 'unknown',
@@ -61,18 +41,49 @@ class TravContainer extends React.Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
-      locations,
+      locations: [],
       showUserLocation: false,
       // zoom: 11
     }
-
-    getCurrentLocation()
-    const region = calculateRegion(locations, { latPadding: 0.05, longPadding: 0.05 });
-    this.renderMapMarkers = this.renderMapMarkers.bind(this)
-    this.onRegionChange = this.onRegionChange.bind(this)
-
   }
 
+  componentDidMount() {
+    let context = this;
+    this.renderMapMarkers = this.renderMapMarkers.bind(this)
+    this.onRegionChange = this.onRegionChange.bind(this)
+    const getCurrentLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+
+          let initialPosition = JSON.stringify(position);
+          context.setState({ initialPosition })
+          // context.state.initialPosition = initialPosition;
+
+          let locations = [{
+            title: 'Starting Location',
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }];
+          context.setState({ locations });
+          const region = calculateRegion(locations, { latPadding: 0.05, longPadding: 0.05 });
+        },
+        (error) => alert(JSON.stringify(error)),
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+      )
+    }
+    getCurrentLocation()
+
+    setTimeout(() => {
+      const testRegion = {
+        latitude: context.state.locations.latitude,
+        longitude: context.state.locations.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      }
+    console.tron.log(context.state.locations.latitude);
+    //   this.refs.map.animateToCoordinate(testRegion, 50)
+  }, 1000)
+  }
 
   calloutPress (location) {
     console.tron.log(location)
@@ -99,6 +110,7 @@ class TravContainer extends React.Component {
     return (
       <View style={styles.container}>
         <MapView
+          ref='map'
           provider={MapView.PROVIDER_GOOGLE}
           // style={styles.map}
           width={width}
@@ -109,6 +121,8 @@ class TravContainer extends React.Component {
           >
             {this.state.locations.map((location) => this.renderMapMarkers(location))}
           </MapView>
+
+          <Slider step={0.25} style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }} />
 
           <ActionButton buttonColor="rgba(231,76,60,1)"
             degrees={90}

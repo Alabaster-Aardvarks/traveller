@@ -4,17 +4,17 @@ import { StyleSheet } from 'react-native'
 import { Colors, Metrics, ApplicationStyles } from '../../Themes/'
 
 export default StyleSheet.create({
-  ...ApplicationStyles.screen,
+  // ...ApplicationStyles.screen,
   travContainer: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   actionButton: {
-    fontSize: 30,
+    fontSize: 20,
     color: 'white',
   },
   actionButtonIcon: {
-    fontSize: 15,
+    fontSize: 17,
     color: 'white',
   },
   container: {
