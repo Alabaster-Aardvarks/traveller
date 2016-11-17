@@ -6,9 +6,12 @@ const axios = require('axios');
 const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?&radius=1609';
 
 const getData = (place, lat, long) => {
+  lat = lat || 37.7825177;
+  long = long || -122.4106772;
   return axios({
     method: 'get',
-    url: `${url}&type=${place}&location=${lat},${long}&key=${process.env.GOOGLEKEY}`
+    // url: `${url}&type=${place}&location=${lat},${long}&key=${process.env.GOOGLE_KEY}`
+    url: `${url}&type=${place}&location=${lat},${long}&key=${process.env.GOOGLE_KEY}`
   })
   .then(response => response.data)
   .catch(error => console.error(error));

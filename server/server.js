@@ -1,6 +1,5 @@
-//for API keys - create a .env file for google API
-require('dotenv').config();
-
+  //for API keys - create a .env file for google API in dev environments 
+require('dotenv').config({silent: true}); 
 //middleware
 const express = require('express');
 const morgan = require('morgan');
