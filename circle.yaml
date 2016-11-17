@@ -1,0 +1,8 @@
+machine:
+  services:
+   - redis
+
+general:
+  branches:
+    only:
+      - develop
