@@ -26,6 +26,7 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		2C669524864243C7AA560DFE /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F8E13CF1DDF4303A48F552F /* Entypo.ttf */; };
 		382AD20097FC46FE98751CA2 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0511278884344AABAA95264C /* EvilIcons.ttf */; };
+		4263F3573E264503B7766566 /* libWorkers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FD44911C433455E82AD7E7C /* libWorkers.a */; };
 		4E27B876EBA657CFD4FAE968 /* Pods_traveller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D93ED48AD4D0AF41F9338500 /* Pods_traveller.framework */; };
 		525D325FD1624FF58EC2F13D /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74C056F1756340A880A1AC0D /* libRNVectorIcons.a */; };
 		5E2EB947A2584769902411F7 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 096469870D0640EBAD7DFE57 /* MaterialIcons.ttf */; };
@@ -35,6 +36,7 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		871886572AAF41FFABBADCFC /* libReactNativeConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB573EBE29554370BFDC1FA9 /* libReactNativeConfig.a */; };
 		925EAADFA03E435284670CDD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 79266A220F3442A1A9AB3F3A /* FontAwesome.ttf */; };
+		A35099DA714446759FFC0A47 /* libRNSpinkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C38BA6141943C78FAC7A02 /* libRNSpinkit.a */; };
 		AFD5E157CEDE47799F612B2F /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DFEB690EE5C446F78B4DDE25 /* Zocial.ttf */; };
 		C2C7F6873DA54735B521CA3E /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5285637E202C43B49A962FD6 /* Ionicons.ttf */; };
 		CA8103F01DDA4A380059F2AD /* AIRGMSMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8103AA1DDA4A380059F2AD /* AIRGMSMarker.m */; };
@@ -186,6 +188,13 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
+		CA3ECC4A1DDB9FAE00AB2642 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D42CB3511B2538DE00FD0AE2;
+			remoteInfo = RNSpinkit;
+		};
 		CAAB20BC1DD6FEAC008F7E60 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */;
@@ -277,6 +286,13 @@
 			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
 			remoteInfo = RNVectorIcons;
 		};
+		CAEDFA281DDAFA7400FB5A63 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C38F24A4125843C3A8D2AFBD /* Workers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9F97656B1CDC87F00091EE06;
+			remoteInfo = Workers;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -310,6 +326,7 @@
 		49375CFD1FDF4A1599891716 /* libRNSVG.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSVG.a; sourceTree = "<group>"; };
 		5285637E202C43B49A962FD6 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		62BB19241D606932341DA580 /* Pods-traveller.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-traveller.release.xcconfig"; path = "Pods/Target Support Files/Pods-traveller/Pods-traveller.release.xcconfig"; sourceTree = "<group>"; };
+		6FD44911C433455E82AD7E7C /* libWorkers.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libWorkers.a; sourceTree = "<group>"; };
 		71C9C3456FAB4D04AC420F1C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		74C056F1756340A880A1AC0D /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -319,6 +336,8 @@
 		85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		91C6B186D0CD45F4BE96BCAA /* ReactNativeConfig.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeConfig.xcodeproj; path = "../node_modules/react-native-config/ios/ReactNativeConfig.xcodeproj"; sourceTree = "<group>"; };
 		96E8608A93F47979999FBC66 /* Pods-travellerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-travellerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-travellerTests/Pods-travellerTests.release.xcconfig"; sourceTree = "<group>"; };
+		B4C38BA6141943C78FAC7A02 /* libRNSpinkit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSpinkit.a; sourceTree = "<group>"; };
+		C38F24A4125843C3A8D2AFBD /* Workers.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = Workers.xcodeproj; path = "../node_modules/react-native-workers/ios/Workers.xcodeproj"; sourceTree = "<group>"; };
 		CA8103A91DDA4A380059F2AD /* AIRGMSMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGMSMarker.h; sourceTree = "<group>"; };
 		CA8103AA1DDA4A380059F2AD /* AIRGMSMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIRGMSMarker.m; sourceTree = "<group>"; };
 		CA8103AB1DDA4A380059F2AD /* AIRGoogleMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGoogleMap.h; sourceTree = "<group>"; };
@@ -393,6 +412,7 @@
 		D93ED48AD4D0AF41F9338500 /* Pods_traveller.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_traveller.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFEB690EE5C446F78B4DDE25 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		E05A75B89A0E5F190A0589D9 /* Pods-traveller.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-traveller.debug.xcconfig"; path = "Pods/Target Support Files/Pods-traveller/Pods-traveller.debug.xcconfig"; sourceTree = "<group>"; };
+		E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSpinkit.xcodeproj; path = "../node_modules/react-native-spinkit/ios/RNSpinkit.xcodeproj"; sourceTree = "<group>"; };
 		EB599D84221ED8A541DA88D0 /* Pods_travellerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_travellerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -426,6 +446,8 @@
 				00C430E4A1B54336B6062E8F /* libRNDeviceInfo.a in Frameworks */,
 				6D208A440C9B454590225D15 /* libRNI18n.a in Frameworks */,
 				525D325FD1624FF58EC2F13D /* libRNVectorIcons.a in Frameworks */,
+				4263F3573E264503B7766566 /* libWorkers.a in Frameworks */,
+				A35099DA714446759FFC0A47 /* libRNSpinkit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -594,6 +616,8 @@
 				415B4DC650CC400CBAF4EF98 /* RNDeviceInfo.xcodeproj */,
 				1E5ACDD82BD245BEA7C1483B /* RNI18n.xcodeproj */,
 				85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */,
+				C38F24A4125843C3A8D2AFBD /* Workers.xcodeproj */,
+				E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -629,6 +653,14 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* traveller.app */,
 				00E356EE1AD99517003FC87E /* travellerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CA3ECC321DDB9FAE00AB2642 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA3ECC4B1DDB9FAE00AB2642 /* libRNSpinkit.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -767,6 +799,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CAEDFA0E1DDAFA7400FB5A63 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CAEDFA291DDAFA7400FB5A63 /* libWorkers.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -896,12 +936,20 @@
 					ProjectRef = 1E5ACDD82BD245BEA7C1483B /* RNI18n.xcodeproj */;
 				},
 				{
+					ProductGroup = CA3ECC321DDB9FAE00AB2642 /* Products */;
+					ProjectRef = E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */;
+				},
+				{
 					ProductGroup = CAAB20B61DD6FEAC008F7E60 /* Products */;
 					ProjectRef = 2879B60CC3D04A8D9B3FA037 /* RNSVG.xcodeproj */;
 				},
 				{
 					ProductGroup = CAAB21191DD6FEBA008F7E60 /* Products */;
 					ProjectRef = 85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */;
+				},
+				{
+					ProductGroup = CAEDFA0E1DDAFA7400FB5A63 /* Products */;
+					ProjectRef = C38F24A4125843C3A8D2AFBD /* Workers.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -981,6 +1029,13 @@
 			fileType = archive.ar;
 			path = libRCTText.a;
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA3ECC4B1DDB9FAE00AB2642 /* libRNSpinkit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNSpinkit.a;
+			remoteRef = CA3ECC4A1DDB9FAE00AB2642 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CAAB20BD1DD6FEAC008F7E60 /* libRCTImage-tvOS.a */ = {
@@ -1072,6 +1127,13 @@
 			fileType = archive.ar;
 			path = libRNVectorIcons.a;
 			remoteRef = CAAB211C1DD6FEBA008F7E60 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CAEDFA291DDAFA7400FB5A63 /* libWorkers.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libWorkers.a;
+			remoteRef = CAEDFA281DDAFA7400FB5A63 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1335,6 +1397,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/traveller.app/traveller";
@@ -1354,6 +1417,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/traveller.app/traveller";
@@ -1365,6 +1429,7 @@
 			baseConfigurationReference = E05A75B89A0E5F190A0589D9 /* Pods-traveller.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = K3EMCGN7CP;
@@ -1378,6 +1443,9 @@
 					"$(SRCROOT)/../node_modules/react-native-i18n/RNI18n",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 				);
 				INFOPLIST_FILE = traveller/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
@@ -1397,6 +1465,7 @@
 			baseConfigurationReference = 62BB19241D606932341DA580 /* Pods-traveller.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K3EMCGN7CP;
 				HEADER_SEARCH_PATHS = (
@@ -1409,10 +1478,14 @@
 					"$(SRCROOT)/../node_modules/react-native-i18n/RNI18n",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 				);
 				INFOPLIST_FILE = traveller/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1467,6 +1540,9 @@
 					"$(SRCROOT)/../node_modules/react-native-i18n/RNI18n",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1513,6 +1589,9 @@
 					"$(SRCROOT)/../node_modules/react-native-i18n/RNI18n",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = NO;

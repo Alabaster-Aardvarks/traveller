@@ -1,14 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { View, StyleSheet, Text, Dimensions } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, StatusBar } from 'react-native'
 import MapView from 'react-native-maps'
+import Spinner from 'react-native-spinkit'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
-import Styles from './Styles/MapviewExampleStyle'
-import { loadIsochron } from './isochron'
-// import Svg, { Circle, Rect, Path } from 'react-native-svg'
-//import { geojson } from './geoJSON'
-// import earcut from 'earcut'
+import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
+         isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
 
 /* ***********************************************************
 * IMPORTANT!!! Before you get started, if you are going to support Android,
@@ -20,84 +18,41 @@ import { loadIsochron } from './isochron'
 * https://console.developers.google.com/apis/api/maps_android_backend/
 *************************************************************/
 
-// Daniel - default values
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const LATITUDE = 37.78825;
-const LONGITUDE = -122.4324;
-const LATITUDE_DELTA = 0.0922;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
-const findColor = function (ratio, opacity) {
-    var r = 255;
-    var g = 255;
-    if (ratio < 1/2) {
-        r = Math.ceil(255 * ratio * 2);
-    } else {
-        g = Math.ceil(255 * (1 - ratio) * 2);
-    }
-    //var hex = sprintf('%02x%02x%02x', r, g, 0);
-    return `rgba(${r}, ${g}, 0, ${opacity})`;
-};
-
-function fillColor (index, opacity) {
-  return findColor(index/5.0, opacity);
+const COORDINATE_PRECISION = 0.001 // degrees
+const roundCoordinate = coord => {
+  return ( Math.round( Math.abs(coord) / COORDINATE_PRECISION ) * COORDINATE_PRECISION ) * Math.sign(coord)
+}
+const DATETIME_PRECISION = 60 // seconds
+const roundDateTime = dateTime => {
+  let date = new Date(dateTime)
+  // getTime() gives us milliseconds
+  date.setTime( Math.round( date.getTime() / (DATETIME_PRECISION * 1000) ) * (1000 * DATETIME_PRECISION) )
+  return date.toISOString()
 }
 
-//console.tron.log('first' + JSON.stringify(geojson.isochrones[0].geojson.coordinates));
-let tesselate = false;
-let polys = [];
-loadIsochron()
-.then(isochrones => {
-  //console.tron.log(isochrones);
-  for (let v = 0; v < (tesselate ? Math.min(4, isochrones.length) : isochrones.length); v++) {
-    //if (v !== 3) { continue; }
-    let geojson = isochrones[v];
-    //console.tron.log(geojson);
-    for (let i = 0; i < geojson.coordinates.length; i++) {
-      //console.tron.display({ name: 'coordinates', value: geojson.coordinates[i] });
-      if (!tesselate) {
-        let poly = [];
-        let holes = [];
-        for (let a = 0; a < geojson.coordinates[i].length; a++) {
-          let coordinates = geojson.coordinates[i][a];
-          let p = [];
-          for (let c = 0; c < coordinates.length; c++) {
-            p.push({ longitude: coordinates[c][0], latitude: coordinates[c][1] });
-          }
-          if (a === 0) { // polygon
-            poly = p;
-          } else { // hole (inner polygon)
-            holes.push(p);
-          }
-        }
-        if (holes.length) {
-          //console.tron.display({ name: 'holes', value: holes });
-        }
-        polys.push({ index: v, poly: poly, holes: holes });
-      } else {
-        let poly = [];
-        // let data = earcut.flatten(geojson.coordinates[i]);
-        // let result = earcut(data.vertices, data.holes, data.dimensions);
-        let triangles = [];
-        for (let r = 0; r < result.length; r++) {
-          let index = result[r];
-          triangles.push([ data.vertices[index * data.dimensions], data.vertices[index * data.dimensions + 1] ]);
-        }
-        for (let ts = 0; triangles && ts < triangles.length; ts += 3) {
-          let t = triangles.slice(ts, ts + 3);
-          polys.push({
-            index: v,
-            poly: [ { longitude: t[0][0], latitude: t[0][1] },
-                    { longitude: t[1][0], latitude: t[1][1] },
-                    { longitude: t[2][0], latitude: t[2][1] } ]
-          });
-        }
-      }
-    }
-  }
-})
-.catch(err => console.tron.log(err));
+// FIXME: hook this up to current time/location/duration settings (also save those settings somewhere)
+const DATETIME = roundDateTime('2016-11-09T18:49:27.000Z')
+const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
+const LATITUDE = roundCoordinate(37.7825177)
+const LONGITUDE = roundCoordinate(-122.4106772)
+const LATITUDE_DELTA = roundCoordinate(0.1)
+const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
+
+const { width, height } = Dimensions.get('window')
+const ASPECT_RATIO = width / height
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
+const mapProvider = MapView.PROVIDER_GOOGLE
+
+// start loading isochrons on load
+let skipIsochrons = false // set to true to disable loading isochrons [for debug]
+updateIsochrons({ params: {
+  latitude: LATITUDE,
+  longitude: LONGITUDE,
+  durations: DURATIONS,
+  dateTime: DATETIME,
+  downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
+  skip: skipIsochrons,
+}})
 
 class MapviewExample extends React.Component {
   /* ***********************************************************
@@ -127,14 +82,60 @@ class MapviewExample extends React.Component {
         latitude: LATITUDE,
         longitude: LONGITUDE,
         latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
       },
       locations,
       showUserLocation: true,
-      zoom: 11
+      zoom: 11,
+      isochronDurations: DURATIONS,
+      polygonsState: ISOCHRON_NOT_LOADED,
+      dateTime: DATETIME,
+      downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
+      networkActivityIndicatorVisible: false,
+      spinnerVisible: true
     }
     this.renderMapMarkers = this.renderMapMarkers.bind(this)
     this.onRegionChange = this.onRegionChange.bind(this)
+  }
+
+  componentDidMount () {
+    //console.tron.display({ name: 'componentDidMount', value: 'mounted' })
+    setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
+
+    // delay to give time for the UI to render the map
+    this.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
+    setTimeout(() => this.updatePolygons({
+      isochrons: {
+        latitude: this.state.region.latitude,
+        longitude: this.state.region.longitude,
+        durations: this.state.isochronDurations,
+        dateTime: this.state.dateTime,
+        downSamplingCoordinates: this.state.downSamplingCoordinates,
+        skip: skipIsochrons
+      }
+    }), 500)
+  }
+  componentWillUnmount () {
+    //console.tron.display({ name: 'componentWillUnmount', value: 'about to unmount' })
+    setUpdateIsochronsStateFn(null)
+    terminateIsochronWorker()
+  }
+
+  updatePolygons (params) {
+    updateIsochrons({ params: params.isochrons })
+  }
+
+  updatePolygonsState (state) {
+    //console.tron.display({ name: 'updatePolygonsState', value: state })
+    this.setState({ polygonsState: state })
+    this.setState({ networkActivityIndicatorVisible: (state === ISOCHRON_LOADED) ? false : true })
+    let context = this
+    if (state === ISOCHRON_LOADED) {
+      // delay the removal of the spinner overlay to give time for the isochrons to appear
+      setTimeout(() => { context.setState({ spinnerVisible: false }) }, 150)
+    } else {
+      this.setState({ spinnerVisible: true })
+    }
   }
 
   componentWillReceiveProps (newProps) {
@@ -164,7 +165,7 @@ class MapviewExample extends React.Component {
     //
 
     // Daniel - when map dragged update region state
-    this.setState({ region });
+    this.setState({ region })
   }
 
   calloutPress (location) {
@@ -189,51 +190,52 @@ class MapviewExample extends React.Component {
       </MapView.Marker>
     )
   }
+
   render () {
-    // StyleSheet.absoluteFill
-    const coordinates = [ { latitude: LATITUDE, longitude: LONGITUDE },
-                          { latitude: LATITUDE + 0.015, longitude: LONGITUDE - 0.015 },
-                          { latitude: LATITUDE - 0.015, longitude: LONGITUDE - 0.005 } ];
-    /*const coordinates = [ [ { latitude: LATITUDE, longitude: LONGITUDE },
-                            { latitude: LATITUDE + 0.015, longitude: LONGITUDE - 0.015 },
-                            { latitude: LATITUDE - 0.015, longitude: LONGITUDE - 0.005 } ],
-                          [ { latitude: LATITUDE, longitude: LONGITUDE },
-                            { latitude: LATITUDE + 0.015*0.5, longitude: LONGITUDE - 0.015*0.5 },
-                            { latitude: LATITUDE - 0.015*0.5, longitude: LONGITUDE - 0.005*0.5 } ]
-                        ];*/
-    //           <MapView.Polygon coordinates={coordinates} fillColor='rgba(200,0,200,0.7)' key={0}/>
+    // wait for all polygons to be loaded
+    const polygonsCount = (savedPolygons && this.state.polygonsState === ISOCHRON_LOADED) ? savedPolygons.length : 0
 
     return (
-      <View style={Styles.container}>
+      <View style={styles.container}>
+        <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
-          provider={MapView.PROVIDER_GOOGLE}
-          style={Styles.map}
+          provider={mapProvider}
+          style={styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
           showsUserLocation={this.state.showUserLocation}
         >
-          {this.state.locations.map((location) => this.renderMapMarkers(location))}
-          {polys.map((poly, index) => {
-            return (
-              <MapView.Polygon
-                style={{ zIndex: (10-poly.index)}}
-                coordinates={poly.poly}
-                holes={poly.holes}
-                fillColor={ fillColor(poly.index, tesselate ? 0.35 : 0.35) }
-                strokeWidth={1}
-                strokeColor={ tesselate ? 'rgba(0,0,0,0)' : 'rgba(85, 85, 85, 0.8)' }
-                key={index}
-                zIndex={10-poly.index} />
-            )
-          })}
+          {this.state.locations.map(location => this.renderMapMarkers(location))}
+          { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
+              return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
+                return (
+                  <MapView.Polygon
+                    coordinates={ p.polygon }
+                    holes={ p.holes }
+                    fillColor={ isochronFillColor(arrayIndex, 0.15) }
+                    strokeWidth={ 1 }
+                    strokeColor={ 'rgba(85, 85, 85, 0.5)' }
+                    key={ arrayIndex * 1000 + index }
+                  />
+                )
+              })
+            })
+          }
         </MapView>
-        <View style={[styles.bubble, styles.latlng]}>
+        <View style={[styles.bubble, styles.latlng]} key={1}>
           <Text style={{ textAlign: 'center' }}>
             {this.state.region.latitude.toPrecision(7)},
             {this.state.region.longitude.toPrecision(7)}
           </Text>
         </View>
+        { this.state.spinnerVisible && (
+            <View style={styles.spinnerContainer} key={2}>
+              <Spinner style={styles.spinner} size={75} type={'Circle'} color={'#ffffff'} />
+              <Text style={styles.spinnerText}>Loading isochrones...</Text>
+            </View>
+          )
+        }
       </View>
     )
   }
@@ -254,6 +256,12 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    // For Android :/
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   },
   bubble: {
     backgroundColor: 'rgba(255,255,255,0.7)',
@@ -276,6 +284,22 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     backgroundColor: 'transparent',
   },
-});
+  spinnerContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  spinner: {
+    opacity: 0.75,
+    marginVertical: 40,
+  },
+  spinnerText: {
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '700',
+  }
+})
 
 export default connect(mapStateToProps)(MapviewExample)

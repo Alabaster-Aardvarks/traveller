@@ -1,0 +1,5 @@
+cd traveller
+react-native run-ios
+cd ..
+redis-server
+npm run dev-start

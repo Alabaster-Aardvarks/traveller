@@ -1,70 +1,93 @@
-import { create } from 'apisauce'
-import { encode } from 'base-64'
+import { Worker } from 'react-native-workers'
 
-// Navitia API token
-const token = '3a8b7ce9-ef1a-4ff5-b65a-5cffcafcfc47';
+export const ISOCHRON_NOT_LOADED = 'ISOCHRON_NOT_LOADED'
+export const ISOCHRON_LOADING = 'ISOCHRON_LOADING'
+export const ISOCHRON_LOADED = 'ISOCHRON_LOADED'
 
-// Set API headers
-const api = create({ baseURL: 'https://api.navitia.io/v1' });
-api.setHeaders({ 'Authorization': 'Basic ' + encode(token) });
+let savedArgString = ''
+let isochronsState = ISOCHRON_NOT_LOADED
+let updateIsochronsState = null
+let worker = null
 
-let geojsonData = [];
+export let savedPolygons = []
 
-export const loadIsochron = from => {
-
-  // Isochron starting point
-  from = from || [ 37.7825177, -122.4106772 ];
-
-  // get region based on location
-  return api.get(`/coord/${from[1]};${from[0]}`)
-  .then(resp => {
-    let region = resp.data.regions[0];
-    //console.tron.log(region);
-
-    let durations = [0, 600, 1200, 1800, 2400, 3000, 3600];
-
-    return Promise.all(
-      durations.map((duration, index) => {
-        let minDuration = duration;
-        let maxDuration = minDuration + 600;
-        // Navitia query for this isochron
-        //https://api.navitia.io/v1/coverage/us-ca/isochrones?from=-122.4106772%3B37.7825177&datetime=20161109T184927&boundary_duration%5B%5D=600&boundary_duration%5B%5D=1200&boundary_duration%5B%5D=1800&boundary_duration%5B%5D=2400&boundary_duration%5B%5D=3000&boundary_duration%5B%5D=3600&
-        let url = `/coverage/${region}/isochrones?from=${from[1]};${from[0]}`
-                  + `&datetime=20161109T184927`
-                  + `&max_duration=${maxDuration}&min_duration=${minDuration}`;
-                  //+ '&boundary_duration[]=600'; //&boundary_duration[]=1200&boundary_duration[]=1800&boundary_duration[]=2400&boundary_duration[]=3000&boundary_duration[]=3600';
-
-        return api.get(url)
-        .then(resp => drawIsochron(resp.data, index))
-      })
-    )
-    .then(() => geojsonData) // return geoJSON data
-
-    // Navitia query for this isochron
-    // let maxDuration = 1200;
-    // let isochronUrl = `https://api.navitia.io/v1/coverage/${region}/journeys?from=${from[1]};${from[0]}&max_duration=${maxDuration}`;
-    //
-    // axios({
-    //   method: 'get',
-    //   url: isochronUrl,
-    //   headers: { Authorization: 'Basic ' + btoa(token) }
-    // })
-    // .then(resp => {
-    //   let geojsonPoints = drawIsochronPoints.call(context, resp.data, maxDuration);
-    //   this.setState({ geojsonLayer: [ geojsonPoints ] });
-    // });
-    //
-  })
-  .catch(err => console.tron.log('ERROR: Navitia region not found [' + err + ']'))
+const initPolygon = () => {
+  savedPolygons = []
+}
+const savePolygon = (index, data) => {
+  savedPolygons[index] = data // update saved isochrons
+}
+const getPolygon = index => {
+  return index ? savedPolygons[index] : savedPolygons
 }
 
-const drawIsochron = (result, index) => {
-  result.isochrones.map(isochrone => {
-    let polygon = isochrone.geojson;
-    if (index) {
-      geojsonData[index] = polygon;
+export const setUpdateIsochronsStateFn = updateFn => {
+  updateIsochronsState = updateFn
+}
+export const terminateIsochronWorker = () => {
+  worker && worker.terminate() // terminate worker if it was running
+  worker = null
+}
+
+export const updateIsochrons = args => {
+  let params = args.params
+  let argString = JSON.stringify(params)
+
+  if (params.skip) { return }
+
+  if (!params.force && (argString === savedArgString && (isochronsState === ISOCHRON_LOADING || isochronsState === ISOCHRON_LOADED))) {
+    console.tron.display({ name: 'updateIsochrons', value: isochronsState })
+    updateIsochronsState && updateIsochronsState(isochronsState)
+    return
+  }
+  // save arguments string
+  savedArgString = argString
+
+  isochronsState = ISOCHRON_NOT_LOADED
+  updateIsochronsState && updateIsochronsState(isochronsState)
+  // reset isochrons (to avoid weird display)
+  initPolygon()
+
+  terminateIsochronWorker()
+
+  isochronsState = ISOCHRON_LOADING
+  updateIsochronsState && updateIsochronsState(isochronsState)
+  // create worker and send it some work
+  worker = new Worker('./App/Containers/isochronWorker.js')
+
+  worker.onmessage = messageString => {
+    let message = JSON.parse(messageString)
+    if (message.id === 'update') {
+      console.tron.display({ name: 'isochron update from worker', value: message.polygons.length })
+      savePolygon(message.index, message.polygons)
+    } else if (message.id === 'done') {
+      isochronsState = ISOCHRON_LOADED
+      updateIsochronsState && updateIsochronsState(isochronsState)
+      terminateIsochronWorker()
+    } else if (message.id === 'log') {
+      console.tron.display({ name: 'Isochron worker ' + message.name, value: message.log })
+    } else if (message.id === 'error') {
+      console.tron.error('Isochron worker reported an error: ' + message.error)
     } else {
-      geojsonData.push(polygon);
+      console.tron.error('Isochron worker unknown message: ' + messageString)
     }
-  })
+  }
+
+  worker.postMessage(JSON.stringify({ id: 'start', params: params }))
+}
+
+const findColor = (ratio, opacity) => {
+  var r = 255;
+  var g = 255;
+  if (ratio < 1/2) {
+    r = Math.ceil(255 * ratio * 2);
+  } else {
+    g = Math.ceil(255 * (1 - ratio) * 2);
+  }
+  //var hex = sprintf('%02x%02x%02x', r, g, 0);
+  return `rgba(${r}, ${g}, 0, ${opacity})`;
+};
+
+export const isochronFillColor = (index, opacity) => {
+  return findColor(index / 5.0, opacity);
 }
