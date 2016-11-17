@@ -126,6 +126,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-spinkit')
     compile project(':react-native-workers')
     compile project(':react-native-maps')
     compile project(':react-native-vector-icons')

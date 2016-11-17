@@ -1,11 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { View, StyleSheet, Text, Dimensions } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, StatusBar } from 'react-native'
 import MapView from 'react-native-maps'
+import Spinner from 'react-native-spinkit'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
-import Styles from './Styles/MapviewExampleStyle'
-import { updateIsochrons, setUpdateIsochronsFn, setUpdateIsochronsStateFn,
+import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
 
 /* ***********************************************************
@@ -18,17 +18,25 @@ import { updateIsochrons, setUpdateIsochronsFn, setUpdateIsochronsStateFn,
 * https://console.developers.google.com/apis/api/maps_android_backend/
 *************************************************************/
 
-const COORDINATE_PRECISION = 0.001
+const COORDINATE_PRECISION = 0.001 // degrees
 const roundCoordinate = coord => {
-  return ( Math.ceil( Math.abs(coord) / COORDINATE_PRECISION ) * COORDINATE_PRECISION ) * Math.sign(coord)
+  return ( Math.round( Math.abs(coord) / COORDINATE_PRECISION ) * COORDINATE_PRECISION ) * Math.sign(coord)
+}
+const DATETIME_PRECISION = 60 // seconds
+const roundDateTime = dateTime => {
+  let date = new Date(dateTime)
+  // getTime() gives us milliseconds
+  date.setTime( Math.round( date.getTime() / (DATETIME_PRECISION * 1000) ) * (1000 * DATETIME_PRECISION) )
+  return date.toISOString()
 }
 
 // FIXME: hook this up to current time/location/duration settings (also save those settings somewhere)
-const DATETIME = '20161109T184927'
+const DATETIME = roundDateTime('2016-11-09T18:49:27.000Z')
 const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
 const LATITUDE = roundCoordinate(37.7825177)
 const LONGITUDE = roundCoordinate(-122.4106772)
 const LATITUDE_DELTA = roundCoordinate(0.1)
+const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
 
 const { width, height } = Dimensions.get('window')
 const ASPECT_RATIO = width / height
@@ -36,11 +44,14 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
 const mapProvider = MapView.PROVIDER_GOOGLE
 
 // start loading isochrons on load
+let skipIsochrons = false // set to true to disable loading isochrons [for debug]
 updateIsochrons({ params: {
   latitude: LATITUDE,
   longitude: LONGITUDE,
   durations: DURATIONS,
-  dateTime: DATETIME
+  dateTime: DATETIME,
+  downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
+  skip: skipIsochrons,
 }})
 
 class MapviewExample extends React.Component {
@@ -80,7 +91,9 @@ class MapviewExample extends React.Component {
       isochronDurations: DURATIONS,
       polygonsState: ISOCHRON_NOT_LOADED,
       dateTime: DATETIME,
-      polygons: []
+      downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
+      networkActivityIndicatorVisible: false,
+      spinnerVisible: true
     }
     this.renderMapMarkers = this.renderMapMarkers.bind(this)
     this.onRegionChange = this.onRegionChange.bind(this)
@@ -88,36 +101,42 @@ class MapviewExample extends React.Component {
 
   componentDidMount () {
     //console.tron.display({ name: 'componentDidMount', value: 'mounted' })
-    setUpdateIsochronsFn(this.updatePolygonsData.bind(this))
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
 
     // delay to give time for the UI to render the map
+    this.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
     setTimeout(() => this.updatePolygons({
       isochrons: {
         latitude: this.state.region.latitude,
         longitude: this.state.region.longitude,
         durations: this.state.isochronDurations,
-        dateTime: this.state.dateTime
+        dateTime: this.state.dateTime,
+        downSamplingCoordinates: this.state.downSamplingCoordinates,
+        skip: skipIsochrons
       }
     }), 500)
   }
   componentWillUnmount () {
     //console.tron.display({ name: 'componentWillUnmount', value: 'about to unmount' })
-    setUpdateIsochronsFn(null)
     setUpdateIsochronsStateFn(null)
+    terminateIsochronWorker()
   }
 
   updatePolygons (params) {
     updateIsochrons({ params: params.isochrons })
   }
 
-  updatePolygonsData (polygons) {
-    //console.tron.display({ name: 'updatePolygonsData', value: 'polygon update' })
-    this.setState({ polygons: polygons });
-  }
   updatePolygonsState (state) {
     //console.tron.display({ name: 'updatePolygonsState', value: state })
     this.setState({ polygonsState: state })
+    this.setState({ networkActivityIndicatorVisible: (state === ISOCHRON_LOADED) ? false : true })
+    let context = this
+    if (state === ISOCHRON_LOADED) {
+      // delay the removal of the spinner overlay to give time for the isochrons to appear
+      setTimeout(() => { context.setState({ spinnerVisible: false }) }, 150)
+    } else {
+      this.setState({ spinnerVisible: true })
+    }
   }
 
   componentWillReceiveProps (newProps) {
@@ -147,7 +166,7 @@ class MapviewExample extends React.Component {
     //
 
     // Daniel - when map dragged update region state
-    this.setState({ region });
+    this.setState({ region })
   }
 
   calloutPress (location) {
@@ -175,28 +194,29 @@ class MapviewExample extends React.Component {
 
   render () {
     // wait for all polygons to be loaded
-    const polygonsCount = (this.state.polygons && this.state.polygonsState === ISOCHRON_LOADED) ? this.state.polygons.length : 0;
+    const polygonsCount = (savedPolygons && this.state.polygonsState === ISOCHRON_LOADED) ? savedPolygons.length : 0
 
     return (
-      <View style={Styles.container}>
+      <View style={styles.container}>
+        <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
           provider={mapProvider}
-          style={Styles.map}
+          style={styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
           showsUserLocation={this.state.showUserLocation}
         >
           {this.state.locations.map(location => this.renderMapMarkers(location))}
-          { polygonsCount === 0 ? undefined : this.state.polygons.map((pArray, arrayIndex) => {
+          { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
               return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
                 return (
                   <MapView.Polygon
                     coordinates={ p.polygon }
                     holes={ p.holes }
-                    fillColor={ isochronFillColor(p.index, (p.index === 2) ? 0.5 : 0.2) }
+                    fillColor={ isochronFillColor(arrayIndex, 0.15) }
                     strokeWidth={ 1 }
-                    strokeColor={ 'rgba(85, 85, 85, 0.8)' }
+                    strokeColor={ 'rgba(85, 85, 85, 0.5)' }
                     key={ arrayIndex * 1000 + index }
                   />
                 )
@@ -204,12 +224,19 @@ class MapviewExample extends React.Component {
             })
           }
         </MapView>
-        <View style={[styles.bubble, styles.latlng]}>
+        <View style={[styles.bubble, styles.latlng]} key={1}>
           <Text style={{ textAlign: 'center' }}>
             {this.state.region.latitude.toPrecision(7)},
             {this.state.region.longitude.toPrecision(7)}
           </Text>
         </View>
+        { this.state.spinnerVisible && (
+            <View style={styles.spinnerContainer} key={2}>
+              <Spinner style={styles.spinner} size={75} type={'Circle'} color={'#ffffff'} />
+              <Text style={styles.spinnerText}>Loading isochrones...</Text>
+            </View>
+          )
+        }
       </View>
     )
   }
@@ -230,6 +257,12 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    // For Android :/
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   },
   bubble: {
     backgroundColor: 'rgba(255,255,255,0.7)',
@@ -252,6 +285,22 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     backgroundColor: 'transparent',
   },
-});
+  spinnerContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  spinner: {
+    opacity: 0.75,
+    marginVertical: 40,
+  },
+  spinnerText: {
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '700',
+  }
+})
 
 export default connect(mapStateToProps)(MapviewExample)
