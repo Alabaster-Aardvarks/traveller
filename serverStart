@@ -1,5 +1,4 @@
-cd traveller
-react-native run-ios
-cd ..
-redis-server
+pushd traveller
+react-native run-ios --simulator 'iPhone 6s'
+popd
 npm run dev-start
