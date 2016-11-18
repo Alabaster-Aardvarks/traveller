@@ -3,7 +3,7 @@ import { encode } from 'base-64'
 import { self } from 'react-native-workers'
 import Secrets from 'react-native-config'
 
-const debug = false // enable log messages for debug
+const debug = true // enable log messages for debug
 const useBoundaryDuration = false // if true, will fetch all isochrons at once, otherwise one by one
 
 // get message from application

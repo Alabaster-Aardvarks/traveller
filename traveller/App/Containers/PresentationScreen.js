@@ -1,4 +1,4 @@
-// @flow		
+// @flow
 
 import React from 'react'
 import { ScrollView, Text, Image, View } from 'react-native'
@@ -21,37 +21,12 @@ export default class PresentationScreen extends React.Component {
 
           <View style={styles.section} >
             <Text style={styles.sectionText} >
-              Default screens for development, debugging, and alpha testing
-              are available below.
+              Travel. Wisely.
             </Text>
           </View>
 
-          <RoundedButton onPress={NavigationActions.isochronExamples}>
-            Isochrones
-          </RoundedButton>
-
           <RoundedButton onPress={NavigationActions.travContainer}>
-            Traveller Alpha Container
-          </RoundedButton>
-
-          <RoundedButton onPress={NavigationActions.travScreen}>
-            Traveller Alpha Screen
-          </RoundedButton>
-
-          <RoundedButton onPress={NavigationActions.componentExamples}>
-            Component Examples Screen
-          </RoundedButton>
-
-          <RoundedButton onPress={NavigationActions.usageExamples}>
-            Usage Examples Screen
-          </RoundedButton>
-
-          <RoundedButton onPress={NavigationActions.apiTesting}>
-            API Testing Screen
-          </RoundedButton>
-
-          <RoundedButton onPress={NavigationActions.theme}>
-            Theme Screen
+            Load Traveller
           </RoundedButton>
 
           <RoundedButton onPress={NavigationActions.deviceInfo}>
