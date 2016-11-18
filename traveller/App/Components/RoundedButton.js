@@ -8,7 +8,7 @@ import ExamplesRegistry from '../Services/ExamplesRegistry'
 // Example
 ExamplesRegistry.add('Rounded Button', () =>
   <RoundedButton
-    text='real harambes have curves'
+    text='harambes have curves'
     onPress={() => window.alert('Rounded Button Pressed!')}
   />
 )

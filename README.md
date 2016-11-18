@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/Alabaster-Aardvarks/traveller/tree/develop.svg?style=svg)](https://circleci.com/gh/Alabaster-Aardvarks/traveller/tree/develop)
+
 # Traveller
 
 ### API
