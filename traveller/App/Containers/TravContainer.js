@@ -3,16 +3,15 @@ import { connect } from 'react-redux'
 import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
-import AlertMessage from '../Components/AlertMessage'
+import ActionButton from 'react-native-action-button'
 import Spinner from 'react-native-spinkit'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import AlertMessage from '../Components/AlertMessage'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
-import ActionButton from 'react-native-action-button'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
-// Styles
-import styles from './Styles/TravContainerStyle'
 
 const COORDINATE_PRECISION = 0.001 // degrees
 const DATETIME_PRECISION = 60 // seconds
@@ -38,14 +37,41 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const mapProvider = MapView.PROVIDER_GOOGLE
 
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
-updateIsochrons({ params: {
-  latitude: LATITUDE,
-  longitude: LONGITUDE,
-  durations: DURATIONS,
-  dateTime: DATETIME,
-  downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
-  skip: skipIsochrons,
-}})
+
+const updateLocationIsochrons = context => {
+  // get current location
+  navigator.geolocation.getCurrentPosition(position => {
+    let locations = [ {
+      title: 'Starting Location',
+      latitude: roundCoordinate(position.coords.latitude),
+      longitude: roundCoordinate(position.coords.longitude),
+    } ]
+
+    let params = {
+      latitude: locations[0].latitude,
+      longitude: locations[0].longitude,
+      durations: context ? context.state.isochronDurations : DURATIONS,
+      dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
+      downSamplingCoordinates: context ? context.state.downSamplingCoordinates : DOWNSAMPLING_COORDINATES,
+      skip: skipIsochrons
+    }
+
+    if (!context) {
+      updateIsochrons({ params: params })
+    } else {
+      let initialPosition = JSON.stringify(position)
+      context.setState({ initialPosition })
+      context.setState({ locations })
+      context.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
+      context.updatePolygons({ isochrons: params })
+    }
+  },
+  error => console.tron.error(error),
+  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+)}
+
+// start loading isochron as soon as we have the current location
+updateLocationIsochrons()
 
 class TravContainer extends React.Component {
   constructor (props) {
@@ -63,6 +89,7 @@ class TravContainer extends React.Component {
       showUserLocation: false,
       isochronDurations: DURATIONS,
       polygonsState: ISOCHRON_NOT_LOADED,
+      polygonsFillColor: [...Array(DURATIONS.length - 1)].map(() => 1),
       dateTime: DATETIME,
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
       networkActivityIndicatorVisible: false,
@@ -72,52 +99,7 @@ class TravContainer extends React.Component {
 
   componentDidMount() {
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
-
-    let context = this;
-    this.renderMapMarkers = this.renderMapMarkers.bind(this)
-    this.onRegionChange = this.onRegionChange.bind(this)
-    const getCurrentLocation = () => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          let initialPosition = JSON.stringify(position);
-          context.setState({ initialPosition })
-          let locations = [{
-            title: 'Starting Location',
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          }];
-          context.setState({ locations });
-          const region = calculateRegion(locations, { latPadding: 0.05, longPadding: 0.05 });
-
-          context.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
-          setTimeout(() => context.updatePolygons({
-            isochrons: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              durations: this.state.isochronDurations,
-              dateTime: this.state.dateTime,
-              downSamplingCoordinates: this.state.downSamplingCoordinates,
-              skip: skipIsochrons
-            }
-          }), 0)
-
-        },
-        (error) => alert(JSON.stringify(error)),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-      )
-    }
-    getCurrentLocation()
-
-    setTimeout(() => {
-      const testRegion = {
-        latitude: context.state.locations.latitude,
-        longitude: context.state.locations.longitude,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      }
-    console.tron.log(context.state.locations.latitude);
-    //   this.refs.map.animateToCoordinate(testRegion, 50) // TODO: Center map on GPS coords
-    }, 1000)
+    updateLocationIsochrons(this)
   }
 
   componentWillUnmount () {
@@ -142,7 +124,7 @@ class TravContainer extends React.Component {
   }
 
   calloutPress (location) {
-    console.tron.log(location)
+    console.tron.display({ name: 'calloutPress location', value: location })
   }
 
   renderMapMarkers (location) {
@@ -158,6 +140,15 @@ class TravContainer extends React.Component {
     this.setState({ region });
   }
 
+  sliderValueChange (value) {
+    let polygonsFillColor = [...Array(this.state.isochronDurations.length - 1)].map(() => 1)
+    if (value > 0) {
+      polygonsFillColor[value - 1] = 2
+    }
+    //console.tron.display({ name: 'polygonsFillColor', value: polygonsFillColor })
+    this.setState({ polygonsFillColor: polygonsFillColor })
+  }
+
   render () {
     // wait for all polygons to be loaded
     const polygonsCount = (savedPolygons && this.state.polygonsState === ISOCHRON_LOADED) ? savedPolygons.length : 0
@@ -170,18 +161,18 @@ class TravContainer extends React.Component {
           provider={mapProvider}
           style={styles.map}
           initialRegion={this.state.region}
-          onRegionChangeComplete={this.onRegionChange}
+          onRegionChangeComplete={this.onRegionChange.bind(this)}
           showsUserLocation={this.state.showUserLocation}
         >
-          {this.state.locations.map(location => this.renderMapMarkers(location))}
+          { this.state.locations.map(location => this.renderMapMarkers.call(this, location)) }
           { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
               return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
                 return (
                   <MapView.Polygon
                     coordinates={ p.polygon }
                     holes={ p.holes }
-                    fillColor={ isochronFillColor(arrayIndex, 0.15) }
-                    strokeWidth={ 0.3 }
+                    fillColor={ isochronFillColor((arrayIndex + 1) / (savedPolygons.length + 1), this.state.polygonsFillColor[arrayIndex]) }
+                    strokeWidth={ 0.4 * (1 + (this.state.polygonsFillColor[arrayIndex] - 1) * 3) }
                     strokeColor={ 'rgba(85, 85, 85, 0.5)' }
                     key={ arrayIndex * 1000 + index }
                   />
@@ -196,6 +187,7 @@ class TravContainer extends React.Component {
           maximumValue={ Math.max(1, this.state.isochronDurations.length - 1) }
           step={ 1 }
           style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }}
+          onValueChange={this.sliderValueChange.bind(this)}
          />
 
         <ActionButton buttonColor="rgba(231,76,60,1)"
@@ -207,7 +199,7 @@ class TravContainer extends React.Component {
         <ActionButton.Item buttonColor='#9b59b6' title="Banks" onPress={() => console.tron.log("New Task tapped!")}>
           <Icon name="university" style={styles.actionButtonIcon}/>
         </ActionButton.Item>
-        <ActionButton.Item buttonColor='#3498db' title="Transit" onPress={() => console.tron.log("Noifications Tapped!")}>
+        <ActionButton.Item buttonColor='#3498db' title="Transit" onPress={() => console.tron.log("Notifications Tapped!")}>
           <Icon name="bus" style={styles.actionButtonIcon} />
         </ActionButton.Item>
         <ActionButton.Item buttonColor='#ff6b6b' title="Medical" onPress={() => console.tron.log('All Tasks Tapped!')}>

@@ -1,5 +1,7 @@
 import { Worker } from 'react-native-workers'
 
+let debug = true
+
 export const ISOCHRON_NOT_LOADED = 'ISOCHRON_NOT_LOADED'
 export const ISOCHRON_LOADING = 'ISOCHRON_LOADING'
 export const ISOCHRON_LOADED = 'ISOCHRON_LOADED'
@@ -25,6 +27,7 @@ export const setUpdateIsochronsStateFn = updateFn => {
   updateIsochronsState = updateFn
 }
 export const terminateIsochronWorker = () => {
+  if (debug) console.tron.log('terminating worker')
   worker && worker.terminate() // terminate worker if it was running
   worker = null
 }
@@ -58,7 +61,7 @@ export const updateIsochrons = args => {
   isochronsState = ISOCHRON_LOADING
   updateIsochronsState && updateIsochronsState(isochronsState)
   // create worker and send it some work
-  worker = new Worker('./App/Workers/isochronWorker.js')
+  worker = new Worker('App/Workers/isochronWorker.js')
 
   worker.onmessage = messageString => {
     let message = JSON.parse(messageString)
@@ -81,18 +84,35 @@ export const updateIsochrons = args => {
   worker.postMessage(JSON.stringify({ id: 'start', params: params }))
 }
 
-const findColor = (ratio, opacity) => {
-  var r = 255;
-  var g = 255;
+export const isochronFillColor = (ratio, opacityFactor) => {
+  let r = 255
+  let g = 255
+  let b = 0
   if (ratio < 1/2) {
-    r = Math.ceil(255 * ratio * 2);
+    r = Math.ceil(255 * ratio * 2)
   } else {
-    g = Math.ceil(255 * (1 - ratio) * 2);
+    b = Math.ceil(255 * (ratio - 1/2) * 2)
+    //r = Math.ceil(255 * (1 - ratio/2) * 2)
+    g = Math.ceil(255 * (1 - ratio) * 2)
   }
-  //var hex = sprintf('%02x%02x%02x', r, g, 0);
-  return `rgba(${r}, ${g}, 0, ${opacity})`;
-};
-
-export const isochronFillColor = (index, opacity) => {
-  return findColor(index / 5.0, opacity);
+  //let { r, g, b } = makeColorGradient(ratio * 3.14)
+  let opacity = 0.2 * opacityFactor * (brightness(r, g, b) / 255)
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`
 }
+
+const brightness = (r, g, b) => {
+  return Math.sqrt( 0.241 * Math.pow(r, 2) + 0.691 * Math.pow(g, 2) + 0.068 * Math.pow(b, 2) )
+}
+
+// const makeColorGradient = i => {
+//   let frequency1 = 1, frequency2 = 1, frequency3 = 1
+//   let phase1 = 0, phase2 = 3.14 / 2, phase3 = 3.14
+//   let center = 128
+//   let width = 255 - center
+//
+//   let red = Math.sin(frequency1 * i + phase1) * width + center
+//   let grn = Math.sin(frequency2 * i + phase2) * width + center
+//   let blu = Math.sin(frequency3 * i + phase3) * width + center
+//
+//   return { r: red, g: grn, b: blu }
+// }
