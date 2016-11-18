@@ -25,6 +25,7 @@ class SettingsScreen extends React.Component {
   state = {
     map: {type: 'Google Maps', marker: 'map-marker'},
     modalVisible: false,
+    duration: 30,
     traffic: 'red'
   }
 
@@ -100,24 +101,19 @@ class SettingsScreen extends React.Component {
           <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'>
             <View>
               <Picker
-                selectedValue={this.state.map.type}
-                onValueChange={(m) => {
-                  if (m === 'Google Maps') {
-                    this.setState({map: {type: m, marker: 'map-marker'}})
-                  } else if (m === 'Apple Maps') {
-                    this.setState({map: {type: m, marker: 'map-pin'}})
-                  }
+                selectedValue={this.state.duration}
+                onValueChange={(duration) => {
+                  this.setState({duration})
                 }}
-                // onValueChange={this.onValueChange.bind(this, 'map')}
                 style={{ padding: 8, backgroundColor: 'white' }}
                 >
-                  <Picker.Item label="Apple Maps" value="Apple Maps" />
-                  <Picker.Item label="Google Maps" value="Google Maps" />
-                {/* <Picker.Item label="30min" value="30" />
+                  {/* <Picker.Item label="Apple Maps" value="Apple Maps" />
+                  <Picker.Item label="Google Maps" value="Google Maps" /> */}
+                <Picker.Item label="30min" value="30" />
                 <Picker.Item label="60min" value="60" />
                 <Picker.Item label="90min" value="90" />
                 <Picker.Item label="120min" value="120" />
-                <Picker.Item label="150min" value="150" /> */}
+                <Picker.Item label="150min" value="150" />
               </Picker>
             </View>
           </CustomActionSheet>
@@ -156,7 +152,14 @@ class SettingsScreen extends React.Component {
             raised
             title={this.state.map.type}
             icon={{name: this.state.map.marker, type: 'font-awesome'}}
-            onPress={() => this.setState({modalVisible: true})}
+            onPress={() => {
+                if (this.state.map.type === 'Google Maps') {
+                  this.setState({map: {type: 'Apple Maps', marker: 'map-pin'}})
+                } else if (this.state.map.type === 'Apple Maps') {
+                  this.setState({map: {type: 'Google Maps', marker: 'map-marker'}})
+                }
+              }
+            }
           />
           <Text style={styles.sectionText} >
             Choose map brand.
@@ -197,10 +200,10 @@ class SettingsScreen extends React.Component {
             </Text>
             <Button
               raised
-              title='max isochrone duration'
+              title={this.state.duration + 'min isochrone duration'}
               icon={{name: 'clock-o', type: 'font-awesome'}}
               backgroundColor='blue'
-              onPress={() => window.alert('Cache Cleared!')}
+              onPress={() => this.setState({modalVisible: true})}
             />
             <Text style={styles.sectionText} >
 
