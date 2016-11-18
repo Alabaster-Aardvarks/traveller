@@ -23,8 +23,9 @@ import styles from './Styles/SettingsScreenStyle'
 
 class SettingsScreen extends React.Component {
   state = {
-    map: 'Google Maps',
-    modalVisible: false
+    map: {type: 'Google Maps', marker: 'map-marker'},
+    modalVisible: false,
+    traffic: 'red'
   }
 
   componentWillReceiveProps (nextProps) {
@@ -83,14 +84,10 @@ class SettingsScreen extends React.Component {
           <View style={styles.section}>
             <Text style={styles.sectionText} >
               This is where settings go.
-              test one 2.
             </Text>
           </View>
 
-          <Text style={styles.sectionText} >
-            Choose what map style you want to use.
-          </Text>
-          <Card title='Traffic'>
+          {/* <Card title='Traffic'>
             <Text style={{marginBottom: 10}} >
               Traffic
             </Text>
@@ -98,13 +95,19 @@ class SettingsScreen extends React.Component {
               // onValueChange={(value) => this.setState({: value})}
               // value={this.state({value})}
               ></Switch>
-          </Card>
+          </Card> */}
 
           <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'>
             <View>
               <Picker
-                selectedValue={this.state.map}
-                onValueChange={(m) => this.setState({map: m})}
+                selectedValue={this.state.map.type}
+                onValueChange={(m) => {
+                  if (m === 'Google Maps') {
+                    this.setState({map: {type: m, marker: 'map-marker'}})
+                  } else if (m === 'Apple Maps') {
+                    this.setState({map: {type: m, marker: 'map-pin'}})
+                  }
+                }}
                 // onValueChange={this.onValueChange.bind(this, 'map')}
                 style={{ padding: 8, backgroundColor: 'white' }}
                 >
@@ -119,7 +122,7 @@ class SettingsScreen extends React.Component {
             </View>
           </CustomActionSheet>
 
-          <List>
+          {/* <List>
             {
               // list.map((item, i) => (
               //   <ListItem
@@ -145,17 +148,72 @@ class SettingsScreen extends React.Component {
             checkedColor='red'
             checked={false}
           />
+          <Card
+            title='CARD WITH DIVIDER'>
+
+          </Card> */}
+          <Button
+            raised
+            title={this.state.map.type}
+            icon={{name: this.state.map.marker, type: 'font-awesome'}}
+            onPress={() => this.setState({modalVisible: true})}
+          />
+          <Text style={styles.sectionText} >
+            Choose map brand.
+          </Text>
+
           <ButtonGroup
             selectedIndex={0}
             onPress={() => window.alert('Cache Cleared!')}
             buttons={['Normal', 'Satellite', 'Terrain']}
           />
-          <Card
-            title='CARD WITH DIVIDER'>
+          <Text style={styles.sectionText} >
+            Choose what map style you want to use.
+          </Text>
+          <ButtonGroup
+            selectedIndex={0}
+            onPress={() => window.alert('Cache Cleared!')}
+            buttons={['Miles', 'Kilometers']}
+          />
+          <Text style={styles.sectionText} >
+            Choose type of distance
+          </Text>
 
-          </Card>
-          <RoundedButton text={this.state.map} onPress={() => this.setState({modalVisible: true})} />
-          <RoundedButton text='clear isochrone cache' onPress={() => window.alert('Cache Cleared!')}/>
+          <Button
+            raised
+            title='Traffic'
+            icon={{name: 'car', type: 'font-awesome'}}
+            backgroundColor={this.state.traffic}
+            onPress={() => {
+              console.tron.log(this.state.traffic)
+              if (this.state.traffic === 'red') {
+                this.setState({traffic: 'green'})
+              } else {
+                this.setState({traffic: 'red'})
+              }
+            }} />
+            <Text style={styles.sectionText} >
+
+            </Text>
+            <Button
+              raised
+              title='max isochrone duration'
+              icon={{name: 'clock-o', type: 'font-awesome'}}
+              backgroundColor='blue'
+              onPress={() => window.alert('Cache Cleared!')}
+            />
+            <Text style={styles.sectionText} >
+
+            </Text>
+          <Button
+            raised
+            title='clear isochrone cache'
+            icon={{name: 'trash', type: 'font-awesome'}}
+            backgroundColor='red'
+            onPress={() => window.alert('Cache Cleared!')}
+          />
+          {/* <RoundedButton text={this.state.map.type} onPress={() => this.setState({modalVisible: true})} />
+          <RoundedButton text='clear isochrone cache' onPress={() => window.alert('Cache Cleared!')}/> */}
         </ScrollView>
       </View>
     )
