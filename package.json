@@ -1,20 +1,21 @@
 {
   "name": "traveller",
   "version": "1.0.0",
-  "description": "",
+  "description": "Traveller (React Native isochron-based traveller app)",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha server/spec",
     "start": "NODE_ENV=production server/server.js",
     "dev-start": "NODE_ENV=development nodemon server/server.js",
     "lint": "standard --verbose | snazzy",
-    "all": "./serverStart"
+    "all": "./serverStart",
+    "postinstall": "cd traveller && npm install"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Alabaster-Aardvarks/Traveller.git"
   },
-  "author": "",
+  "author": "Alabaster Aardvarks",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Alabaster-Aardvarks/Traveller/issues"
@@ -28,6 +29,7 @@
     "express": "^4.14.0",
     "ioredis": "^2.4.0",
     "qs": "^6.3.0",
+    "redis-server": "0.0.3",
     "request": "^2.78.0"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import { create } from 'apisauce'
 import { encode } from 'base-64'
 import { self } from 'react-native-workers'
+import Secrets from 'react-native-config'
 
 const debug = false // enable log messages for debug
 const useBoundaryDuration = false // if true, will fetch all isochrons at once, otherwise one by one
@@ -17,9 +18,9 @@ self.onmessage = messageString => {
   }
 }
 
-const token = process.env.NAVITIA_TOKEN || '3a8b7ce9-ef1a-4ff5-b65a-5cffcafcfc47' // navitia API token
+const token = process.env.NAVITIA_TOKEN || Secrets.NAVITIA_TOKEN || '3a8b7ce9-ef1a-4ff5-b65a-5cffcafcfc47' // navitia API token
 const navitiaUrl = 'https://api.navitia.io/v1'
-const serverUrl = process.env.ISOCHRON_SERVER_URL || navitiaUrl
+const serverUrl = process.env.ISOCHRON_SERVER_URL || Secrets.ISOCHRON_SERVER_URL || navitiaUrl
 const api = create({ baseURL: serverUrl })
 const useNavitia = serverUrl.match(/api\.navitia/) ? true : false
 const serverEndpointUrl = '/navitia'
