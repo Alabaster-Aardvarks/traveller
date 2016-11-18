@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha server/spec",
-    "start": "node server/server.js",
-    "dev-start": "nodemon server/server.js",
+    "test": "NODE_ENV=test mocha server/spec",
+    "start": "NODE_ENV=production server/server.js",
+    "dev-start": "NODE_ENV=dev nodemon server/server.js",
     "lint": "standard --verbose | snazzy",
     "all": "./serverStart"
   },
