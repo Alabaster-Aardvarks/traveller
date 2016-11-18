@@ -23,10 +23,10 @@ class DrawerContent extends Component {
     this.context.drawer.toggle()
   }
 
-  handlePressIsochron = () => {
-    this.toggleDrawer()
-    NavigationActions.isochronExamples()
-  }
+  // handlePressIsochron = () => {
+  //   this.toggleDrawer()
+  //   NavigationActions.isochronExamples()
+  // }
 
   handlePressComponents = () => {
     this.toggleDrawer()
@@ -57,7 +57,7 @@ class DrawerContent extends Component {
     return (
       <ScrollView style={styles.container}>
         <Image source={Images.logo} style={styles.logo} />
-        <DrawerButton text='Isochrones' onPress={this.handlePressIsochron} />
+        {/* <DrawerButton text='Isochrones' onPress={this.handlePressIsochron} /> */}
         <DrawerButton text='Component Examples' onPress={this.handlePressComponents} />
         <DrawerButton text='Usage Examples' onPress={this.handlePressUsage} />
         <DrawerButton text='API Testing' onPress={this.handlePressAPI} />

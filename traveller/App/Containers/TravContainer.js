@@ -7,9 +7,8 @@ import AlertMessage from '../Components/AlertMessage'
 import Spinner from 'react-native-spinkit'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
-import ListviewGridExample from './ListviewGridExample'
-import ActionButton from 'react-native-action-button';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import ActionButton from 'react-native-action-button'
+import Icon from 'react-native-vector-icons/FontAwesome'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
 // Styles
@@ -74,18 +73,6 @@ class TravContainer extends React.Component {
   componentDidMount() {
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
 
-    this.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
-    setTimeout(() => this.updatePolygons({
-      isochrons: {
-        latitude: this.state.region.latitude,
-        longitude: this.state.region.longitude,
-        durations: this.state.isochronDurations,
-        dateTime: this.state.dateTime,
-        downSamplingCoordinates: this.state.downSamplingCoordinates,
-        skip: skipIsochrons
-      }
-    }), 500)
-
     let context = this;
     this.renderMapMarkers = this.renderMapMarkers.bind(this)
     this.onRegionChange = this.onRegionChange.bind(this)
@@ -101,6 +88,19 @@ class TravContainer extends React.Component {
           }];
           context.setState({ locations });
           const region = calculateRegion(locations, { latPadding: 0.05, longPadding: 0.05 });
+
+          context.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
+          setTimeout(() => context.updatePolygons({
+            isochrons: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              durations: this.state.isochronDurations,
+              dateTime: this.state.dateTime,
+              downSamplingCoordinates: this.state.downSamplingCoordinates,
+              skip: skipIsochrons
+            }
+          }), 0)
+
         },
         (error) => alert(JSON.stringify(error)),
         {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
@@ -161,62 +161,66 @@ class TravContainer extends React.Component {
   render () {
     // wait for all polygons to be loaded
     const polygonsCount = (savedPolygons && this.state.polygonsState === ISOCHRON_LOADED) ? savedPolygons.length : 0
-    const coordinates = [ { latitude: LATITUDE, longitude: LONGITUDE },
-                          { latitude: LATITUDE + 0.015, longitude: LONGITUDE - 0.015 },
-                          { latitude: LATITUDE - 0.015, longitude: LONGITUDE - 0.005 },
-                        ];
+
     return (
       <View style={styles.container}>
+        <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
           provider={mapProvider}
-          // style={styles.map}
-          width={width}
-          height={height}
+          style={styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
           showsUserLocation={this.state.showUserLocation}
-          >
-            {this.state.locations.map((location) => this.renderMapMarkers(location))}
-            {this.state.locations.map(location => this.renderMapMarkers(location))}
-            { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
-                return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
-                  return (
-                    <MapView.Polygon
-                      coordinates={ p.polygon }
-                      holes={ p.holes }
-                      fillColor={ isochronFillColor(arrayIndex, 0.15) }
-                      strokeWidth={ 1 }
-                      strokeColor={ 'rgba(85, 85, 85, 0.5)' }
-                      key={ arrayIndex * 1000 + index }
-                    />
-                  )
-                })
+        >
+          {this.state.locations.map(location => this.renderMapMarkers(location))}
+          { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
+              return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
+                return (
+                  <MapView.Polygon
+                    coordinates={ p.polygon }
+                    holes={ p.holes }
+                    fillColor={ isochronFillColor(arrayIndex, 0.15) }
+                    strokeWidth={ 1 }
+                    strokeColor={ 'rgba(85, 85, 85, 0.5)' }
+                    key={ arrayIndex * 1000 + index }
+                  />
+                )
               })
-            }
-          </MapView>
+            })
+          }
+        </MapView>
 
-          <Slider step={0.25} style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }} />
+        <Slider step={0.25} style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }} />
 
-          <ActionButton buttonColor="rgba(231,76,60,1)"
-            degrees={90}
-            icon={<Icon name='search'
-            style={styles.actionButton}></Icon>}
-            spacing={10}
-          >
-          <ActionButton.Item buttonColor='#9b59b6' title="Banks" onPress={() => console.tron.log("New Task tapped!")}>
-            <Icon name="university" style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title="Transit" onPress={() => console.tron.log("Noifications Tapped!")}>
-            <Icon name="bus" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' title="Medical" onPress={() => console.tron.log('All Tasks Tapped!')}>
-            <Icon name="ambulance" style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title="Settings" onPress={() => console.tron.log('All Tasks Tapped!')}>
-            <Icon name="cog" style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
+        <ActionButton buttonColor="rgba(231,76,60,1)"
+          degrees={90}
+          icon={<Icon name='search'
+          style={styles.actionButton}></Icon>}
+          spacing={10}
+        >
+        <ActionButton.Item buttonColor='#9b59b6' title="Banks" onPress={() => console.tron.log("New Task tapped!")}>
+          <Icon name="university" style={styles.actionButtonIcon}/>
+        </ActionButton.Item>
+        <ActionButton.Item buttonColor='#3498db' title="Transit" onPress={() => console.tron.log("Noifications Tapped!")}>
+          <Icon name="bus" style={styles.actionButtonIcon} />
+        </ActionButton.Item>
+        <ActionButton.Item buttonColor='#ff6b6b' title="Medical" onPress={() => console.tron.log('All Tasks Tapped!')}>
+          <Icon name="ambulance" style={styles.actionButtonIcon}/>
+        </ActionButton.Item>
+        <ActionButton.Item buttonColor='#1abc9c' title="Settings" onPress={() => console.tron.log('All Tasks Tapped!')}>
+          <Icon name="cog" style={styles.actionButtonIcon}/>
+        </ActionButton.Item>
         </ActionButton>
+
+        { this.state.spinnerVisible && (
+            <View style={styles.spinnerContainer} key={2}>
+              <Spinner style={styles.spinner} size={75} type={'Circle'} color={'#ffffff'} />
+              <Text style={styles.spinnerText}>Loading isochrones...</Text>
+            </View>
+          )
+        }
+
       </View>
     )
   }
