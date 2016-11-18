@@ -9,6 +9,11 @@
 | GET    | places/bank   | Nearby Banks                      |
 | GET    | navitia/      | Isochrone JSON Data               |
 
+
+### Redis Installation
+brew install redis OR [GO HERE](http://redis.io/download)
+brew services start redis - will have redis running in the background
+
 ### Setup Server Environment
 
 ```sh
