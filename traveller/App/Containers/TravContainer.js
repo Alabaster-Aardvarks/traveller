@@ -181,7 +181,7 @@ class TravContainer extends React.Component {
                     coordinates={ p.polygon }
                     holes={ p.holes }
                     fillColor={ isochronFillColor(arrayIndex, 0.15) }
-                    strokeWidth={ 1 }
+                    strokeWidth={ 0.3 }
                     strokeColor={ 'rgba(85, 85, 85, 0.5)' }
                     key={ arrayIndex * 1000 + index }
                   />
@@ -191,7 +191,12 @@ class TravContainer extends React.Component {
           }
         </MapView>
 
-        <Slider step={0.25} style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }} />
+        <Slider
+          minimumValue={ 0 }
+          maximumValue={ Math.max(1, this.state.isochronDurations.length - 1) }
+          step={ 1 }
+          style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }}
+         />
 
         <ActionButton buttonColor="rgba(231,76,60,1)"
           degrees={90}
