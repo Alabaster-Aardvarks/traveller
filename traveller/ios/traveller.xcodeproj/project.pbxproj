@@ -1178,7 +1178,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=/Users/nxc/n/bin/node\n./react-native-workers.sh\n../node_modules/react-native/packager/react-native-xcode.sh\n";
+			shellScript = "PATH=${PATH}:/Users/nxc/n/bin\nexport NODE_BINARY=$(which node)\necho $PATH\n./react-native-workers.sh\n../node_modules/react-native/packager/react-native-xcode.sh\n";
 		};
 		0A42AF250867EE57B5173D4C /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
