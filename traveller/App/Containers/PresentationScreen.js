@@ -1,4 +1,4 @@
-// @flow		
+// @flow
 
 import React from 'react'
 import { ScrollView, Text, Image, View } from 'react-native'
@@ -32,10 +32,6 @@ export default class PresentationScreen extends React.Component {
 
           <RoundedButton onPress={NavigationActions.travContainer}>
             Traveller Alpha Container
-          </RoundedButton>
-
-          <RoundedButton onPress={NavigationActions.travScreen}>
-            Traveller Alpha Screen
           </RoundedButton>
 
           <RoundedButton onPress={NavigationActions.componentExamples}>
