@@ -1,4 +1,21 @@
-pushd traveller
-react-native run-ios --simulator 'iPhone 6s'
-popd
+#!/bin/bash
+
+SKIP=0
+
+while [[ "$#" > 0 ]]; do case $1 in
+
+    --skipRunIOS) SKIP=1;;
+
+    *) break;;
+
+  esac; shift
+done
+
+if [ $SKIP -eq 0 ]; then
+  pushd traveller
+  react-native run-ios --simulator 'iPhone 6s'
+  popd
+fi
+
+cd $(dirname "${BASH_SOURCE[0]}")
 npm run dev-start
