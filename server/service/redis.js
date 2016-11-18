@@ -15,7 +15,6 @@ const setRedisIso = (url, data) => {
 const getRedisIso = (url) => {
   return redis.get(url)
   .then(result => {
-    console.log('result', result);
     if (result === null) {
       console.log('this place is not in the db, fall to navitia');
       return result;
