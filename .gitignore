@@ -39,6 +39,5 @@ npm-debug.log
 # Yarn #
 yarn.lock
 
-
 # Redis #
 dump.rdb
