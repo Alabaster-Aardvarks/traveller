@@ -6,7 +6,7 @@
   "scripts": {
     "test": "NODE_ENV=test mocha server/spec",
     "start": "NODE_ENV=production server/server.js",
-    "dev-start": "NODE_ENV=dev nodemon server/server.js",
+    "dev-start": "NODE_ENV=development nodemon server/server.js",
     "lint": "standard --verbose | snazzy",
     "all": "./serverStart"
   },
