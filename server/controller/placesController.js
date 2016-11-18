@@ -10,8 +10,7 @@ const getData = (place, lat, long) => {
   long = long || -122.4106772;
   return axios({
     method: 'get',
-    // url: `${url}&type=${place}&location=${lat},${long}&key=${process.env.GOOGLE_KEY}`
-    url: `${url}&type=${place}&location=${lat},${long}&key=${process.env.GOOGLE_KEY}`
+    url: `${url}&type=${place}&location=${lat},${long}&key=${process.env.GOOGLE_KEY || GOOGLE_KEY}`
   })
   .then(response => response.data)
   .catch(error => console.error(error));

@@ -1,7 +1,7 @@
 const Redis = require('ioredis');
 const redis = new Redis({
   port: 6379,          // Redis port
-  host: '127.0.0.1',   // Redis host
+  host: '127.0.0.1',   // Redis host, may have to revisit for test and production environment
   db: 0
 });
 redis.config('set', 'maxmemory-policy', 'allkeys-lru');
@@ -15,7 +15,6 @@ const setRedisIso = (url, data) => {
 const getRedisIso = (url) => {
   return redis.get(url)
   .then(result => {
-    console.log('result', result);
     if (result === null) {
       console.log('this place is not in the db, fall to navitia');
       return result;
