@@ -3,8 +3,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { ScrollView, View, StyleSheet, Text, Dimensions, Slider } from 'react-native'
-// Add Actions - replace 'Your' with whatever your reducer is called :)
-// import YourActions from '../Redux/YourRedux'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import AlertMessage from '../Components/AlertMessage'
 import MapView from 'react-native-maps'
@@ -13,7 +11,6 @@ import MapCallout from '../Components/MapCallout'
 import ListviewGridExample from './ListviewGridExample'
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 
 // Default values
 const { width, height } = Dimensions.get('window');
@@ -29,9 +26,7 @@ import styles from './Styles/TravContainerStyle'
 
 class TravContainer extends React.Component {
   constructor (props) {
-
     super(props)
-
     this.state = {
       initialPosition: 'unknown',
       lastPosition: 'unknown',
@@ -43,7 +38,6 @@ class TravContainer extends React.Component {
       },
       locations: [],
       showUserLocation: false,
-      // zoom: 11
     }
   }
 
@@ -54,11 +48,8 @@ class TravContainer extends React.Component {
     const getCurrentLocation = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-
           let initialPosition = JSON.stringify(position);
           context.setState({ initialPosition })
-          // context.state.initialPosition = initialPosition;
-
           let locations = [{
             title: 'Starting Location',
             latitude: position.coords.latitude,
@@ -81,7 +72,7 @@ class TravContainer extends React.Component {
         longitudeDelta: LONGITUDE_DELTA,
       }
     console.tron.log(context.state.locations.latitude);
-    //   this.refs.map.animateToCoordinate(testRegion, 50)
+    //   this.refs.map.animateToCoordinate(testRegion, 50) // TODO: Center map on GPS coords
   }, 1000)
   }
 
@@ -105,7 +96,8 @@ class TravContainer extends React.Component {
 
     const coordinates = [ { latitude: LATITUDE, longitude: LONGITUDE },
                           { latitude: LATITUDE + 0.015, longitude: LONGITUDE - 0.015 },
-                          { latitude: LATITUDE - 0.015, longitude: LONGITUDE - 0.005 } ];
+                          { latitude: LATITUDE - 0.015, longitude: LONGITUDE - 0.005 },
+                        ];
 
     return (
       <View style={styles.container}>
@@ -143,7 +135,6 @@ class TravContainer extends React.Component {
             <Icon name="cog" style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
-        {/* <Slider step={0.27} style={{marginTop: 0}} /> */}
       </View>
     )
   }
