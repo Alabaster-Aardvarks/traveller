@@ -1,5 +1,7 @@
 [![CircleCI](https://circleci.com/gh/Alabaster-Aardvarks/traveller/tree/develop.svg?style=svg)](https://circleci.com/gh/Alabaster-Aardvarks/traveller/tree/develop)
 
+[![Stories in Ready](https://badge.waffle.io/Alabaster-Aardvarks/traveller.svg?label=ready&title=Ready)](http://waffle.io/Alabaster-Aardvarks/traveller)
+
 #  traveller
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
 
