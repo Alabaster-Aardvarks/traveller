@@ -4,15 +4,22 @@ const placesController = require('../controller/placesController');
 const placesRouter = express.Router(); 
 
 
-placesRouter.get('/museum', (req, res) =>{
-  let bundle = [];                                      //req.body.lat req.body.long
-  placesController.getData('museum', 37.7825177, -122.4106772)
+placesRouter.get('/museum', (req, res) => {
+  lat = req.body.lat || 37.7825177;
+  long = req.body.long || -122.4106772;
+  let bundle = [];
+  let result = {}; 
+  let counter = 0;      
+  placesController.getData('museum', lat, long)
   .then(data => {
     data.results.forEach((place) => bundle.push(place.place_id));  
     placesController.getDistanceData(bundle.splice(0, 24), 37.7825177, -122.4106772)
     .then(data => {
-      console.log(data);
-      res.status(200).json(data);
+      data.destination_addresses.forEach(place => {
+        result[place] = data.rows[0].elements[counter].duration.text;
+        counter++;
+      });
+      res.status(200).json(result);
     })
     .catch(err => res.sendStatus(500));
   })
