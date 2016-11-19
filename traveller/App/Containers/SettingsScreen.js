@@ -26,7 +26,7 @@ import styles from './Styles/SettingsScreenStyle'
 
 class SettingsScreen extends React.Component {
 
-  constructor (props) {
+  constructor (props: Object) {
     super(props)
     this.state = {
       map: 'Google Maps',

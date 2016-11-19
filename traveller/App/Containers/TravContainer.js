@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
@@ -93,7 +93,7 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
 updateLocationIsochrons()
 
 class TravContainer extends React.Component {
-  constructor (props) {
+  constructor (props: Object) {
     super(props)
     this.state = {
       initialPosition: 'unknown',
@@ -127,6 +127,8 @@ class TravContainer extends React.Component {
   componentWillUnmount () {
     setUpdateIsochronsStateFn(null)
     terminateIsochronWorker()
+    console.tron.log(this.state)
+    console.tron.log(this.props)
   }
 
   updatePolygons (params) {
@@ -231,6 +233,7 @@ class TravContainer extends React.Component {
         <MapView
           ref='map'
           provider={mapProvider}
+          showsTraffic={this.props.map.traffic}
           style={styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}
@@ -317,7 +320,16 @@ class TravContainer extends React.Component {
   }
 }
 
-const mapStateToProps = state => { return {} }
-const mapDispatchToProps = dispatch => { return {} }
+const mapStateToProps = (state) => {
+  return {
+    map: state.map,
+    duration: state.duration,
+    traffic: state.traffic,
+    mileType: state.mileType,
+    mapType: state.mapType
+  }
+}
+
+const mapDispatchToProps = (dispatch) => { return {} }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TravContainer)
