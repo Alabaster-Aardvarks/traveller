@@ -171,23 +171,13 @@ class SettingsScreen extends React.Component {
             category={this.state.mapType}
             setStateOfButtonGroup={this.setStateOfButtonGroup}
           />
+          <Text style={styles.sectionText} >
+            Choose what map style you want to use.
+          </Text>
           <MapButtonGroup
             buttons={['Miles', 'Kilometers']}
             category={this.state.mileType}
             setStateOfButtonGroup={this.setStateOfButtonGroup}
-          />
-          {/* <ButtonGroup
-            selectedIndex={1}
-            onPress={() => console.tron.log(this)}
-            buttons={['Normal', 'Satellite', 'Terrain']}
-          /> */}
-          <Text style={styles.sectionText} >
-            Choose what map style you want to use.
-          </Text>
-          <ButtonGroup
-            selectedIndex={0}
-            onPress={() => console.tron.log(this.state)}
-            buttons={['Miles', 'Kilometers']}
           />
           <Text style={styles.sectionText} >
             Choose type of distance
