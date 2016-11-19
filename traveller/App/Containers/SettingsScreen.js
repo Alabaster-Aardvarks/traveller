@@ -31,7 +31,7 @@ class SettingsScreen extends React.Component {
       map: {type: 'Google Maps', marker: 'map-marker'},
       modalVisible: false,
       duration: 30,
-      traffic: 'red',
+      traffic: false,
       mileType: 'Normal',
       mapType: 'Miles'
     }
@@ -247,13 +247,23 @@ class SettingsScreen extends React.Component {
           <SettingsList.Item title='Unit of measurement' titleInfo='Miles'/>
           <SettingsList.Item
             hasNavArrow={false}
-            switchState={this.state.switchValue}
-            switchOnValueChange={this.onValueChange}
+            switchState={this.state.traffic}
+            switchOnValueChange={() => {
+              if (this.state.traffic === false) {
+                this.setState({traffic: true})
+              } else {
+                this.setState({traffic: false})
+              }
+            }}
             hasSwitch={true}
             title='Traffic'/>
           <SettingsList.Header headerText='isochrones' headerStyle={{color:'white', marginTop:50}}/>
           <SettingsList.Item title='Max duration' titleInfo='60min'/>
-          <SettingsList.Item title='Clear cache' hasNavArrow={false} onPress={() => window.alert('Isochrone cache cleared')} />
+          <SettingsList.Item
+            title='Clear isochrone cache'
+            hasNavArrow={false}
+            titleStyle={{color: 'blue'}}
+            onPress={() => window.alert('Isochrone cache cleared')} />
 
           <SettingsList.Header headerStyle={{color:'white', marginTop:50}}/>
           <SettingsList.Item title='About' />
