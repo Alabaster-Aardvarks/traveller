@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -862,11 +863,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = K3EMCGN7CP;
+						DevelopmentTeam = TYXC29FT67;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 5B5SX74NB8;
+						DevelopmentTeam = TYXC29FT67;
 					};
 				};
 			};
@@ -1385,7 +1386,7 @@
 			baseConfigurationReference = 7CF686A516E650B232DA7268 /* Pods-travellerTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = K3EMCGN7CP;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1395,6 +1396,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1409,12 +1412,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = K3EMCGN7CP;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				INFOPLIST_FILE = travellerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1431,7 +1436,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 5B5SX74NB8;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1446,6 +1451,8 @@
 					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 				);
 				INFOPLIST_FILE = traveller/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
@@ -1468,7 +1475,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5B5SX74NB8;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1483,6 +1490,8 @@
 					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 				);
 				INFOPLIST_FILE = traveller/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
@@ -1551,6 +1560,8 @@
 					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1604,6 +1615,8 @@
 					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
