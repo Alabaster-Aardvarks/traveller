@@ -7,7 +7,7 @@ const axios = require('axios');
 
 const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?&radius=1609';
 const radar = 'https://maps.googleapis.com/maps/api/place/radarsearch/json?';
-const distance = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=metric';
+const distance = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial';
 
 const key = process.env.GOOGLE_KEY || GOOGLE_KEY;
 
