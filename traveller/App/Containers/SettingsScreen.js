@@ -287,9 +287,13 @@ SettingsScreen.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    loggedIn: isLoggedIn(state.login),
     temperature: state.temperature.temperature,
-    city: state.temperature.city
+    city: state.temperature.city,
+    map: state.map,
+    duration: state.duration,
+    traffic: state.traffic,
+    mileType: state.mileType,
+    mapType: state.mapType
   }
 }
 
