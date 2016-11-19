@@ -31,23 +31,21 @@ const getRadarData = (place, lat, long) => {
     method: 'get',
     url: `${radar}location=${lat},${long}&radius=4827&type=${place}&key=${key}`
   })
-  .then(response => response.data)
+  .then(response =>response.data)
   .catch(error => console.error(error));
 };
 
 //google distance matrix 
 const getDistanceData = (arrayOfPlaces, lat, long) => {
-  console.log('arrayofplaces', arrayOfPlaces);
   lat = lat || 37.7825177;
   long = long || -122.4106772;
   let destinationString = 'place_id:';
   for (var i = 0; i < arrayOfPlaces.length; i++) {
     destinationString += arrayOfPlaces[i];
-    if (i !== arrayOfPlaces.length -1 ) {
+    if (i !== arrayOfPlaces.length - 1 ) {
       destinationString += '|place_id:';
     }
   }
-  console.log('destination string', destinationString);
   return axios({
     method: 'get',
     url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=transit&departure_time=now&transit_mode=bus|rail`
