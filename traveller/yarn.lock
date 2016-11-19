@@ -217,6 +217,10 @@ async-each@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.1.tgz#19d386a1d9edc6e7c1c85d388aedbcc56d33602d"
 
+async@^0.2.10, async@~0.2.6:
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/async/-/async-0.2.10.tgz#b6bbe0b0674b9d719708ca38de8c237cb526c3d1"
+
 async@^1.4.0, async@^1.4.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
@@ -226,10 +230,6 @@ async@^2.0.1:
   resolved "https://registry.yarnpkg.com/async/-/async-2.1.2.tgz#612a4ab45ef42a70cde806bad86ee6db047e8385"
   dependencies:
     lodash "^4.14.0"
-
-async@~0.2.6:
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/async/-/async-0.2.10.tgz#b6bbe0b0674b9d719708ca38de8c237cb526c3d1"
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -344,6 +344,12 @@ aws4@^1.2.1:
 axios@^0.13.1:
   version "0.13.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.13.1.tgz#3e67abfe4333bc9d2d5fe6fbd13b4694eafc8df8"
+  dependencies:
+    follow-redirects "0.0.7"
+
+axios@^0.15.2:
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.15.2.tgz#496f50980b2ce1ad2e195af93c2d03b4d035e90d"
   dependencies:
     follow-redirects "0.0.7"
 
@@ -1140,6 +1146,10 @@ balanced-match@^0.4.1:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-0.4.2.tgz#cb3f3e3c732dc0f01ee70b403f302e61d7709838"
 
+base-64@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
+
 base62@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/base62/-/base62-1.1.1.tgz#974e82c11bd5e00816b508a7ed9c7b9086c9db6b"
@@ -1304,6 +1314,10 @@ bser@^1.0.2:
   dependencies:
     node-int64 "^0.4.0"
 
+btoa@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/btoa/-/btoa-1.1.2.tgz#3e40b81663f81d2dd6596a4cb714a8dc16cfabe0"
+
 buf-compare@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/buf-compare/-/buf-compare-1.0.1.tgz#fef28da8b8113a0a0db4430b0b6467b69730b34a"
@@ -1328,6 +1342,10 @@ buffer-to-vinyl@^1.0.0:
     readable-stream "^2.0.2"
     uuid "^2.0.1"
     vinyl "^1.0.0"
+
+Buffer@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/Buffer/-/Buffer-0.0.0.tgz#82cf8e986a2109ff6d1d6f1c436e47d07127aea4"
 
 builtin-modules@^1.0.0, builtin-modules@^1.1.1:
   version "1.1.1"
@@ -1564,7 +1582,7 @@ clone@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/clone/-/clone-0.2.0.tgz#c6126a90ad4f72dbf5acdb243cc37724fe93fc1f"
 
-clone@^1.0.0:
+clone@^1.0.0, clone@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.2.tgz#260b7a99ebb1edfe247538175f783243cb19d149"
 
@@ -1585,6 +1603,30 @@ co@3.1.0:
 code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
+
+color-convert@^1.3.0:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.8.2.tgz#be868184d7c8631766d54e7078e2672d7c7e3339"
+  dependencies:
+    color-name "^1.1.1"
+
+color-name@^1.0.0, color-name@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.1.tgz#4b1415304cf50028ea81643643bd82ea05803689"
+
+color-string@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/color-string/-/color-string-0.3.0.tgz#27d46fb67025c5c2fa25993bfbf579e47841b991"
+  dependencies:
+    color-name "^1.0.0"
+
+color@^0.11.1:
+  version "0.11.4"
+  resolved "https://registry.yarnpkg.com/color/-/color-0.11.4.tgz#6d7b5c74fb65e841cd48792ad1ed5e07b904d764"
+  dependencies:
+    clone "^1.0.2"
+    color-convert "^1.3.0"
+    color-string "^0.3.0"
 
 colors@~0.6.0-1:
   version "0.6.2"
@@ -2224,6 +2266,10 @@ each-async@^1.0.0:
   dependencies:
     onetime "^1.0.0"
     set-immediate-shim "^1.0.0"
+
+earcut@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/earcut/-/earcut-2.1.1.tgz#157634e5f3ebb42224e475016e86a5b6ce556b45"
 
 eastasianwidth@^0.1.1:
   version "0.1.1"
@@ -3034,6 +3080,19 @@ generate-object-property@^1.1.0:
   dependencies:
     is-property "^1.0.0"
 
+geojson-project@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/geojson-project/-/geojson-project-1.0.1.tgz#aa9346586558a365c44d6698ffcd0bfc57df4406"
+
+geojson-to-svg@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/geojson-to-svg/-/geojson-to-svg-1.0.2.tgz#724bc9033b70a67096e99f99f7122af69e8545a4"
+  dependencies:
+    geojson-project "^1.0.1"
+    json-extend "^0.1.0"
+    string-hash "^1.1.0"
+    transformation-matrix-js "^2.6.5"
+
 get-caller-file@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.2.tgz#f702e63127e7e231c160a80c1554acb70d5047e5"
@@ -3441,7 +3500,7 @@ image-size@^0.3.5:
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.3.5.tgz#83240eab2fb5b00b04aab8c74b0471e9cba7ad8c"
 
-immutable@^3.7.6:
+immutable@^3.7.6, immutable@^3.8.1:
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
 
@@ -3900,6 +3959,10 @@ jsesc@~0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
 
+json-extend@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/json-extend/-/json-extend-0.1.0.tgz#76b18823d5c65604d887cd59272ae07da5150398"
+
 json-schema@0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
@@ -4027,6 +4090,10 @@ lcid@^1.0.0:
   resolved "https://registry.yarnpkg.com/lcid/-/lcid-1.0.0.tgz#308accafa0bc483a3867b4b6f2b9506251d1b835"
   dependencies:
     invert-kv "^1.0.0"
+
+leaflet@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.0.1.tgz#5868c389b556cd85481198ff8bfe59a8de0932db"
 
 levn@^0.3.0, levn@~0.3.0:
   version "0.3.0"
@@ -5246,13 +5313,34 @@ react-dom@^15.3.2:
   version "15.3.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.3.2.tgz#c46b0aa5380d7b838e7a59c4a7beff2ed315531f"
 
+react-leaflet@^1.0.0-rc.3:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-1.0.0.tgz#801008aa3af2c4ab13b809f5e408976d12d3b684"
+  dependencies:
+    lodash "^4.0.0"
+    warning "^3.0.0"
+
+react-native-action-button@^2.0.14:
+  version "2.0.15"
+  resolved "https://registry.yarnpkg.com/react-native-action-button/-/react-native-action-button-2.0.15.tgz#f549c1839d537a6893fc03d939651617339547d2"
+
 react-native-animatable@^0.6.0:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-0.6.1.tgz#bd85023d42ad0ceb3cc98d7b490f7d6dd6ba11b0"
 
+react-native-cache@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-cache/-/react-native-cache-1.0.2.tgz#bdf45cff7cfbbffaf5803fdc62071c3e68bf68d0"
+  dependencies:
+    async "^0.2.10"
+
 react-native-config@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-0.1.2.tgz#cf6e3e312845f411fe9ef42f3ea283c576078681"
+
+react-native-custom-action-sheet@0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/react-native-custom-action-sheet/-/react-native-custom-action-sheet-0.0.11.tgz#9272ad018c7846880933289728fce7ac3f72c289"
 
 react-native-device-info@^0.9.5:
   version "0.9.6"
@@ -5263,6 +5351,12 @@ react-native-drawer@^2.3.0:
   resolved "https://registry.yarnpkg.com/react-native-drawer/-/react-native-drawer-2.3.0.tgz#a0369ec80ff0b61c9f152dbdea91fe76c843113a"
   dependencies:
     tween-functions "^1.0.1"
+
+react-native-elements@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-0.6.3.tgz#db5d1dc6a3afcc34d08c84c6917189a7e825fac7"
+  dependencies:
+    react-native-tab-navigator "^0.3.3"
 
 react-native-experimental-navigation@0.26.x:
   version "0.26.10"
@@ -5279,9 +5373,9 @@ react-native-i18n@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/react-native-i18n/-/react-native-i18n-0.1.1.tgz#7fdc7512e71c9f5057d5f9ee8d559fc4801a1c14"
 
-react-native-maps@^0.11.0:
+"react-native-maps@git+https://github.com/therealgilles/react-native-maps.git#iosPolygonHoles":
   version "0.11.0"
-  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.11.0.tgz#8baa56eef83e9f2f04a70b192624b7bc9c56289d"
+  resolved "git+https://github.com/therealgilles/react-native-maps.git#017f61d52da6428b698d6e843a916031dd5e41d2"
 
 react-native-mock@^0.2.7:
   version "0.2.7"
@@ -5300,6 +5394,10 @@ react-native-mock@^0.2.7:
     react-timer-mixin "=0.13.3"
     warning "=2.1.0"
 
+react-native-modal-picker@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/react-native-modal-picker/-/react-native-modal-picker-0.0.16.tgz#c9324d880a3bb8f36b772f378164977e2f431cbc"
+
 react-native-router-flux@^3.35.0:
   version "3.36.0"
   resolved "https://registry.yarnpkg.com/react-native-router-flux/-/react-native-router-flux-3.36.0.tgz#2f36360d684b5e546ecee2d2ee1baccc8e1dd74f"
@@ -5308,6 +5406,23 @@ react-native-router-flux@^3.35.0:
     react-native-experimental-navigation "0.26.x"
     react-native-tabs "^1.0.9"
     react-static-container "1.0.1"
+
+react-native-spinkit@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-spinkit/-/react-native-spinkit-0.1.5.tgz#29f04c0f886956a2c961388bcd2e6741391f1b8c"
+
+react-native-svg@^4.3.2:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-4.3.3.tgz#bab6e0c88fab5cc4834b3592e79730435e5683c7"
+  dependencies:
+    color "^0.11.1"
+    lodash "^4.0.0"
+
+react-native-tab-navigator@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-tab-navigator/-/react-native-tab-navigator-0.3.3.tgz#b222bad21fbe773c8d28f9a0de30ce62b08724d3"
+  dependencies:
+    immutable "^3.8.1"
 
 react-native-tabs@^1.0.9:
   version "1.0.9"
@@ -5319,6 +5434,10 @@ react-native-vector-icons@^2.1.0:
   dependencies:
     lodash "^4.0.0"
     yargs "^4.7.0"
+
+"react-native-workers@git+https://github.com/therealgilles/react-native-workers.git#releaseBuildFix":
+  version "0.3.1"
+  resolved "git+https://github.com/therealgilles/react-native-workers.git#28483d29f2d2597369babf9f3c40abb1df42f37c"
 
 react-native@^0.36.0:
   version "0.36.1"
@@ -5773,6 +5892,10 @@ rimraf@~2.2.6:
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
 
+rn-number-input@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/rn-number-input/-/rn-number-input-0.0.2.tgz#6f9c5eec37b0a81696005ccc9bd8fbd7f4b27c53"
+
 rndm@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/rndm/-/rndm-1.2.0.tgz#f33fe9cfb52bbfd520aa18323bc65db110a1b76c"
@@ -6206,6 +6329,10 @@ string_decoder@~0.10.x:
   version "0.10.31"
   resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-0.10.31.tgz#62e203bc41766c6c28c9fc84301dab1c5310fa94"
 
+string-hash@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/string-hash/-/string-hash-1.1.0.tgz#e4a1fe9862fb76bfc01a5aa0bfafe0561b7ef25d"
+
 string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-1.0.2.tgz#118bdf5b8cdc51a2a7e70d211e07e2b0b9b107d3"
@@ -6487,6 +6614,10 @@ tough-cookie@~2.3.0:
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.3.2.tgz#f081f76e4c85720e6c37a5faced737150d84072a"
   dependencies:
     punycode "^1.4.1"
+
+transformation-matrix-js@^2.6.5:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/transformation-matrix-js/-/transformation-matrix-js-2.7.0.tgz#5d3c76a59c4fbf58006eb80d6f8470c83b4da6f8"
 
 traverse@^0.6.6:
   version "0.6.6"
@@ -6771,6 +6902,12 @@ ware@^1.2.0:
   resolved "https://registry.yarnpkg.com/ware/-/ware-1.3.0.tgz#d1b14f39d2e2cb4ab8c4098f756fe4b164e473d4"
   dependencies:
     wrap-fn "^0.1.0"
+
+warning@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
+  dependencies:
+    loose-envify "^1.0.0"
 
 warning@=2.1.0:
   version "2.1.0"

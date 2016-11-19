@@ -10,6 +10,7 @@ import PresentationScreen from '../Containers/PresentationScreen'
 import LoginScreen from '../Containers/LoginScreen'
 import DeviceInfoScreen from '../Containers/DeviceInfoScreen'
 import TravContainer from '../Containers/TravContainer'
+import SettingsScreen from '../Containers/SettingsScreen'
 
 // Documentation: https://github.com/aksonov/react-native-router-flux
 
@@ -22,6 +23,7 @@ class NavigationRouter extends Component {
             <Scene initial key='presentationScreen' component={TravContainer} title='Traveller' renderLeftButton={NavItems.hamburgerButton} />
             <Scene key='travContainer' component={TravContainer} title='Traveller' />
             <Scene key='deviceInfo' component={DeviceInfoScreen} title='Device Info' navBar={CustomNavBar} />
+            <Scene key='settings' component={SettingsScreen} title='Settings' />
           </Scene>
         </Scene>
       </Router>

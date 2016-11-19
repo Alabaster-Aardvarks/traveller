@@ -31,12 +31,17 @@ class DrawerContent extends Component {
     NavigationActions.deviceInfo()
   }
 
+  handlePressSettings = () => {
+    this.toggleDrawer()
+    NavigationActions.settings()
+  }
+
   render () {
     return (
       <ScrollView style={styles.container}>
         <Image source={Images.plane} style={styles.logo} />
         <DrawerButton text='Map' onPress={this.handlePressTraveller} />
-        <DrawerButton text='Settings' onPress={this.handlePressDevice} />
+        <DrawerButton text='Settings' onPress={this.handlePressSettings} />
         <DrawerButton text='About' onPress={this.handlePressDevice} />
       </ScrollView>
     )
