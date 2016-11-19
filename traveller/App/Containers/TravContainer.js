@@ -26,14 +26,14 @@ const roundDateTime = dateTime => {
 }
 const DATETIME = roundDateTime('2016-11-09T18:49:27.000Z')
 const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
-const LATITUDE = roundCoordinate(37.7825177)
-const LONGITUDE = roundCoordinate(-122.4106772)
 const LATITUDE_DELTA = roundCoordinate(0.1)
 const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
+let LATITUDE = 37.7825177
+let LONGITUDE = -122.4106772
 
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const { width, height } = Dimensions.get('window')
+const ASPECT_RATIO = width / height
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
 const mapProvider = MapView.PROVIDER_GOOGLE
 
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
@@ -41,15 +41,17 @@ let skipIsochrons = false // set to true to disable loading isochrons [for debug
 const updateLocationIsochrons = context => {
   // get current location
   navigator.geolocation.getCurrentPosition(position => {
+    LATITUDE = position.coords.latitude
+    LONGITUDE = position.coords.longitude
     let locations = [ {
       title: 'Starting Location',
-      latitude: roundCoordinate(position.coords.latitude),
-      longitude: roundCoordinate(position.coords.longitude),
+      latitude: LATITUDE,
+      longitude: LONGITUDE,
     } ]
 
     let params = {
-      latitude: locations[0].latitude,
-      longitude: locations[0].longitude,
+      latitude: roundCoordinate(locations[0].latitude),
+      longitude: roundCoordinate(locations[0].longitude),
       durations: context ? context.state.isochronDurations : DURATIONS,
       dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
       downSamplingCoordinates: context ? context.state.downSamplingCoordinates : DOWNSAMPLING_COORDINATES,
@@ -62,6 +64,12 @@ const updateLocationIsochrons = context => {
       let initialPosition = JSON.stringify(position)
       context.setState({ initialPosition })
       context.setState({ locations })
+      context.setState({ region: {
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      }})
       context.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
       context.updatePolygons({ isochrons: params })
     }
@@ -86,7 +94,7 @@ class TravContainer extends React.Component {
         longitudeDelta: LONGITUDE_DELTA,
       },
       locations: [],
-      showUserLocation: false,
+      showUserLocation: true,
       isochronDurations: DURATIONS,
       polygonsState: ISOCHRON_NOT_LOADED,
       polygonsFillColor: [...Array(DURATIONS.length - 1)].map(() => 1),
@@ -102,6 +110,7 @@ class TravContainer extends React.Component {
   componentDidMount() {
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
     updateLocationIsochrons(this)
+    this.refs.map.animateToRegion(this.state.region, 500)
   }
 
   componentWillUnmount () {
@@ -131,15 +140,25 @@ class TravContainer extends React.Component {
 
   renderMapMarkers (location) {
     return (
-      <MapView.Marker pinColor='#183446' draggable key={location.title} coordinate={{latitude: location.latitude, longitude: location.longitude}}>
+      <MapView.Marker
+        pinColor='rgba(21, 107, 254, 0.9)'
+        draggable
+        key={location.title}
+        coordinate={{ latitude: location.latitude, longitude: location.longitude }}
+        onDragEnd={ e => {
+          let newRegion = this.state.region
+          newRegion.latitude = e.nativeEvent.coordinate.latitude
+          newRegion.longitude = e.nativeEvent.coordinate.longitude
+          this.refs.map.animateToRegion(newRegion, 500)
+        }}
+      >
         <MapCallout location={location} onPress={this.calloutPress} />
       </MapView.Marker>
     )
   }
 
-  onRegionChange (region) {
-    // Update region when map is dragged
-    this.setState({ region });
+  onRegionChangeComplete (region) {
+    this.setState({ region }) // Update region when map is finishing dragging
   }
 
   sliderValueChange (value) {
@@ -163,9 +182,23 @@ class TravContainer extends React.Component {
           provider={mapProvider}
           style={styles.map}
           initialRegion={this.state.region}
-          onRegionChangeComplete={this.onRegionChange.bind(this)}
+          onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}
           showsUserLocation={this.state.showUserLocation}
+          showsCompass={true}
+          showsScale={true}
+          loadingEnabled={true}
+          showsTraffic={true}
         >
+          { 1 ? undefined :
+            <MapView.UrlTile
+              /**
+              * The url template of the tile server. The patterns {x} {y} {z} will be replaced at runtime
+              * For example, http://c.tile.openstreetmap.org/{z}/{x}/{y}.png
+              */
+              /**urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png'}*/
+              urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}
+            />
+          }
           { this.state.locations.map(location => this.renderMapMarkers.call(this, location)) }
           { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
               return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
