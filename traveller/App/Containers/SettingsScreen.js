@@ -9,6 +9,7 @@ import { Actions as NavigationActions } from 'react-native-router-flux'
 import { Colors, Images, Metrics } from '../Themes'
 import RoundedButton from '../Components/RoundedButton'
 import FullButton from '../Components/FullButton'
+import MapButtonGroup from '../Components/MapButtonGroup'
 import { CheckBox, Card, Button, List, ListItem, ButtonGroup } from 'react-native-elements'
 import CustomActionSheet from 'react-native-custom-action-sheet'
 
@@ -26,7 +27,9 @@ class SettingsScreen extends React.Component {
     map: {type: 'Google Maps', marker: 'map-marker'},
     modalVisible: false,
     duration: 30,
-    traffic: 'red'
+    traffic: 'red',
+    mileType: 'Normal',
+    mapType: 'Miles'
   }
 
   componentWillReceiveProps (nextProps) {
@@ -68,25 +71,15 @@ class SettingsScreen extends React.Component {
 
 
   render () {
-    const list = [
-  {
-    title: 'Appointments',
-    icon: 'av-timer'
-  },
-  {
-    title: 'Trips',
-    icon: 'flight-takeoff'
-  }
-]
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
-          <View style={styles.section}>
+          {/* <View style={styles.section}>
             <Text style={styles.sectionText} >
-              This is where settings go.
+              This is where settings go. test
             </Text>
-          </View>
+          </View> */}
 
           {/* <Card title='Traffic'>
             <Text style={{marginBottom: 10}} >
@@ -107,8 +100,6 @@ class SettingsScreen extends React.Component {
                 }}
                 style={{ padding: 8, backgroundColor: 'white' }}
                 >
-                  {/* <Picker.Item label="Apple Maps" value="Apple Maps" />
-                  <Picker.Item label="Google Maps" value="Google Maps" /> */}
                 <Picker.Item label="30min" value="30" />
                 <Picker.Item label="60min" value="60" />
                 <Picker.Item label="90min" value="90" />
@@ -152,6 +143,7 @@ class SettingsScreen extends React.Component {
             raised
             title={this.state.map.type}
             icon={{name: this.state.map.marker, type: 'font-awesome'}}
+            buttonStyle={{borderRadius: 10}}
             onPress={() => {
                 if (this.state.map.type === 'Google Maps') {
                   this.setState({map: {type: 'Apple Maps', marker: 'map-pin'}})
@@ -164,25 +156,32 @@ class SettingsScreen extends React.Component {
           <Text style={styles.sectionText} >
             Choose map brand.
           </Text>
-
-          <ButtonGroup
-            selectedIndex={0}
-            onPress={() => window.alert('Cache Cleared!')}
+          <MapButtonGroup
             buttons={['Normal', 'Satellite', 'Terrain']}
+            category={this.state.mapType}
           />
+          <MapButtonGroup
+            buttons={['Miles', 'Kilometers']}
+            category={this.state.mileType}
+          />
+          {/* <ButtonGroup
+            selectedIndex={1}
+            onPress={() => console.tron.log(this)}
+            buttons={['Normal', 'Satellite', 'Terrain']}
+          /> */}
           <Text style={styles.sectionText} >
             Choose what map style you want to use.
           </Text>
           <ButtonGroup
             selectedIndex={0}
-            onPress={() => window.alert('Cache Cleared!')}
+            onPress={() => console.tron.log(this.state)}
             buttons={['Miles', 'Kilometers']}
           />
           <Text style={styles.sectionText} >
             Choose type of distance
           </Text>
 
-          <Button
+          {/* <Button
             raised
             title='Traffic'
             icon={{name: 'car', type: 'font-awesome'}}
@@ -194,7 +193,7 @@ class SettingsScreen extends React.Component {
               } else {
                 this.setState({traffic: 'red'})
               }
-            }} />
+            }} /> */}
             <Text style={styles.sectionText} >
 
             </Text>
@@ -203,6 +202,7 @@ class SettingsScreen extends React.Component {
               title={this.state.duration + 'min isochrone duration'}
               icon={{name: 'clock-o', type: 'font-awesome'}}
               backgroundColor='blue'
+              buttonStyle={{borderRadius: 10}}
               onPress={() => this.setState({modalVisible: true})}
             />
             <Text style={styles.sectionText} >
@@ -213,6 +213,7 @@ class SettingsScreen extends React.Component {
             title='clear isochrone cache'
             icon={{name: 'trash', type: 'font-awesome'}}
             backgroundColor='red'
+            buttonStyle={{borderRadius: 10}}
             onPress={() => window.alert('Cache Cleared!')}
           />
           {/* <RoundedButton text={this.state.map.type} onPress={() => this.setState({modalVisible: true})} />
