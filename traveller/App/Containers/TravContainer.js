@@ -13,42 +13,46 @@ import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
 
+const debug = false
+
 const COORDINATE_PRECISION = 0.001 // degrees
 const DATETIME_PRECISION = 60 // seconds
 const roundCoordinate = coord => {
   return ( Math.round( Math.abs(coord) / COORDINATE_PRECISION ) * COORDINATE_PRECISION ) * Math.sign(coord)
 }
 const roundDateTime = dateTime => {
-  let date = new Date(dateTime)
+  let date = (dateTime === 'now') ? new Date() : new Date(dateTime)
   // getTime() gives us milliseconds
   date.setTime( Math.round( date.getTime() / (DATETIME_PRECISION * 1000) ) * (1000 * DATETIME_PRECISION) )
   return date.toISOString()
 }
-const DATETIME = roundDateTime('2016-11-09T18:49:27.000Z')
+const DATETIME = roundDateTime('now') // '2016-11-09T18:49:27.000Z'
 const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
 const LATITUDE_DELTA = roundCoordinate(0.1)
 const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
-let LATITUDE = 37.7825177
-let LONGITUDE = -122.4106772
 
 const { width, height } = Dimensions.get('window')
 const ASPECT_RATIO = width / height
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
 const mapProvider = MapView.PROVIDER_GOOGLE
 
+// temporary position until we get the current location
+let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
+
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
 
 const updateLocationIsochrons = context => {
   // get current location
   navigator.geolocation.getCurrentPosition(position => {
-    LATITUDE = position.coords.latitude
-    LONGITUDE = position.coords.longitude
+    currentPosition = { latitude: position.coords.latitude, longitude: position.coords.longitude }
+    if (debug) console.tron.display({ name: 'current position', value: currentPosition })
     let locations = [ {
       title: 'Starting Location',
-      latitude: LATITUDE,
-      longitude: LONGITUDE,
+      latitude: currentPosition.latitude,
+      longitude: currentPosition.longitude,
     } ]
 
+    // isochron parameters
     let params = {
       latitude: roundCoordinate(locations[0].latitude),
       longitude: roundCoordinate(locations[0].longitude),
@@ -65,8 +69,8 @@ const updateLocationIsochrons = context => {
       context.setState({ initialPosition })
       context.setState({ locations })
       context.setState({ region: {
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       }})
@@ -88,8 +92,8 @@ class TravContainer extends React.Component {
       initialPosition: 'unknown',
       lastPosition: 'unknown',
       region: {
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
@@ -135,7 +139,7 @@ class TravContainer extends React.Component {
   }
 
   calloutPress (location) {
-    console.tron.display({ name: 'calloutPress location', value: location })
+    if (debug) console.tron.display({ name: 'calloutPress location', value: location })
   }
 
   renderMapMarkers (location) {
@@ -166,7 +170,7 @@ class TravContainer extends React.Component {
     if (value > 0) {
       polygonsFillColor[value - 1] = 2
     }
-    //console.tron.display({ name: 'polygonsFillColor', value: polygonsFillColor })
+    //if (debug) console.tron.display({ name: 'polygonsFillColor', value: polygonsFillColor })
     this.setState({ polygonsFillColor: polygonsFillColor, sliderValue: value })
   }
 
@@ -195,8 +199,8 @@ class TravContainer extends React.Component {
               * The url template of the tile server. The patterns {x} {y} {z} will be replaced at runtime
               * For example, http://c.tile.openstreetmap.org/{z}/{x}/{y}.png
               */
-              /**urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png'}*/
-              urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}
+              /**urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}*/
+              urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png'}
             />
           }
           { this.state.locations.map(location => this.renderMapMarkers.call(this, location)) }
@@ -229,24 +233,23 @@ class TravContainer extends React.Component {
           )
         }
 
-        <ActionButton buttonColor="rgba(231,76,60,1)"
+        <ActionButton buttonColor='rgba(231,76,60,1)'
           degrees={90}
-          icon={<Icon name='search'
-          style={styles.actionButton}></Icon>}
+          icon={<Icon name='search' style={styles.actionButton}></Icon>}
           spacing={10}
         >
-        <ActionButton.Item buttonColor='#9b59b6' title="Banks" onPress={() => console.tron.log("New Task tapped!")}>
-          <Icon name="university" style={styles.actionButtonIcon}/>
-        </ActionButton.Item>
-        <ActionButton.Item buttonColor='#3498db' title="Transit" onPress={() => console.tron.log("Notifications Tapped!")}>
-          <Icon name="bus" style={styles.actionButtonIcon} />
-        </ActionButton.Item>
-        <ActionButton.Item buttonColor='#ff6b6b' title="Medical" onPress={() => console.tron.log('All Tasks Tapped!')}>
-          <Icon name="ambulance" style={styles.actionButtonIcon}/>
-        </ActionButton.Item>
-        <ActionButton.Item buttonColor='#1abc9c' title="Slider" onPress={() => {this.setState({sliderVisible: !this.state.sliderVisible})}}>
-          <Icon name="info-circle" style={styles.actionButtonIcon}/>
-        </ActionButton.Item>
+          <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => { debug && console.tron.log('New Task tapped!') }}>
+            <Icon name='university' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#3498db' title='Transit' onPress={() => { debug && console.tron.log('Notifications Tapped!') }}>
+            <Icon name='bus' style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#ff6b6b' title='Medical' onPress={() => { debug && console.tron.log('All Tasks Tapped!') }}>
+            <Icon name='ambulance' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1abc9c' title='Slider' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
+            <Icon name='info-circle' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
         </ActionButton>
 
         { this.state.spinnerVisible && (
@@ -262,14 +265,7 @@ class TravContainer extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-  }
-}
+const mapStateToProps = state => { return {} }
+const mapDispatchToProps = dispatch => { return {} }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TravContainer)

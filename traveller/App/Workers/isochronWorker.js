@@ -18,7 +18,7 @@ self.onmessage = messageString => {
   }
 }
 
-const token = process.env.NAVITIA_TOKEN || Secrets.NAVITIA_TOKEN || '3a8b7ce9-ef1a-4ff5-b65a-5cffcafcfc47' // navitia API token
+const token = process.env.NAVITIA_TOKEN || Secrets.NAVITIA_TOKEN // navitia API token
 const navitiaUrl = 'https://api.navitia.io/v1'
 const serverUrl = process.env.ISOCHRON_SERVER_URL || Secrets.ISOCHRON_SERVER_URL || navitiaUrl
 const api = create({ baseURL: serverUrl })
