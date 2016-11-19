@@ -7,7 +7,7 @@ const axios = require('axios');
 
 const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?&radius=1609';
 const radar = 'https://maps.googleapis.com/maps/api/place/radarsearch/json?';
-const distance = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial';
+const distance = 'https://maps.googleapis.com/maps/api/distancematrix/json?';
 
 const key = process.env.GOOGLE_KEY || GOOGLE_KEY;
 
@@ -48,7 +48,7 @@ const getDistanceData = (arrayOfPlaces, lat, long) => {
   }
   return axios({
     method: 'get',
-    url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=transit&departure_time=now&transit_mode=bus|rail`
+    url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=transit&departure_time=now&transit_mode=bus|rail`
   })
   .then(response => response.data)
   .catch(error => console.error(error));

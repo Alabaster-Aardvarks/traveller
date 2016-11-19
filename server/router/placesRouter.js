@@ -12,7 +12,7 @@ placesRouter.get('/bank', (req, res) => {
   //need to get the coordinates of nearby search results as well
   let coordinates = [];
   //holder for response object
-  let result = {}; 
+  let result = []; 
   //to iterate over results
   let counter = 0;      
   placesController.getRadarData('bank', lat, long)
@@ -28,12 +28,13 @@ placesRouter.get('/bank', (req, res) => {
     .then(data => {
       console.log(data.rows[0].distance);
       data.destination_addresses.forEach(place => {
-        result[place] = {
+        result.push({
+          'name': place, 
           'time': data.rows[0].elements[counter].duration.text,
           'location': coordinates[counter],
           'distance': data.rows[0].elements[counter].distance.text,
           'metric distance': data.rows[0].elements[counter].distance.value 
-        };
+        });
         counter++;
       });
       res.status(200).json(result);
