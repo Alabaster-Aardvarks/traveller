@@ -5,6 +5,7 @@ import { View, ScrollView, Switch, Picker, Text, TouchableOpacity, Image } from 
 import { connect } from 'react-redux'
 import LoginActions, { isLoggedIn } from '../Redux/LoginRedux'
 import TemperatureActions from '../Redux/TemperatureRedux'
+import MapActions from '../Redux/MapRedux'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import { Colors, Images, Metrics } from '../Themes'
 import RoundedButton from '../Components/RoundedButton'
@@ -28,7 +29,7 @@ class SettingsScreen extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      map: {type: 'Google Maps', marker: 'map-marker'},
+      map: 'Google Maps',
       modalVisible: false,
       duration: 30,
       traffic: false,
@@ -247,14 +248,8 @@ class SettingsScreen extends React.Component {
           <SettingsList.Item title='Unit of measurement' titleInfo='Miles'/>
           <SettingsList.Item
             hasNavArrow={false}
-            switchState={this.state.traffic}
-            switchOnValueChange={() => {
-              if (this.state.traffic === false) {
-                this.setState({traffic: true})
-              } else {
-                this.setState({traffic: false})
-              }
-            }}
+            switchState={this.props.map.traffic}
+            switchOnValueChange={this.props.toggleTraffic}
             hasSwitch={true}
             title='Traffic'/>
           <SettingsList.Header headerText='isochrones' headerStyle={{color:'white', marginTop:50}}/>
@@ -263,7 +258,7 @@ class SettingsScreen extends React.Component {
             title='Clear isochrone cache'
             hasNavArrow={false}
             titleStyle={{color: 'blue'}}
-            onPress={() => window.alert('Isochrone cache cleared')} />
+            onPress={() => console.tron.log(this.props)} />
 
           <SettingsList.Header headerStyle={{color:'white', marginTop:50}}/>
           <SettingsList.Item title='About' />
@@ -278,17 +273,15 @@ class SettingsScreen extends React.Component {
 }
 
 SettingsScreen.propTypes = {
-  loggedIn: PropTypes.bool,
-  temperature: PropTypes.number,
-  city: PropTypes.string,
-  logout: PropTypes.func,
-  requestTemperature: PropTypes.func
+  map: PropTypes.object,
+  duration: PropTypes.number,
+  traffic: PropTypes.bool,
+  mileType: PropTypes.string,
+  mapType: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
   return {
-    temperature: state.temperature.temperature,
-    city: state.temperature.city,
     map: state.map,
     duration: state.duration,
     traffic: state.traffic,
@@ -300,7 +293,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(LoginActions.logout()),
-    requestTemperature: (city) => dispatch(TemperatureActions.temperatureRequest(city))
+    requestTemperature: (city) => dispatch(TemperatureActions.temperatureRequest(city)),
+    toggleTraffic: () => dispatch(MapActions.toggleTraffic())
+    // toggleMapType: () => dispatch(MapActions.toggleMapType())
   }
 }
 

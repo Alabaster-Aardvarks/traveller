@@ -8,7 +8,8 @@ export default () => {
   /* ------------- Assemble The Reducers ------------- */
   const rootReducer = combineReducers({
     temperature: require('./TemperatureRedux').reducer,
-    login: require('./LoginRedux').reducer
+    login: require('./LoginRedux').reducer,
+    map: require('./MapRedux').reducer
   })
 
   return configureStore(rootReducer, rootSaga)
