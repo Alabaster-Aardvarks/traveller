@@ -11,7 +11,7 @@ self.onmessage = messageString => {
   let message = JSON.parse(messageString)
 
   if (message.id === 'start') {
-    if (debug) { self.postMessage(JSON.stringify({ id: 'log', log: message.params })) }
+    if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'start', log: message.params })) }
     loadIsochron(message.params)
   } else {
     self.postMessage(JSON.stringify({ id: 'error', error: 'Isochron worker unknown message: ' + messageString }))
