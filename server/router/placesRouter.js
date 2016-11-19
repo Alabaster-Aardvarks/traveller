@@ -5,8 +5,8 @@ const placesRouter = express.Router();
 
 
 placesRouter.get('/bank', (req, res) => {
-  lat = req.body.lat || 37.7825177;
-  long = req.body.long || -122.4106772;
+  lat = req.query.lat || 37.7825177;
+  long = req.query.long || -122.4106772;
   //take results of nearby search and get their place ides
   let idList = [];
   //need to get the coordinates of nearby search results as well
