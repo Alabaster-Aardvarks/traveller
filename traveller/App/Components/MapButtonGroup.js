@@ -12,7 +12,8 @@ class MapButtonGroup extends React.Component {
   updateIndex (selectedIndex) {
     console.tron.log(this.state)
     this.setState({selectedIndex})
-    this.props.category = (this.props.buttons[selectedIndex])
+    // this.props.category = (this.props.buttons[selectedIndex])
+    this.props.setStateOfButtonGroup(this.props.category, this.props.buttons[selectedIndex])
 
     // this.setState({this.props.category: this.props.buttons[selectedIndex]})
   }

@@ -23,14 +23,20 @@ import I18n from 'react-native-i18n'
 import styles from './Styles/SettingsScreenStyle'
 
 class SettingsScreen extends React.Component {
-  state = {
-    map: {type: 'Google Maps', marker: 'map-marker'},
-    modalVisible: false,
-    duration: 30,
-    traffic: 'red',
-    mileType: 'Normal',
-    mapType: 'Miles'
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      map: {type: 'Google Maps', marker: 'map-marker'},
+      modalVisible: false,
+      duration: 30,
+      traffic: 'red',
+      mileType: 'Normal',
+      mapType: 'Miles'
+    }
+    this.setStateOfButtonGroup = this.setStateOfButtonGroup.bind(this)
   }
+
 
   componentWillReceiveProps (nextProps) {
     // Request push premissions only if the user has logged in.
@@ -67,6 +73,10 @@ class SettingsScreen extends React.Component {
         <Text style={styles.componentLabel}>{title}</Text>
       </View>
     )
+  }
+
+  setStateOfButtonGroup (categoryType, categoryValue) {
+    this.setState({[categoryType]: categoryValue})
   }
 
 
@@ -159,10 +169,12 @@ class SettingsScreen extends React.Component {
           <MapButtonGroup
             buttons={['Normal', 'Satellite', 'Terrain']}
             category={this.state.mapType}
+            setStateOfButtonGroup={this.setStateOfButtonGroup}
           />
           <MapButtonGroup
             buttons={['Miles', 'Kilometers']}
             category={this.state.mileType}
+            setStateOfButtonGroup={this.setStateOfButtonGroup}
           />
           {/* <ButtonGroup
             selectedIndex={1}
