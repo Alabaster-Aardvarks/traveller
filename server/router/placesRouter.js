@@ -7,21 +7,33 @@ const placesRouter = express.Router();
 placesRouter.get('/museum', (req, res) => {
   lat = req.body.lat || 37.7825177;
   long = req.body.long || -122.4106772;
-  let bundle = [];
+  //take results of nearby search and get their place ides
+  let idList = [];
+  //need to get the coordinates of nearby search results as well
+  let coordinates = [];
+  //holder for response object
   let result = {}; 
+  //to iterate over results
   let counter = 0;      
   placesController.getData('museum', lat, long)
   .then(data => {
-    data.results.forEach((place) => bundle.push(place.place_id));  
-    placesController.getDistanceData(bundle.splice(0, 24), 37.7825177, -122.4106772)
+    data.results.forEach((place) => {
+      idList.push(place.place_id);
+      coordinates.push(place.geometry.location);
+    });
+    //can only use 25 destinations at a time for Google distance matrix
+    let shortList = idList.splice(0, 24);  
+    placesController.getDistanceData(shortList, 37.7825177, -122.4106772)
     .then(data => {
       data.destination_addresses.forEach(place => {
-        result[place] = data.rows[0].elements[counter].duration.text;
+        result[place] = {
+          'time': data.rows[0].elements[counter].duration.text,
+          'location': coordinates[counter]
+        };
         counter++;
       });
       res.status(200).json(result);
-    })
-    .catch(err => res.sendStatus(500));
+    });
   })
   .catch(err => res.sendStatus(500));
 });
