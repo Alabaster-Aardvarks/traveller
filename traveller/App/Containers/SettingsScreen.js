@@ -108,7 +108,7 @@ class SettingsScreen extends React.Component {
                 onValueChange={(duration) => {
                   this.setState({duration})
                 }}
-                style={{ padding: 8, backgroundColor: 'white' }}
+                style={{ padding: 8, backgroundColor: 'white', borderRadius: 10 }}
                 >
                 <Picker.Item label="30min" value="30" />
                 <Picker.Item label="60min" value="60" />
@@ -164,7 +164,7 @@ class SettingsScreen extends React.Component {
             }
           />
           <Text style={styles.sectionText} >
-            Choose map brand.
+            tap to change map brand
           </Text>
           <MapButtonGroup
             buttons={['Normal', 'Satellite', 'Terrain']}
@@ -172,7 +172,7 @@ class SettingsScreen extends React.Component {
             setStateOfButtonGroup={this.setStateOfButtonGroup}
           />
           <Text style={styles.sectionText} >
-            Choose what map style you want to use.
+            tap to change map style
           </Text>
           <MapButtonGroup
             buttons={['Miles', 'Kilometers']}
@@ -183,11 +183,12 @@ class SettingsScreen extends React.Component {
             Choose type of distance
           </Text>
 
-          {/* <Button
+          <Button
             raised
             title='Traffic'
             icon={{name: 'car', type: 'font-awesome'}}
             backgroundColor={this.state.traffic}
+            buttonStyle={{borderRadius: 10}}
             onPress={() => {
               console.tron.log(this.state.traffic)
               if (this.state.traffic === 'red') {
@@ -195,10 +196,11 @@ class SettingsScreen extends React.Component {
               } else {
                 this.setState({traffic: 'red'})
               }
-            }} /> */}
+            }} />
             <Text style={styles.sectionText} >
 
             </Text>
+            
             <Button
               raised
               title={this.state.duration + 'min isochrone duration'}
@@ -218,8 +220,6 @@ class SettingsScreen extends React.Component {
             buttonStyle={{borderRadius: 10}}
             onPress={() => window.alert('Cache Cleared!')}
           />
-          {/* <RoundedButton text={this.state.map.type} onPress={() => this.setState({modalVisible: true})} />
-          <RoundedButton text='clear isochrone cache' onPress={() => window.alert('Cache Cleared!')}/> */}
         </ScrollView>
       </View>
     )
