@@ -3,7 +3,7 @@
 
 # Xcode #
 build/
-traveller.xcodeproj/
+**/traveller.xcodeproj/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -19,9 +19,12 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-project.xcworkspace
+**/project.xcworkspace/
+**/traveller.xcworkspace/
 *.dat*
-Pods/
+**/Pods/
+**/Podfile.lock
+**/Gemfile.lock
 
 # Environmental Variables #
 **/.env
