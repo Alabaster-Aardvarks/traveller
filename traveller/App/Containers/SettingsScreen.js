@@ -12,6 +12,7 @@ import FullButton from '../Components/FullButton'
 import MapButtonGroup from '../Components/MapButtonGroup'
 import { CheckBox, Card, Button, List, ListItem, ButtonGroup } from 'react-native-elements'
 import CustomActionSheet from 'react-native-custom-action-sheet'
+import SettingsList from 'react-native-settings-list';
 
 // external libs
 // import PushNotification from 'react-native-push-notification'
@@ -101,7 +102,7 @@ class SettingsScreen extends React.Component {
               ></Switch>
           </Card> */}
 
-          <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'>
+          {/* <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'>
             <View>
               <Picker
                 selectedValue={this.state.duration}
@@ -117,7 +118,7 @@ class SettingsScreen extends React.Component {
                 <Picker.Item label="150min" value="150" />
               </Picker>
             </View>
-          </CustomActionSheet>
+          </CustomActionSheet> */}
 
           {/* <List>
             {
@@ -149,7 +150,7 @@ class SettingsScreen extends React.Component {
             title='CARD WITH DIVIDER'>
 
           </Card> */}
-          <Button
+          {/* <Button
             raised
             title={this.state.map.type}
             icon={{name: this.state.map.marker, type: 'font-awesome'}}
@@ -200,7 +201,7 @@ class SettingsScreen extends React.Component {
             <Text style={styles.sectionText} >
 
             </Text>
-            
+
             <Button
               raised
               title={this.state.duration + 'min isochrone duration'}
@@ -219,7 +220,47 @@ class SettingsScreen extends React.Component {
             backgroundColor='red'
             buttonStyle={{borderRadius: 10}}
             onPress={() => window.alert('Cache Cleared!')}
+          /> */}
+
+          <View style={{flex:1}}>
+      <View style={{flex:1}}>
+        <SettingsList>
+        	<SettingsList.Header headerText='Map' headerStyle={{color:'white'}}/>
+          <SettingsList.Item
+            // icon={
+            //   <View style={{height:30,marginLeft:10,alignSelf:'center'}}>
+            //     <Image style={{alignSelf:'center',height:40, width:40}} source={}/>
+            //   </View>
+            // }
+            itemWidth={50}
+            title='Map type'
+            titleInfo={this.state.map.type}
+            onPress={() => {
+                if (this.state.map.type === 'Google Maps') {
+                  this.setState({map: {type: 'Apple Maps'}})
+                } else if (this.state.map.type === 'Apple Maps') {
+                  this.setState({map: {type: 'Google Maps'}})
+                }
+              }}
           />
+          <SettingsList.Item title='Map style' titleInfo='Normal'/>
+          <SettingsList.Item title='Unit of measurement' titleInfo='Miles'/>
+          <SettingsList.Item
+            hasNavArrow={false}
+            switchState={this.state.switchValue}
+            switchOnValueChange={this.onValueChange}
+            hasSwitch={true}
+            title='Traffic'/>
+          <SettingsList.Header headerText='isochrones' headerStyle={{color:'white', marginTop:50}}/>
+          <SettingsList.Item title='Max duration' titleInfo='60min'/>
+          <SettingsList.Item title='Clear cache' hasNavArrow={false} onPress={() => window.alert('Isochrone cache cleared')} />
+
+          <SettingsList.Header headerStyle={{color:'white', marginTop:50}}/>
+          <SettingsList.Item title='About' />
+        </SettingsList>
+      </View>
+    </View>
+
         </ScrollView>
       </View>
     )
