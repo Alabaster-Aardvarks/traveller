@@ -35,7 +35,7 @@
     "ramda": "^0.22.1",
     "react": "~15.3.0",
     "react-leaflet": "^1.0.0-rc.3",
-    "react-native": "^0.36.0",
+    "react-native": "^0.36.1",
     "react-native-action-button": "^2.0.14",
     "react-native-animatable": "^0.6.0",
     "react-native-cache": "^1.0.2",
