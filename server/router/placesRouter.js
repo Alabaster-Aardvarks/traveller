@@ -4,9 +4,9 @@ const placesController = require('../controller/placesController');
 const placesRouter = express.Router(); 
 
 
-placesRouter.get('/museum', (req, res) => {
-  lat = req.body.lat || 37.7825177;
-  long = req.body.long || -122.4106772;
+placesRouter.get('/bank', (req, res) => {
+  lat = req.query.lat || 37.7825177;
+  long = req.query.long || -122.4106772;
   //take results of nearby search and get their place ides
   let idList = [];
   //need to get the coordinates of nearby search results as well
@@ -15,15 +15,16 @@ placesRouter.get('/museum', (req, res) => {
   let result = {}; 
   //to iterate over results
   let counter = 0;      
-  placesController.getData('museum', lat, long)
+  placesController.getRadarData('bank', lat, long)
   .then(data => {
+    console.log(data.results.length);
     data.results.forEach((place) => {
       idList.push(place.place_id);
       coordinates.push(place.geometry.location);
     });
     //can only use 25 destinations at a time for Google distance matrix
     let shortList = idList.splice(0, 24);  
-    placesController.getDistanceData(shortList, 37.7825177, -122.4106772)
+    placesController.getDistanceData(shortList, lat, long)
     .then(data => {
       data.destination_addresses.forEach(place => {
         result[place] = {
