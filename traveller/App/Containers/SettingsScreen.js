@@ -235,7 +235,7 @@ class SettingsScreen extends React.Component {
             // }
             itemWidth={50}
             title='Map type'
-            titleInfo={this.state.map.type}
+            titleInfo={this.props.map.map}
             onPress={() => {
                 if (this.state.map.type === 'Google Maps') {
                   this.setState({map: {type: 'Apple Maps'}})
