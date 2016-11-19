@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from 'react'
 import { ScrollView, Image, BackAndroid } from 'react-native'
 import styles from './Styles/DrawerContentStyle'
@@ -19,33 +17,13 @@ class DrawerContent extends Component {
     })
   }
 
-  toggleDrawer () {
+  toggleDrawer = () => {
     this.context.drawer.toggle()
   }
 
-  // handlePressIsochron = () => {
-  //   this.toggleDrawer()
-  //   NavigationActions.isochronExamples()
-  // }
-
-  handlePressComponents = () => {
+  handlePressTraveller = () => {
     this.toggleDrawer()
-    NavigationActions.componentExamples()
-  }
-
-  handlePressUsage = () => {
-    this.toggleDrawer()
-    NavigationActions.usageExamples()
-  }
-
-  handlePressAPI = () => {
-    this.toggleDrawer()
-    NavigationActions.apiTesting()
-  }
-
-  handlePressTheme = () => {
-    this.toggleDrawer()
-    NavigationActions.theme()
+    NavigationActions.travContainer()
   }
 
   handlePressDevice = () => {
@@ -56,13 +34,10 @@ class DrawerContent extends Component {
   render () {
     return (
       <ScrollView style={styles.container}>
-        <Image source={Images.logo} style={styles.logo} />
-        {/* <DrawerButton text='Isochrones' onPress={this.handlePressIsochron} /> */}
-        <DrawerButton text='Component Examples' onPress={this.handlePressComponents} />
-        <DrawerButton text='Usage Examples' onPress={this.handlePressUsage} />
-        <DrawerButton text='API Testing' onPress={this.handlePressAPI} />
-        <DrawerButton text='Themes' onPress={this.handlePressTheme} />
-        <DrawerButton text='Device Info' onPress={this.handlePressDevice} />
+        <Image source={Images.plane} style={styles.logo} />
+        <DrawerButton text='Map' onPress={this.handlePressTraveller} />
+        <DrawerButton text='Settings' onPress={this.handlePressDevice} />
+        <DrawerButton text='About' onPress={this.handlePressDevice} />
       </ScrollView>
     )
   }
