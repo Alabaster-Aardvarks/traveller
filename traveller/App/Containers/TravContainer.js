@@ -94,6 +94,8 @@ class TravContainer extends React.Component {
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
+      sliderVisible: false,
+      sliderValue: 0,
     }
   }
 
@@ -146,7 +148,7 @@ class TravContainer extends React.Component {
       polygonsFillColor[value - 1] = 2
     }
     //console.tron.display({ name: 'polygonsFillColor', value: polygonsFillColor })
-    this.setState({ polygonsFillColor: polygonsFillColor })
+    this.setState({ polygonsFillColor: polygonsFillColor, sliderValue: value })
   }
 
   render () {
@@ -182,13 +184,17 @@ class TravContainer extends React.Component {
           }
         </MapView>
 
-        <Slider
-          minimumValue={ 0 }
-          maximumValue={ Math.max(1, this.state.isochronDurations.length - 1) }
-          step={ 1 }
-          style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }}
-          onValueChange={this.sliderValueChange.bind(this)}
-         />
+        { this.state.sliderVisible && (
+            <Slider
+              minimumValue={ 0 }
+              maximumValue={ Math.max(1, this.state.isochronDurations.length - 1) }
+              step={ 1 }
+              style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }}
+              value={ this.state.sliderValue }
+              onValueChange={this.sliderValueChange.bind(this)}
+            />
+          )
+        }
 
         <ActionButton buttonColor="rgba(231,76,60,1)"
           degrees={90}
@@ -205,8 +211,8 @@ class TravContainer extends React.Component {
         <ActionButton.Item buttonColor='#ff6b6b' title="Medical" onPress={() => console.tron.log('All Tasks Tapped!')}>
           <Icon name="ambulance" style={styles.actionButtonIcon}/>
         </ActionButton.Item>
-        <ActionButton.Item buttonColor='#1abc9c' title="Settings" onPress={() => console.tron.log('All Tasks Tapped!')}>
-          <Icon name="cog" style={styles.actionButtonIcon}/>
+        <ActionButton.Item buttonColor='#1abc9c' title="Slider" onPress={() => {this.setState({sliderVisible: !this.state.sliderVisible})}}>
+          <Icon name="info-circle" style={styles.actionButtonIcon}/>
         </ActionButton.Item>
         </ActionButton>
 

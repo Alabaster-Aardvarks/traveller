@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from 'react'
 import { ScrollView, Image, BackAndroid } from 'react-native'
 import styles from './Styles/DrawerContentStyle'
@@ -19,13 +17,13 @@ class DrawerContent extends Component {
     })
   }
 
-  toggleDrawer () {
+  toggleDrawer = () => {
     this.context.drawer.toggle()
   }
 
   handlePressTraveller = () => {
     this.toggleDrawer()
-    NavigationActions.travContainer();
+    NavigationActions.travContainer()
   }
 
   handlePressDevice = () => {
