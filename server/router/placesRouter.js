@@ -2,8 +2,9 @@
 const express = require('express');
 const placesController = require('../controller/placesController');
 const placesRouter = express.Router(); 
-//transit
-//health
+
+
+//actual working routes
 
 placesRouter.get('/bank', (req, res) => {
   lat = req.query.lat || 37.7825177;
