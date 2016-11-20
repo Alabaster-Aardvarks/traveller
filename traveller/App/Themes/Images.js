@@ -9,6 +9,8 @@ const images = {
   plane: require('../Images/plane.png'),
   tileBg: require('../Images/tile_bg.png'),
   topLogo: require('../Images/top_logo.png'),
+  launchScreen55: require('../Images/Launch55.png'),
+  launchScreen47: require('../Images/Launch47.png'),
 }
 
 export default images
