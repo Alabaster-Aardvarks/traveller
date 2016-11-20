@@ -23,13 +23,13 @@ const getData = (place, lat, long) => {
   .catch(error => console.error(error));
 };
 
-//how to use google radar search
+//how to use google radar search -searching in a 10 mile area
 const getRadarData = (place, lat, long) => {
   lat = lat || 37.7825177;
   long = long || -122.4106772;
   return axios({
     method: 'get',
-    url: `${radar}location=${lat},${long}&radius=4827&type=${place}&key=${key}`
+    url: `${radar}location=${lat},${long}&radius=16090&type=${place}&key=${key}`
   })
   .then(response =>response.data)
   .catch(error => console.error(error));

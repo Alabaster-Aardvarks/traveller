@@ -9,7 +9,8 @@ placesRouter.get('/bank', (req, res) => {
   long = req.query.long || -122.4106772;
   //take results of nearby search and get their place ides
   let idList = [];
-  //need to get the coordinates of nearby search results as well
+  //in case we end up with another hundred
+  let idList2 = [];
   let coordinates = [];
   //holder for response object
   let result = []; 
@@ -23,7 +24,8 @@ placesRouter.get('/bank', (req, res) => {
       coordinates.push(place.geometry.location);
     });
     //can only use 25 destinations at a time for Google distance matrix
-    let shortList = idList.splice(0, 24);  
+    let shortList = idList.splice(0, 99); 
+    console.log(idList.length);
     placesController.getDistanceData(shortList, lat, long)
     .then(data => {
       console.log(data.rows[0].distance);
