@@ -9,7 +9,8 @@ const { Types, Creators } = createActions({
   temperatureRequest: ['city'],
   temperatureSuccess: ['temperature'],
   temperatureFailure: null,
-  toggleTraffic: null
+  toggleTraffic: null,
+  setMaxDuration: ['duration']
 })
 
 export const MapTypes = Types
@@ -42,13 +43,16 @@ export const failure = (state: Object) =>
   state.merge({ fetching: false, error: true, temperature: null })
 
 export const toggleTraffic = (state: Object) => {
-  console.tron.log("clicked")
-  console.tron.log(state.traffic)
   if (state.traffic === false) {
     return state.merge({ traffic: true })
   } else {
     return state.merge({ traffic: false })
   }
+}
+
+export const setMaxDuration = (state: Object, { duration }: Object) => {
+  console.tron.log(duration)
+  state.merge({ duration: duration })
 }
 
 
@@ -58,5 +62,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.TEMPERATURE_REQUEST]: request,
   [Types.TEMPERATURE_SUCCESS]: success,
   [Types.TEMPERATURE_FAILURE]: failure,
-  [Types.TOGGLE_TRAFFIC]: toggleTraffic
+  [Types.TOGGLE_TRAFFIC]: toggleTraffic,
+  [Types.SETMAXDURATION]: setMaxDuration
 })

@@ -103,13 +103,11 @@ class SettingsScreen extends React.Component {
               ></Switch>
           </Card> */}
 
-          {/* <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'>
+          <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'>
             <View>
               <Picker
-                selectedValue={this.state.duration}
-                onValueChange={(duration) => {
-                  this.setState({duration})
-                }}
+                selectedValue={this.props.map.duration}
+                onValueChange={this.props.setMaxDuration}
                 style={{ padding: 8, backgroundColor: 'white', borderRadius: 10 }}
                 >
                 <Picker.Item label="30min" value="30" />
@@ -119,7 +117,7 @@ class SettingsScreen extends React.Component {
                 <Picker.Item label="150min" value="150" />
               </Picker>
             </View>
-          </CustomActionSheet> */}
+          </CustomActionSheet>
 
           {/* <List>
             {
@@ -225,7 +223,7 @@ class SettingsScreen extends React.Component {
 
           <View style={{flex:1}}>
       <View style={{flex:1}}>
-        <SettingsList>
+        <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
         	<SettingsList.Header headerText='Map' headerStyle={{color:'white'}}/>
           <SettingsList.Item
             // icon={
@@ -236,13 +234,7 @@ class SettingsScreen extends React.Component {
             itemWidth={50}
             title='Map type'
             titleInfo={this.props.map.map}
-            onPress={() => {
-                if (this.state.map.type === 'Google Maps') {
-                  this.setState({map: {type: 'Apple Maps'}})
-                } else if (this.state.map.type === 'Apple Maps') {
-                  this.setState({map: {type: 'Google Maps'}})
-                }
-              }}
+            onPress={() => NavigationActions.mapSelect()}
           />
           <SettingsList.Item title='Map style' titleInfo='Normal'/>
           <SettingsList.Item title='Unit of measurement' titleInfo='Miles'/>
@@ -253,7 +245,7 @@ class SettingsScreen extends React.Component {
             hasSwitch={true}
             title='Traffic'/>
           <SettingsList.Header headerText='isochrones' headerStyle={{color:'white', marginTop:50}}/>
-          <SettingsList.Item title='Max duration' titleInfo='60min'/>
+          <SettingsList.Item title='Max duration' titleInfo={(this.props.map.duration).toString() + 'min'} onPress={() => NavigationActions.maxDuration()} />
           <SettingsList.Item
             title='Clear isochrone cache'
             hasNavArrow={false}
@@ -294,7 +286,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(LoginActions.logout()),
     requestTemperature: (city) => dispatch(TemperatureActions.temperatureRequest(city)),
-    toggleTraffic: () => dispatch(MapActions.toggleTraffic())
+    toggleTraffic: () => dispatch(MapActions.toggleTraffic()),
+    setMaxDuration: (duration) => dispatch(MapActions.setMaxDuration(duration))
     // toggleMapType: () => dispatch(MapActions.toggleMapType())
   }
 }
