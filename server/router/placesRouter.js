@@ -2,7 +2,8 @@
 const express = require('express');
 const placesController = require('../controller/placesController');
 const placesRouter = express.Router(); 
-
+//transit
+//health
 
 placesRouter.get('/bank', (req, res) => {
   lat = req.query.lat || 37.7825177;
@@ -45,7 +46,87 @@ placesRouter.get('/bank', (req, res) => {
   .catch(err => res.sendStatus(500));
 });
 
+placesRouter.get('/health', (req, res) => {
+  lat = req.query.lat || 37.7825177;
+  long = req.query.long || -122.4106772;
+  //take results of nearby search and get their place ides
+  let idList = [];
+  //in case we end up with another hundred
+  let idList2 = [];
+  let coordinates = [];
+  //holder for response object
+  let result = []; 
+  //to iterate over results
+  let counter = 0;      
+  placesController.getRadarData('health', lat, long)
+  .then(data => {
+    // console.log(data);
+    data.results.forEach((place) => {
+      idList.push(place.place_id);
+      coordinates.push(place.geometry.location);
+    });
+    //can only use 25 destinations at a time for Google distance matrix
+    let shortList = idList.splice(0, 99); 
+    console.log(idList.length);
+    placesController.getDistanceData(shortList, lat, long)
+    .then(data => {
+      console.log(data.rows[0].distance);
+      data.destination_addresses.forEach(place => {
+        result.push({
+          'name': place, 
+          'time': data.rows[0].elements[counter].duration.text,
+          'location': coordinates[counter],
+          'distance': data.rows[0].elements[counter].distance.text,
+          'metric distance': data.rows[0].elements[counter].distance.value 
+        });
+        counter++;
+      });
+      res.status(200).json(result);
+    });
+  })
+  .catch(err => res.sendStatus(500));
+});
 
+placesRouter.get('/transit', (req, res) => {
+  lat = req.query.lat || 37.7825177;
+  long = req.query.long || -122.4106772;
+  //take results of nearby search and get their place ides
+  let idList = [];
+  //in case we end up with another hundred
+  let idList2 = [];
+  let coordinates = [];
+  //holder for response object
+  let result = []; 
+  //to iterate over results
+  let counter = 0;      
+  placesController.getRadarData('transit_station', lat, long)
+  .then(data => {
+    // console.log(data);
+    data.results.forEach((place) => {
+      idList.push(place.place_id);
+      coordinates.push(place.geometry.location);
+    });
+    //can only use 25 destinations at a time for Google distance matrix
+    let shortList = idList.splice(0, 99); 
+    console.log(idList.length);
+    placesController.getDistanceData(shortList, lat, long)
+    .then(data => {
+      console.log(data.rows[0].distance);
+      data.destination_addresses.forEach(place => {
+        result.push({
+          'name': place, 
+          'time': data.rows[0].elements[counter].duration.text,
+          'location': coordinates[counter],
+          'distance': data.rows[0].elements[counter].distance.text,
+          'metric distance': data.rows[0].elements[counter].distance.value 
+        });
+        counter++;
+      });
+      res.status(200).json(result);
+    });
+  })
+  .catch(err => res.sendStatus(500));
+});
 //DEV Testing 
 // const testArray = ["ChIJCdSUgO-AhYARuk0zTH3lyvU","ChIJ82ZgT_GAhYAR4rJh5-mnw9I","ChIJnbTAq--AhYAReI41AUmRd1w","ChIJtfiHddh_j4ARAjjq3GVQZdI"];
 //this places nearby search
