@@ -3,6 +3,12 @@ const express = require('express');
 const placesController = require('../controller/placesController');
 const placesRouter = express.Router(); 
 
+// debug ====================================================================
+const debug = require('debug');
+//debug.enable('placesRouter:*');
+const log = debug('placesRouter:log');
+const info = debug('placesRouter:info');
+const error = debug('placesRouter:error');
 
 //actual working routes
 
@@ -20,14 +26,14 @@ placesRouter.get('/bank', (req, res) => {
   let counter = 0;      
   placesController.getRadarData('bank', lat, long)
   .then(data => {
-    // console.log(data);
+    //log(data.results.length);
     data.results.forEach((place) => {
       idList.push(place.place_id);
       coordinates.push(place.geometry.location);
     });
     //can only use 25 destinations at a time for Google distance matrix
     let shortList = idList.splice(0, 99); 
-    console.log(idList.length);
+    //log(shortList);
     placesController.getDistanceData(shortList, lat, long)
     .then(data => {
       console.log(data.rows[0].distance);
@@ -41,6 +47,7 @@ placesRouter.get('/bank', (req, res) => {
         });
         counter++;
       });
+      //log(result);
       res.status(200).json(result);
     });
   })
@@ -132,10 +139,10 @@ placesRouter.get('/transit', (req, res) => {
 // const testArray = ["ChIJCdSUgO-AhYARuk0zTH3lyvU","ChIJ82ZgT_GAhYAR4rJh5-mnw9I","ChIJnbTAq--AhYAReI41AUmRd1w","ChIJtfiHddh_j4ARAjjq3GVQZdI"];
 //this places nearby search
 placesRouter.get('/devTest1', (req, res) =>{
-  // console.log('look for coordinates in here', req);
+  //log('look for coordinates in here', req);
   placesController.getData('museum', 37.7825177, -122.4106772)
   .then(data => {
-    console.log(data);
+    //log(data);
     res.status(200).json(data);
   })
   .catch(err => res.sendStatus(500));
@@ -143,10 +150,10 @@ placesRouter.get('/devTest1', (req, res) =>{
 
 //places in a radar radius
 placesRouter.get('/devTest2', (req, res) =>{
-  // console.log('look for coordinates in here', req);
+  //log('look for coordinates in here', req);
   placesController.getRadarData('museum', 37.7825177, -122.4106772)
   .then(data => {
-    console.log(data);
+    //log(data);
     res.status(200).json(data);
   })
   .catch(err => res.sendStatus(500));
@@ -154,10 +161,10 @@ placesRouter.get('/devTest2', (req, res) =>{
 
 //how to get to an array of places, maximum of 25 in array
 placesRouter.get('/devTest3', (req, res) =>{
-  // console.log('look for coordinates in here', req);
+  //log('look for coordinates in here', req);
   placesController.getDistanceData(testArray, 37.7825177, -122.4106772)
   .then(data => {
-    console.log(data);
+    //log(data);
     res.status(200).json(data);
   })
   .catch(err => res.sendStatus(500));

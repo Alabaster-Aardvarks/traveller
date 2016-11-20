@@ -75,7 +75,7 @@ export const updateIsochrons = args => {
       updateIsochronsState && updateIsochronsState(isochronsState)
       terminateIsochronWorker()
     } else if (message.id === 'log') {
-      if (debug) console.tron.display({ name: 'Isochron worker ' + message.name, value: message.log })
+      console.tron.display({ name: 'Isochron worker ' + message.name, value: message.log })
     } else if (message.id === 'error') {
       console.tron.error('Isochron worker reported an error: ' + message.error)
     } else {

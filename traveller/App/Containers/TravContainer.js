@@ -12,6 +12,7 @@ import MapCallout from '../Components/MapCallout'
 import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
+import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
 
 const debug = false
 
@@ -41,9 +42,10 @@ let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
 
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
 
-const updateLocationIsochrons = context => {
+const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
   // get current location
   navigator.geolocation.getCurrentPosition(position => {
+    if (newPosition) { position = newPosition }
     currentPosition = { latitude: position.coords.latitude, longitude: position.coords.longitude }
     if (debug) console.tron.display({ name: 'current position', value: currentPosition })
     let locations = [ {
@@ -62,20 +64,25 @@ const updateLocationIsochrons = context => {
       skip: skipIsochrons
     }
 
+    Object.keys(placesTypes).map(type => {
+      placesTypes[type] && getPlaces(type, currentPosition)
+    })
+
     if (!context) {
       updateIsochrons({ params: params })
     } else {
       let initialPosition = JSON.stringify(position)
-      context.setState({ initialPosition })
-      context.setState({ locations })
-      context.setState({ region: {
+      let newRegion = {
         latitude: currentPosition.latitude,
         longitude: currentPosition.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
-      }})
-      context.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
-      context.updatePolygons({ isochrons: params })
+      }
+      context.setState({ initialPosition })
+      context.setState({ locations })
+      context.setState({ region: newRegion })
+      animateToRegion && context.refs.map.animateToRegion(newRegion, 500)
+      context.updatePolygons.call(context, { isochrons: params })
     }
   },
   error => console.tron.error(error),
@@ -108,13 +115,13 @@ class TravContainer extends React.Component {
       spinnerVisible: true,
       sliderVisible: false,
       sliderValue: 0,
+      placesTypes: {},
     }
   }
 
   componentDidMount() {
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
-    updateLocationIsochrons(this)
-    this.refs.map.animateToRegion(this.state.region, 500)
+    updateLocationIsochrons(this, true)
   }
 
   componentWillUnmount () {
@@ -123,6 +130,7 @@ class TravContainer extends React.Component {
   }
 
   updatePolygons (params) {
+    this.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
     updateIsochrons({ params: params.isochrons })
   }
 
@@ -142,14 +150,38 @@ class TravContainer extends React.Component {
     if (debug) console.tron.display({ name: 'calloutPress location', value: location })
   }
 
-  renderMapMarkers (location) {
+  renderMapMarkers (place, index, type) {
+    let location = {}
+    let pinColor = 'rgba(21, 107, 254, 0.9)'
+    if (!type) {
+      location = place
+    } else {
+      let placeTravelTime = convertDayHourMinToSeconds(place.time)
+      if (this.state.sliderValue > 0) {
+        if (placeTravelTime < this.state.isochronDurations[this.state.sliderValue - 1] ||
+            placeTravelTime > this.state.isochronDurations[this.state.sliderValue]) {
+          return undefined
+        }
+      } else {
+        if (placeTravelTime > this.state.isochronDurations[this.state.isochronDurations.length - 1]) {
+          return undefined
+        }
+      }
+      location.title = `${place.name} - ${place.time}`
+      location.latitude = place.location.lat
+      location.longitude = place.location.lng
+      pinColor = type === 'bank'    ? 'rgba(160, 57, 175, 0.9)' :
+                 type === 'transit' ? 'rgba(6, 142, 219, 0.9)'  :
+                 type === 'health'  ? 'rgba(255, 71, 87, 0.9)'  : 'rgba(100, 100, 100, 0.9)'
+    }
+
     return (
       <MapView.Marker
-        pinColor='rgba(21, 107, 254, 0.9)'
-        draggable
+        pinColor={pinColor}
+        draggable={ type || index !== 0 ? false : true}
         key={location.title}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-        onDragEnd={ e => {
+        onDragEnd={ type || index !== 0 ? undefined : e => {
           let newRegion = this.state.region
           newRegion.latitude = e.nativeEvent.coordinate.latitude
           newRegion.longitude = e.nativeEvent.coordinate.longitude
@@ -174,9 +206,21 @@ class TravContainer extends React.Component {
     this.setState({ polygonsFillColor: polygonsFillColor, sliderValue: value })
   }
 
+  changePlacesType (type) {
+    let placesTypes = this.state.placesTypes
+    placesTypes[type] = placesTypes[type] ? false : true
+    this.setState({ placesTypes: placesTypes })
+  }
+
+  onMapLongPress ({ coordinate }) {
+    console.tron.display({ name: 'onMapLongPress', value: coordinate })
+    let newPosition = { coords: coordinate }
+    updateLocationIsochrons(this, true, newPosition)
+  }
+
   render () {
     // wait for all polygons to be loaded
-    const polygonsCount = (savedPolygons && this.state.polygonsState === ISOCHRON_LOADED) ? savedPolygons.length : 0
+    const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
     return (
       <View style={styles.container}>
@@ -187,6 +231,7 @@ class TravContainer extends React.Component {
           style={styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}
+          onLongPress={ e => this.onMapLongPress.call(this, e.nativeEvent) }
           showsUserLocation={this.state.showUserLocation}
           showsCompass={true}
           showsScale={true}
@@ -203,7 +248,10 @@ class TravContainer extends React.Component {
               urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png'}
             />
           }
-          { this.state.locations.map(location => this.renderMapMarkers.call(this, location)) }
+          { Object.keys(this.state.placesTypes).map(type => {
+              return (!this.state.placesTypes[type] || !savedPlaces[type] || savedPlaces[type].length === 0) ? undefined : savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type))
+            })
+          }
           { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
               return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
                 return (
@@ -219,6 +267,7 @@ class TravContainer extends React.Component {
               })
             })
           }
+          { this.state.locations.map((location, index) => this.renderMapMarkers.call(this, location, index)) }
         </MapView>
 
         { this.state.sliderVisible && (
@@ -238,13 +287,13 @@ class TravContainer extends React.Component {
           icon={<Icon name='search' style={styles.actionButton}></Icon>}
           spacing={10}
         >
-          <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => { debug && console.tron.log('New Task tapped!') }}>
+          <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => this.changePlacesType.call(this, 'bank')}>
             <Icon name='university' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title='Transit' onPress={() => { debug && console.tron.log('Notifications Tapped!') }}>
+          <ActionButton.Item buttonColor='#3498db' title='Transit' onPress={() => this.changePlacesType.call(this, 'transit')}>
             <Icon name='bus' style={styles.actionButtonIcon} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' title='Medical' onPress={() => { debug && console.tron.log('All Tasks Tapped!') }}>
+          <ActionButton.Item buttonColor='#ff6b6b' title='Medical' onPress={() => this.changePlacesType.call(this, 'medical')}>
             <Icon name='ambulance' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#1abc9c' title='Slider' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
