@@ -103,21 +103,6 @@ class SettingsScreen extends React.Component {
               ></Switch>
           </Card> */}
 
-          <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'>
-            <View>
-              <Picker
-                selectedValue={this.props.map.duration}
-                onValueChange={this.props.setMaxDuration}
-                style={{ padding: 8, backgroundColor: 'white', borderRadius: 10 }}
-                >
-                <Picker.Item label="30min" value="30" />
-                <Picker.Item label="60min" value="60" />
-                <Picker.Item label="90min" value="90" />
-                <Picker.Item label="120min" value="120" />
-                <Picker.Item label="150min" value="150" />
-              </Picker>
-            </View>
-          </CustomActionSheet>
 
           {/* <List>
             {
@@ -286,8 +271,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(LoginActions.logout()),
     requestTemperature: (city) => dispatch(TemperatureActions.temperatureRequest(city)),
-    toggleTraffic: () => dispatch(MapActions.toggleTraffic()),
-    setMaxDuration: (duration) => dispatch(MapActions.setMaxDuration(duration))
+    toggleTraffic: () => dispatch(MapActions.toggleTraffic())
     // toggleMapType: () => dispatch(MapActions.toggleMapType())
   }
 }

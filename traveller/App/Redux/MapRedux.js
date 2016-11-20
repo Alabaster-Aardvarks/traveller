@@ -50,9 +50,9 @@ export const toggleTraffic = (state: Object) => {
   }
 }
 
-export const setMaxDuration = (state: Object, { duration }: Object) => {
-  console.tron.log(duration)
-  state.merge({ duration: duration })
+export const setMaxDuration = (state: Object, action: Object) => {
+  const { duration } = action
+  return state.merge({ duration })
 }
 
 
@@ -63,5 +63,5 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.TEMPERATURE_SUCCESS]: success,
   [Types.TEMPERATURE_FAILURE]: failure,
   [Types.TOGGLE_TRAFFIC]: toggleTraffic,
-  [Types.SETMAXDURATION]: setMaxDuration
+  [Types.SET_MAX_DURATION]: setMaxDuration
 })

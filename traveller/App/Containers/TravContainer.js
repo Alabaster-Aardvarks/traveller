@@ -127,8 +127,6 @@ class TravContainer extends React.Component {
   componentWillUnmount () {
     setUpdateIsochronsStateFn(null)
     terminateIsochronWorker()
-    console.tron.log(this.state)
-    console.tron.log(this.props)
   }
 
   updatePolygons (params) {

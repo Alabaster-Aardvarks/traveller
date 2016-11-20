@@ -20,23 +20,40 @@ import styles from './Styles/SettingsScreenStyle'
 
 class MaxDurationScreen extends React.Component {
 
+  // constructor (props: Object) {
+  //   super(props)
+  //   this.state = {
+  //     modalVisible: false
+  //   }
+  // }
+
   render () {
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
-          <View style={{flex:1}}>
-            <View style={{flex:1}}>
+          {/* <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'> */}
+            {/* <View> */}
+              <Picker
+                selectedValue={this.props.map.duration}
+                onValueChange={this.props.setMaxDuration}
+                style={{backgroundColor: 'white'}}
+                >
+                <Picker.Item label="30min" value={30} />
+                <Picker.Item label="60min" value={60} />
+                <Picker.Item label="90min" value={90} />
+                <Picker.Item label="120min" value={120} />
+                <Picker.Item label="150min" value={150} />
+              </Picker>
               <SettingsList>
-                <SettingsList.Header />
-                  <SettingsList.Item
-                    title='Google Maps'
-                    arrowIcon={<Icon name="check" size={14} color="blue" />}
-                  />
-                  <SettingsList.Item title='Apple Maps' />
-              </SettingsList>
-            </View>
-          </View>
+              <SettingsList.Item
+                title='Clear isochrone cache'
+                hasNavArrow={false}
+                titleStyle={{color: 'blue'}}
+                onPress={() => console.tron.log(this.props)} />
+                </SettingsList>
+            {/* </View> */}
+          {/* </CustomActionSheet> */}
         </ScrollView>
       </View>
     )
@@ -46,16 +63,16 @@ class MaxDurationScreen extends React.Component {
 const mapStateToProps = (state) => {
   return {
     map: state.map,
+    duration: state.duration,
+    traffic: state.traffic,
+    mileType: state.mileType,
     mapType: state.mapType
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // logout: () => dispatch(LoginActions.logout()),
-    // requestTemperature: (city) => dispatch(TemperatureActions.temperatureRequest(city)),
-    // toggleTraffic: () => dispatch(MapActions.toggleTraffic())
-    // toggleMapType: () => dispatch(MapActions.toggleMapType())
+    setMaxDuration: (duration) => dispatch(MapActions.setMaxDuration(duration))
   }
 }
 
