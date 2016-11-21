@@ -9,7 +9,7 @@ const serverUrl = process.env.PLACES_SERVER_URL || Secrets.PLACES_SERVER_URL
 const api = create({ baseURL: serverUrl })
 
 export let savedPlaces = {}
-export let placesTypes = { 'bank': true, 'health': false, 'transit': false  } // FIXME
+export let placesTypes = { 'bank': true, 'health': true, 'transit': true  } // FIXME
 
 api.setHeaders({ 'Authorization': 'Basic ' + encode(token) })
 
