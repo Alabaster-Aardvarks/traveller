@@ -5,6 +5,13 @@ const axios = require('axios');
 //1609 meters = 1 mile
 //4827 meters = 3 miles
 
+// debug ====================================================================
+const debug = require('debug');
+//debug.enable('placesController:*');
+const log = debug('placesController:log');
+const info = debug('placesController:info');
+const error = debug('placesController:error');
+
 const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?&radius=1609';
 const radar = 'https://maps.googleapis.com/maps/api/place/radarsearch/json?';
 const distance = 'https://maps.googleapis.com/maps/api/distancematrix/json?';
@@ -20,7 +27,7 @@ const getData = (place, lat, long) => {
     url: `${url}&type=${place}&location=${lat},${long}&key=${key}`
   })
   .then(response => response.data)
-  .catch(error => console.error(error));
+  .catch(error => error(error));
 };
 
 //how to use google radar search -searching in a 10 mile area
@@ -29,10 +36,10 @@ const getRadarData = (place, lat, long) => {
   long = long || -122.4106772;
   return axios({
     method: 'get',
-    url: `${radar}location=${lat},${long}&radius=16090&type=${place}&key=${key}`
+    url: `${radar}location=${lat},${long}&radius=50000&type=${place}&key=${key}` // FIXME: distance needs to be sent by client
   })
   .then(response =>response.data)
-  .catch(error => console.error(error));
+  .catch(error => error(error));
 };
 
 //google distance matrix 
@@ -51,7 +58,7 @@ const getDistanceData = (arrayOfPlaces, lat, long) => {
     url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=transit&departure_time=now&transit_mode=bus|rail`
   })
   .then(response => response.data)
-  .catch(error => console.error(error));
+  .catch(error => error(error));
 };
 
 module.exports = {

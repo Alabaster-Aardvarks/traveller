@@ -1,5 +1,5 @@
-  //for API keys - create a .env file for google API in dev environments 
-require('dotenv').config({silent: true}); 
+//for API keys - create a .env file for google API in dev environments 
+require('dotenv').config({ silent: true, path: './traveller/.env' }); 
 //middleware
 const express = require('express');
 const morgan = require('morgan');
@@ -8,6 +8,14 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const placesRouter = require('./router/placesRouter');
 const navitiaRouter = require('./router/navitiaRouter');
+
+// debug ====================================================================
+const debug = require('debug');
+//debug.enable('server:*');
+const log = debug('server:log');
+const info = debug('server:info');
+const error = debug('server:error');
+
 const app = express();
 
 // Don't enable CORS in production.

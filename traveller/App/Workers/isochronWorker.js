@@ -36,7 +36,6 @@ const loadIsochron = params => {
   let durations = useBoundaryDuration ? [ params.durations ] : params.durations
   let dateTime = params.dateTime.replace(/\.\d{3}/,'').replace(/[-:]*/g, '').replace(/Z$/, '') // remove second decimals, separators, and ending Z
   let downSamplingCoordinates = params.downSamplingCoordinates
-  self.postMessage(JSON.stringify({ id: 'log', name: 'params', log: params }))
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'params', log: params })) }
 
   // get region based on location
@@ -44,6 +43,7 @@ const loadIsochron = params => {
   const regionUrl = useNavitia ? navitiaRegionUrl : serverEndpointUrl
   const regionQuery = useNavitia ? null : { url: `${navitiaUrl}${navitiaRegionUrl}` }
 
+  if (debug) self.postMessage(JSON.stringify({ id: 'log', name: 'navitia region request url', log: regionUrl }))
   return api.get(regionUrl, regionQuery)
   .then(resp => {
     if (!resp.ok) {
@@ -74,6 +74,7 @@ const loadIsochron = params => {
         let url = useNavitia ? navitiaIsochronUrl : serverEndpointUrl
         let query = useNavitia ? null : { url: `${navitiaUrl}${navitiaIsochronUrl}` }
 
+        if (debug) self.postMessage(JSON.stringify({ id: 'log', name: 'navitia request url', log: url }))
         return api.get(url, query)
         .then(resp => {
           if (!resp.ok) {
@@ -85,6 +86,7 @@ const loadIsochron = params => {
             duration.shift() // remove first entry
             duration.map((d, idx) => drawIsochron(resp.data.isochrones[idx], idx))
           } else {
+            if (debug) self.postMessage(JSON.stringify({ id: 'log', name: 'navitia isochron', log: resp.data.isochrones[0] }))
             drawIsochron(resp.data.isochrones[0], index - 1, downSamplingCoordinates) // we have only one isochrone
           }
         })
