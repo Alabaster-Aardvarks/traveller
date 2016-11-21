@@ -26,17 +26,31 @@ placesRouter.get('/bank', (req, res) => {
   let counter = 0;      
   placesController.getRadarData('bank', lat, long)
   .then(data => {
-    //log(data.results.length);
-    data.results.forEach((place) => {
+    if (!data.results.length) {
+      console.error('No google places data found for banks.');
+      res.sendStatus(500);
+      return;
+    }
+    log(data);
+    data.results.forEach(place => {
       idList.push(place.place_id);
       coordinates.push(place.geometry.location);
     });
     //can only use 25 destinations at a time for Google distance matrix
-    let shortList = idList.splice(0, 99); 
-    //log(shortList);
+    let shortList = idList.splice(0, 25); 
+    log(shortList);
     placesController.getDistanceData(shortList, lat, long)
     .then(data => {
-      console.log(data.rows[0].distance);
+      if (data.error_message) {
+        console.error(`Not able to get distance data for banks [${data.error_message}]`);
+        res.sendStatus(500);
+        return;
+      }
+      if (!data.rows || !data.rows.length) {
+        console.error('Not able to get distance data for banks (reached quota?).');
+        res.sendStatus(500);
+        return;
+      }
       data.destination_addresses.forEach(place => {
         result.push({
           'name': place, 
@@ -47,11 +61,17 @@ placesRouter.get('/bank', (req, res) => {
         });
         counter++;
       });
-      //log(result);
       res.status(200).json(result);
+    })
+    .catch(err => {
+      console.error(`Not able to get distance data for banks [${err}]`);
+      res.sendStatus(500);
     });
   })
-  .catch(err => res.sendStatus(500));
+  .catch(err => {
+    console.error(err);
+    res.sendStatus(500);
+  });
 });
 
 placesRouter.get('/health', (req, res) => {
@@ -68,31 +88,51 @@ placesRouter.get('/health', (req, res) => {
   let counter = 0;      
   placesController.getRadarData('health', lat, long)
   .then(data => {
-    // console.log(data);
-    data.results.forEach((place) => {
+    if (!data.results.length) {
+      console.error('No google places data found for health.');
+      res.sendStatus(500);
+      return;
+    }
+    log(data);
+    data.results.forEach(place => {
       idList.push(place.place_id);
       coordinates.push(place.geometry.location);
     });
     //can only use 25 destinations at a time for Google distance matrix
-    let shortList = idList.splice(0, 99); 
-    console.log(idList.length);
+    let shortList = idList.splice(0, 25);
     placesController.getDistanceData(shortList, lat, long)
     .then(data => {
-      console.log(data.rows[0].distance);
+      if (data.error_message) {
+        console.error(`Distance data API request returned an error for health [${data.error_message}]`);
+        res.sendStatus(500);
+        return;
+      }
+      if (!data.rows || !data.rows.length) {
+        console.error('Not able to get distance data for health (reached quota?).');
+        res.sendStatus(500);
+        return;
+      }
       data.destination_addresses.forEach(place => {
         result.push({
-          'name': place, 
+          'name': place,
           'time': data.rows[0].elements[counter].duration.text,
           'location': coordinates[counter],
           'distance': data.rows[0].elements[counter].distance.text,
-          'metric distance': data.rows[0].elements[counter].distance.value 
+          'metric distance': data.rows[0].elements[counter].distance.value
         });
         counter++;
       });
       res.status(200).json(result);
+    })
+    .catch(err => {
+      console.error(`Not able to get distance data for health [${err}]`);
+      res.sendStatus(500);
     });
   })
-  .catch(err => res.sendStatus(500));
+  .catch(err => {
+    console.error(err);
+    res.sendStatus(500);
+  });
 });
 
 placesRouter.get('/transit', (req, res) => {
@@ -109,17 +149,31 @@ placesRouter.get('/transit', (req, res) => {
   let counter = 0;      
   placesController.getRadarData('transit_station', lat, long)
   .then(data => {
-    // console.log(data);
-    data.results.forEach((place) => {
+    if (!data.results.length) {
+      console.error('No google places data found for transit.');
+      res.sendStatus(500);
+      return;
+    }
+    log(data);
+    data.results.forEach(place => {
       idList.push(place.place_id);
       coordinates.push(place.geometry.location);
     });
     //can only use 25 destinations at a time for Google distance matrix
-    let shortList = idList.splice(0, 99); 
-    console.log(idList.length);
+    let shortList = idList.splice(0, 25); 
+    log(shortList);
     placesController.getDistanceData(shortList, lat, long)
     .then(data => {
-      console.log(data.rows[0].distance);
+      if (data.error_message) {
+        console.error(`Not able to get distance data for transit [${data.error_message}]`);
+        res.sendStatus(500);
+        return;
+      }
+      if (!data.rows || !data.rows.length) {
+        console.error('Not able to get distance data for transit (reached quota?).');
+        res.sendStatus(500);
+        return;
+      }
       data.destination_addresses.forEach(place => {
         result.push({
           'name': place, 
@@ -131,10 +185,18 @@ placesRouter.get('/transit', (req, res) => {
         counter++;
       });
       res.status(200).json(result);
+    })
+    .catch(err => {
+      console.error(`Not able to get distance data for transit [${err}]`);
+      res.sendStatus(500);
     });
   })
-  .catch(err => res.sendStatus(500));
+  .catch(err => {
+    console.error(err);
+    res.sendStatus(500);
+  });
 });
+
 //DEV Testing 
 // const testArray = ["ChIJCdSUgO-AhYARuk0zTH3lyvU","ChIJ82ZgT_GAhYAR4rJh5-mnw9I","ChIJnbTAq--AhYAReI41AUmRd1w","ChIJtfiHddh_j4ARAjjq3GVQZdI"];
 //this places nearby search

@@ -27,10 +27,10 @@ const getData = (place, lat, long) => {
     url: `${url}&type=${place}&location=${lat},${long}&key=${key}`
   })
   .then(response => response.data)
-  .catch(error => error(error));
+  .catch(error => console.error(error));
 };
 
-//how to use google radar search -searching in a 10 mile area
+//how to use google radar search -searching in a 50 mile area
 const getRadarData = (place, lat, long) => {
   lat = lat || 37.7825177;
   long = long || -122.4106772;
@@ -38,8 +38,11 @@ const getRadarData = (place, lat, long) => {
     method: 'get',
     url: `${radar}location=${lat},${long}&radius=50000&type=${place}&key=${key}` // FIXME: distance needs to be sent by client
   })
-  .then(response =>response.data)
-  .catch(error => error(error));
+  .then(response => {
+    //log('getRadarData response', response.data);
+    return response.data;
+  })
+  .catch(error => console.error(error));
 };
 
 //google distance matrix 
@@ -47,18 +50,24 @@ const getDistanceData = (arrayOfPlaces, lat, long) => {
   lat = lat || 37.7825177;
   long = long || -122.4106772;
   let destinationString = 'place_id:';
-  for (var i = 0; i < arrayOfPlaces.length; i++) {
+  for (let i = 0; i < arrayOfPlaces.length; i++) {
     destinationString += arrayOfPlaces[i];
     if (i !== arrayOfPlaces.length - 1 ) {
       destinationString += '|place_id:';
     }
   }
+  log('getDistanceData destinationString', destinationString);
   return axios({
     method: 'get',
     url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=transit&departure_time=now&transit_mode=bus|rail`
   })
-  .then(response => response.data)
-  .catch(error => error(error));
+  .then(response => {
+    log('getDistanceData response', response.data);
+    return response.data;
+  })
+  .catch(error => {
+    console.error(error)
+  });
 };
 
 module.exports = {
