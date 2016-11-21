@@ -25,8 +25,7 @@ navitiaRouter.get('*', (req, res) => {
         res.status(200).json(data);
       }).catch(err => res.sendStatus(500));
     }
-  }).catch(err => res.sendStatus(500));
-   
+  }).catch(err => res.sendStatus(500));   
 });
 
 module.exports = navitiaRouter;
