@@ -11,7 +11,7 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
-         isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED } from './isochron'
+         isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
 
 const debug = false
@@ -136,9 +136,12 @@ class TravContainer extends React.Component {
 
   updatePolygonsState (state) {
     this.setState({ polygonsState: state })
-    this.setState({ networkActivityIndicatorVisible: (state === ISOCHRON_LOADED) ? false : true })
+    this.setState({ networkActivityIndicatorVisible: (state === ISOCHRON_LOADING) ? true : false })
     let context = this
-    if (state === ISOCHRON_LOADED) {
+    if (state === ISOCHRON_ERROR) {
+      context.setState({ spinnerVisible: false })
+      alert('No isochrons found for this location.')
+    } else if (state === ISOCHRON_LOADED) {
       // delay the removal of the spinner overlay to give time for the isochrons to appear
       setTimeout(() => { context.setState({ spinnerVisible: false }) }, 150)
     } else {
@@ -245,7 +248,7 @@ class TravContainer extends React.Component {
               * For example, http://c.tile.openstreetmap.org/{z}/{x}/{y}.png
               */
               /**urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}*/
-              urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png'}
+              urlTemplate={'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'}
             />
           }
           { Object.keys(this.state.placesTypes).map(type => {
@@ -293,7 +296,7 @@ class TravContainer extends React.Component {
           <ActionButton.Item buttonColor='#3498db' title='Transit' onPress={() => this.changePlacesType.call(this, 'transit')}>
             <Icon name='bus' style={styles.actionButtonIcon} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' title='Medical' onPress={() => this.changePlacesType.call(this, 'medical')}>
+          <ActionButton.Item buttonColor='#ff6b6b' title='Medical' onPress={() => this.changePlacesType.call(this, 'health')}>
             <Icon name='ambulance' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#1abc9c' title='Slider' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>

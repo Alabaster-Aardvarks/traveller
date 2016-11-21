@@ -5,6 +5,7 @@ const debug = false
 export const ISOCHRON_NOT_LOADED = 'ISOCHRON_NOT_LOADED'
 export const ISOCHRON_LOADING = 'ISOCHRON_LOADING'
 export const ISOCHRON_LOADED = 'ISOCHRON_LOADED'
+export const ISOCHRON_ERROR = 'ISOCHRON_ERROR'
 
 let savedArgString = ''
 let isochronsState = ISOCHRON_NOT_LOADED
@@ -78,8 +79,14 @@ export const updateIsochrons = args => {
       console.tron.display({ name: 'Isochron worker ' + message.name, value: message.log })
     } else if (message.id === 'error') {
       console.tron.error('Isochron worker reported an error: ' + message.error)
+      isochronsState = ISOCHRON_ERROR
+      updateIsochronsState && updateIsochronsState(isochronsState)
+      terminateIsochronWorker()
     } else {
       console.tron.error('Isochron worker unknown message: ' + messageString)
+      isochronsState = ISOCHRON_ERROR
+      updateIsochronsState && updateIsochronsState(isochronsState)
+      terminateIsochronWorker()
     }
   }
 
