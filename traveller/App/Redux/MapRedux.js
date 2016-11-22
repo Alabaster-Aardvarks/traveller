@@ -23,7 +23,7 @@ export const INITIAL_STATE = Immutable({
   duration: 60,
   traffic: false,
   unitOfMeasurement: 'Miles',
-  mapStyle: 'Normal'
+  mapStyle: 'Standard'
 })
 
 /* ------------- Reducers ------------- */
