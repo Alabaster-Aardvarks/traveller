@@ -1,10 +1,11 @@
 import { Worker } from 'react-native-workers'
 
-let debug = true
+const debug = false
 
 export const ISOCHRON_NOT_LOADED = 'ISOCHRON_NOT_LOADED'
 export const ISOCHRON_LOADING = 'ISOCHRON_LOADING'
 export const ISOCHRON_LOADED = 'ISOCHRON_LOADED'
+export const ISOCHRON_ERROR = 'ISOCHRON_ERROR'
 
 let savedArgString = ''
 let isochronsState = ISOCHRON_NOT_LOADED
@@ -27,9 +28,11 @@ export const setUpdateIsochronsStateFn = updateFn => {
   updateIsochronsState = updateFn
 }
 export const terminateIsochronWorker = () => {
-  if (debug) console.tron.log('terminating worker')
-  worker && worker.terminate() // terminate worker if it was running
-  worker = null
+  if (worker) {
+    if (debug) console.tron.display({ name: 'terminateIsochronWorker', value: 'terminating isochron worker' })
+    worker.terminate() // terminate worker if it was running
+    worker = null
+  }
 }
 
 export const updateIsochrons = args => {
@@ -44,7 +47,7 @@ export const updateIsochrons = args => {
   }
 
   if (!params.force && (argString === savedArgString && (isochronsState === ISOCHRON_LOADING || isochronsState === ISOCHRON_LOADED))) {
-    console.tron.display({ name: 'updateIsochrons', value: isochronsState })
+    if (debug) console.tron.display({ name: 'updateIsochrons', value: isochronsState })
     updateIsochronsState && updateIsochronsState(isochronsState)
     return
   }
@@ -66,7 +69,7 @@ export const updateIsochrons = args => {
   worker.onmessage = messageString => {
     let message = JSON.parse(messageString)
     if (message.id === 'update') {
-      console.tron.display({ name: 'isochron update from worker', value: message.polygons.length })
+      if (debug) console.tron.display({ name: 'isochron update from worker', value: message.polygons.length })
       savePolygon(message.index, message.polygons)
     } else if (message.id === 'done') {
       isochronsState = ISOCHRON_LOADED
@@ -76,8 +79,14 @@ export const updateIsochrons = args => {
       console.tron.display({ name: 'Isochron worker ' + message.name, value: message.log })
     } else if (message.id === 'error') {
       console.tron.error('Isochron worker reported an error: ' + message.error)
+      isochronsState = ISOCHRON_ERROR
+      updateIsochronsState && updateIsochronsState(isochronsState)
+      terminateIsochronWorker()
     } else {
       console.tron.error('Isochron worker unknown message: ' + messageString)
+      isochronsState = ISOCHRON_ERROR
+      updateIsochronsState && updateIsochronsState(isochronsState)
+      terminateIsochronWorker()
     }
   }
 

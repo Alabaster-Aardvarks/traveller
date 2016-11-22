@@ -3,28 +3,28 @@ const express = require('express');
 const placesController = require('../controller/placesController');
 const placesRouter = express.Router(); 
 
-placesRouter.get('/museum', (req, res) =>{
-  // console.log('look for coordinates in here', req);
-  placesController.getData('museum', 37.7825177, -122.4106772)
-  .then(data => res.status(200).json(data))
-  .catch(err => res.sendStatus(500));
+// debug ====================================================================
+const debug = require('debug');
+//debug.enable('placesRouter:*');
+const log = debug('placesRouter:log');
+const info = debug('placesRouter:info');
+const error = debug('placesRouter:error');
+
+//actual working routes
+
+placesRouter.get('/transit', (req, res) => {
+  placesController.getGoogleData(req, res, 'transit_station');
 });
 
-placesRouter.get('/park', (req, res) =>{
-  // console.log('look for coordinates in here', req);
-  placesController.getData('park', 37.7825177, -122.4106772)
-  .then(data => res.status(200).json(data))
-  .catch(err => res.sendStatus(500));
+placesRouter.get('/bank', (req, res) => {
+  placesController.getGoogleData(req, res, 'bank');
 });
 
-placesRouter.get('/bank', (req, res) =>{
-  // console.log('look for coordinates in here', req);
-  placesController.getData('bank', 37.7825177, -122.4106772)
-  .then(data => res.status(200).json(data))
-  .catch(err => res.sendStatus(500));
+placesRouter.get('/health', (req, res) => {
+  placesController.getGoogleData(req, res, 'bank');
 });
 
 //404 all other routes
-placesRouter.use('*', (req, res) => res.status(404).send());
+placesRouter.use('*', (req, res) => res.status(404).send({error: 'places/endpoint not found'}));
 
 module.exports = placesRouter;
