@@ -7,9 +7,9 @@ import rootSaga from '../Sagas/'
 export default () => {
   /* ------------- Assemble The Reducers ------------- */
   const rootReducer = combineReducers({
-    temperature: require('./TemperatureRedux').reducer,
     login: require('./LoginRedux').reducer,
-    map: require('./MapRedux').reducer
+    temperature: require('./TemperatureRedux').reducer,
+    map: require('./MapRedux').reducer,
   })
 
   return configureStore(rootReducer, rootSaga)

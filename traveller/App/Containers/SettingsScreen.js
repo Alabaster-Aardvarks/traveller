@@ -3,14 +3,9 @@
 import React, { PropTypes } from 'react'
 import { View, ScrollView, Switch, Picker, Text, TouchableOpacity, Image } from 'react-native'
 import { connect } from 'react-redux'
-import LoginActions, { isLoggedIn } from '../Redux/LoginRedux'
-import TemperatureActions from '../Redux/TemperatureRedux'
 import MapActions from '../Redux/MapRedux'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import { Colors, Images, Metrics } from '../Themes'
-import RoundedButton from '../Components/RoundedButton'
-import FullButton from '../Components/FullButton'
-import MapButtonGroup from '../Components/MapButtonGroup'
 import { CheckBox, Card, Button, List, ListItem, ButtonGroup } from 'react-native-elements'
 import CustomActionSheet from 'react-native-custom-action-sheet'
 import SettingsList from 'react-native-settings-list';
@@ -27,7 +22,7 @@ import styles from './Styles/SettingsScreenStyle'
 class SettingsScreen extends React.Component {
 
   render () {
-    const { mapBrand, mapStyle, traffic, toggleTraffic, duration } = this.props
+    const { mapBrand, mapStyle, traffic, toggleTraffic, duration, unitOfMeasurement } = this.props
 
     return (
       <View style={styles.mainContainer}>
@@ -45,7 +40,7 @@ class SettingsScreen extends React.Component {
                   onPress={() => NavigationActions.mapSelect()}
                 />
                 <SettingsList.Item title='Map style' titleInfo={mapStyle} onPress={() => NavigationActions.mapStyle()} />
-                <SettingsList.Item title='Unit of measurement' titleInfo='Miles'/>
+                <SettingsList.Item title='Unit of measurement' titleInfo={unitOfMeasurement} onPress={() => NavigationActions.measurement()} />
                 <SettingsList.Item
                   hasNavArrow={false}
                   switchState={traffic}
@@ -76,7 +71,7 @@ SettingsScreen.propTypes = {
   mapBrand: PropTypes.string,
   duration: PropTypes.number,
   traffic: PropTypes.bool,
-  mileType: PropTypes.string,
+  unitOfMeasurement: PropTypes.string,
   mapStyle: PropTypes.string,
   toggleTraffic: PropTypes.func,
 }
@@ -86,8 +81,8 @@ const mapStateToProps = state => {
     mapBrand: state.map.mapBrand,
     duration: state.map.duration,
     traffic: state.map.traffic,
+    unitOfMeasurement: state.map.unitOfMeasurement,
     mapStyle: state.map.mapStyle,
-    mapType: state.map.mapType,
   }
 }
 

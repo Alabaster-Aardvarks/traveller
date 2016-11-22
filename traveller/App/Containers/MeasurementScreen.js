@@ -12,21 +12,24 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 // Styles
 import styles from './Styles/SettingsScreenStyle'
 
-class MaxDurationScreen extends React.Component {
+class MeasurementScreen extends React.Component {
   render () {
-    const { duration, setMaxDuration } = this.props
+    const { unitOfMeasurement } = this.props
 
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
-              <Picker
-                selectedValue={duration}
-                onValueChange={setMaxDuration}
-                style={{backgroundColor: 'white'}}
-                >
-                {[30, 60, 90, 120, 150].map((time, index) => <Picker.Item label={time + "min"} value={time} key={index} />)}
-              </Picker>
+          <SettingsList>
+            {['Miles', 'Kilometers'].map((unit, index) =>
+              <SettingsList.Item
+                title={unit}
+                key={index}
+                // onPress={() => setMapBrand(mapName)}
+                arrowIcon={ ( <Icon name="check" size={14} color={(unitOfMeasurement === unit) ? "blue" : "rgba(255,255,255,0)"} /> ) }
+              />
+            )}
+          </SettingsList>
         </ScrollView>
       </View>
     )
@@ -35,14 +38,13 @@ class MaxDurationScreen extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    duration: state.map.duration,
+    unitOfMeasurement: state.map.unitOfMeasurement,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setMaxDuration: (duration) => dispatch(MapActions.setMaxDuration(duration))
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MaxDurationScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(MeasurementScreen)

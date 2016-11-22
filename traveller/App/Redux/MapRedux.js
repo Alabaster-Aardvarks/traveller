@@ -6,13 +6,11 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  temperatureRequest: ['city'],
-  temperatureSuccess: ['temperature'],
-  temperatureFailure: null,
   toggleTraffic: null,
   setMaxDuration: ['duration'],
   setMapBrand: ['mapBrand'],
-  setMapStyle: ['mapStyle']
+  setMapStyle: ['mapStyle'],
+  setUnitOfMeasurement: ['unitOfMeasurement']
 })
 
 export const MapTypes = Types
@@ -24,25 +22,11 @@ export const INITIAL_STATE = Immutable({
   mapBrand: 'Google Maps',
   duration: 60,
   traffic: false,
-  mileType: 'Miles',
+  unitOfMeasurement: 'Miles',
   mapStyle: 'Normal'
 })
 
 /* ------------- Reducers ------------- */
-
-// request the temperature for a city
-export const request = (state: Object, { city }: Object) =>
-  state.merge({ fetching: true, city, temperature: null })
-
-// successful temperature lookup
-export const success = (state: Object, action: Object) => {
-  const { temperature } = action
-  return state.merge({ fetching: false, error: null, temperature })
-}
-
-// failed to get the temperature
-export const failure = (state: Object) =>
-  state.merge({ fetching: false, error: true, temperature: null })
 
 export const toggleTraffic = (state: Object) => {
   if (state.traffic === false) {
@@ -67,15 +51,18 @@ export const setMapStyle = (state : Object, action: Object) => {
   return state.merge({ mapStyle })
 }
 
+export const setUnitOfMeasurement = (state : Object, action: Object) => {
+  const { unitOfMeasurement } = action
+  return state.merge({ unitOfMeasurement })
+}
+
 
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.TEMPERATURE_REQUEST]: request,
-  [Types.TEMPERATURE_SUCCESS]: success,
-  [Types.TEMPERATURE_FAILURE]: failure,
   [Types.TOGGLE_TRAFFIC]: toggleTraffic,
   [Types.SET_MAX_DURATION]: setMaxDuration,
   [Types.SET_MAP_BRAND]: setMapBrand,
-  [Types.SET_MAP_STYLE]: setMapStyle
+  [Types.SET_MAP_STYLE]: setMapStyle,
+  [Types.SET_UNIT_OF_MEASUREMENT]: setUnitOfMeasurement
 })
