@@ -19,7 +19,7 @@ const getIso = (url, auth) => {
     log('navitia response', response.data);
     return response.data;
   })
-  .catch(error => error(error));
+ .catch(error => console.error(error));
 };
 
 module.exports = {
