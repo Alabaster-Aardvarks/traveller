@@ -84,7 +84,7 @@ const getGoogleData = (req, res, keyword) => {
   .then(data => {
     if (!data.results.length) {
       console.error(`No google places data found for ${keyword}`);
-      res.sendStatus(500);
+      res.sendStatus(500).send({error: 'no data found by Google'});
       return;
     }
 
@@ -100,15 +100,16 @@ const getGoogleData = (req, res, keyword) => {
     .then(data => {
       if (data.error_message) {
         console.error(`Not able to get distance data for ${keyword} [${data.error_message}]`);
-        res.sendStatus(500);
+        res.sendStatus(500).send({error: `${data.error_message}`});
         return;
       }
       if (!data.rows || !data.rows.length) {
         console.error(`Not able to get distance data for ${keyword} (reached quota?).`);
-        res.sendStatus(500);
+        res.sendStatus(500).send({error: 'reached API quota'});
         return;
       }
       data.destination_addresses.forEach(place => {
+
         result.push({
           'name': place, 
           'time': data.rows[0].elements[counter].duration.text,
@@ -121,13 +122,13 @@ const getGoogleData = (req, res, keyword) => {
       res.status(200).json(result);
     })
     .catch(err => {
-      console.error(`Not able to get distance data for banks [${err}]`);
-      res.sendStatus(500);
+      console.error(`Not able to get distance data for ${keyword} [${err}]`);
+      res.sendStatus(500).send({error: `no distance data found for ${keyword}`});
     });
   })
   .catch(err => {
     console.error(err);
-    res.sendStatus(500);
+    res.sendStatus(500).send({error: 'catch error, no response from API, check server code'});
   });
 };
 
