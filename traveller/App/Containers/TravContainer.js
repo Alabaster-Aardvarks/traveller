@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
@@ -32,10 +32,9 @@ const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
 const LATITUDE_DELTA = roundCoordinate(0.1)
 const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
 
-const { width, height } = Dimensions.get('window')
-const ASPECT_RATIO = width / height
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
-const mapProvider = MapView.PROVIDER_GOOGLE
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 // temporary position until we get the current location
 let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
@@ -93,7 +92,7 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
 updateLocationIsochrons()
 
 class TravContainer extends React.Component {
-  constructor (props) {
+  constructor (props: Object) {
     super(props)
     this.state = {
       initialPosition: 'unknown',
@@ -222,6 +221,7 @@ class TravContainer extends React.Component {
   }
 
   render () {
+    const { traffic, mapBrand, mapStyle } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -230,7 +230,8 @@ class TravContainer extends React.Component {
         <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
-          provider={mapProvider}
+          provider={mapBrand === 'Google Maps' ? MapView.PROVIDER_GOOGLE : MapView.PROVIDER_DEFAULT}
+          showsTraffic={traffic}
           style={styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}
@@ -239,7 +240,7 @@ class TravContainer extends React.Component {
           showsCompass={true}
           showsScale={true}
           loadingEnabled={true}
-          showsTraffic={true}
+          mapType={mapStyle.toLowerCase()}
         >
           { 1 ? undefined :
             <MapView.UrlTile
@@ -317,7 +318,20 @@ class TravContainer extends React.Component {
   }
 }
 
-const mapStateToProps = state => { return {} }
-const mapDispatchToProps = dispatch => { return {} }
+TravContainer.propTypes = {
+  traffic: PropTypes.bool,
+  mapBrand: PropTypes.string,
+  mapStyle: PropTypes.string
+}
+
+const mapStateToProps = (state) => {
+  return {
+    traffic: state.map.traffic,
+    mapBrand: state.map.mapBrand,
+    mapStyle: state.map.mapStyle
+  }
+}
+
+const mapDispatchToProps = (dispatch) => { return {} }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TravContainer)
