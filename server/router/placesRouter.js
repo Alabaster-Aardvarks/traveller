@@ -21,7 +21,7 @@ placesRouter.get('/bank', (req, res) => {
 });
 
 placesRouter.get('/health', (req, res) => {
-  placesController.getGoogleData(req, res, 'health');
+  placesController.getGoogleData(req, res, 'doctor');
 });
 
 //404 all other routes

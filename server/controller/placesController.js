@@ -85,14 +85,15 @@ const getGoogleData = (req, res, keyword) => {
       res.sendStatus(500).send({error: 'no data found by Google'});
       return;
     }
-
+    log(data.results.length);
     log(data);
     data.results.forEach(place => {
       idList.push(place.place_id);
       coordinates.push(place.geometry.location);
     });
     //can only use 25 destinations at a time for Google distance matrix
-    let shortList = idList.splice(0, 25); 
+    let shortList = idList.splice(0, 99); 
+    console.log(shortList.length);
     log(shortList);
     getDistanceData(shortList, lat, long)
     .then(data => {
