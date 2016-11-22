@@ -109,7 +109,6 @@ const getGoogleData = (req, res, keyword) => {
         return;
       }
       data.destination_addresses.forEach(place => {
-
         result.push({
           'name': place, 
           'time': data.rows[0].elements[counter].duration.text,

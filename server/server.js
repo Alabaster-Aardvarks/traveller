@@ -35,7 +35,7 @@ app.use('/places', placesRouter);
 app.use('/navitia', navitiaRouter);
 //404 all other routes
 app.use('*', (req, res) => {
-  res.status(404).send();
+  res.status(404).send({error: 'endpoint not found'});
 });
               //dev env          //test & production env
 const port = process.env.PORT || 3000;

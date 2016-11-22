@@ -25,6 +25,6 @@ placesRouter.get('/health', (req, res) => {
 });
 
 //404 all other routes
-placesRouter.use('*', (req, res) => res.status(404).send());
+placesRouter.use('*', (req, res) => res.status(404).send({error: 'places/endpoint not found'}));
 
 module.exports = placesRouter;
