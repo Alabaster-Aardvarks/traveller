@@ -29,7 +29,7 @@ class MapSelectScreen extends React.Component {
                     title={mapName}
                     key={index}
                     onPress={() => setMapBrand(mapName)}
-                    arrowIcon={ ( <Icon name="check" size={14} color={(mapBrand === mapName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
+                    arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapBrand === mapName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
                   />
                 )}
               </SettingsList>
