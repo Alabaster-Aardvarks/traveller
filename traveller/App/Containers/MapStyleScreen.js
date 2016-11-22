@@ -24,7 +24,7 @@ class MapStyleScreen extends React.Component {
         <ScrollView style={styles.container}>
           <View style={{flex:1}}>
             <View style={{flex:1}}>
-              <SettingsList>
+              <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
                 <SettingsList.Header />
                   {['Standard', 'Satellite', 'Hybrid'].map((mapStyleName, index) =>
                     <SettingsList.Item

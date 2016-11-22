@@ -20,7 +20,7 @@ class MeasurementScreen extends React.Component {
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
-          <SettingsList>
+          <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
             {['Miles', 'Kilometers'].map((unit, index) =>
               <SettingsList.Item
                 title={unit}

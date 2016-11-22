@@ -23,7 +23,7 @@ class MapSelectScreen extends React.Component {
         <ScrollView style={styles.container}>
           <View style={{flex:1}}>
             <View style={{flex:1}}>
-              <SettingsList>
+              <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
                 {['Google Maps', 'Apple Maps'].map((mapName, index) =>
                   <SettingsList.Item
                     title={mapName}
