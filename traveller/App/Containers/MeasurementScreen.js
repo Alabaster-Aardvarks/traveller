@@ -14,7 +14,7 @@ import styles from './Styles/SettingsScreenStyle'
 
 class MeasurementScreen extends React.Component {
   render () {
-    const { unitOfMeasurement } = this.props
+    const { unitOfMeasurement, setUnitOfMeasurement } = this.props
 
     return (
       <View style={styles.mainContainer}>
@@ -25,7 +25,7 @@ class MeasurementScreen extends React.Component {
               <SettingsList.Item
                 title={unit}
                 key={index}
-                // onPress={() => setMapBrand(mapName)}
+                onPress={() => setUnitOfMeasurement(unit)}
                 arrowIcon={ ( <Icon name="check" size={14} color={(unitOfMeasurement === unit) ? "blue" : "rgba(255,255,255,0)"} /> ) }
               />
             )}
@@ -44,6 +44,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    setUnitOfMeasurement: (unitOfMeasurement) => dispatch(MapActions.setUnitOfMeasurement(unitOfMeasurement))
   }
 }
 
