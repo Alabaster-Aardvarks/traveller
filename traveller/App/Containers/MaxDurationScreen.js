@@ -32,8 +32,6 @@ class MaxDurationScreen extends React.Component {
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
-          {/* <CustomActionSheet modalVisible={this.state.modalVisible} onCancel={() => this.setState({modalVisible: false})} buttonText='Done'> */}
-            {/* <View> */}
               <Picker
                 selectedValue={this.props.map.duration}
                 onValueChange={this.props.setMaxDuration}
@@ -45,15 +43,6 @@ class MaxDurationScreen extends React.Component {
                 <Picker.Item label="120min" value={120} />
                 <Picker.Item label="150min" value={150} />
               </Picker>
-              <SettingsList>
-              <SettingsList.Item
-                title='Clear isochrone cache'
-                hasNavArrow={false}
-                titleStyle={{color: 'blue'}}
-                onPress={() => console.tron.log(this.props)} />
-                </SettingsList>
-            {/* </View> */}
-          {/* </CustomActionSheet> */}
         </ScrollView>
       </View>
     )
