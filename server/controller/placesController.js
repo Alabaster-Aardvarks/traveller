@@ -66,10 +66,71 @@ const getDistanceData = (arrayOfPlaces, lat, long) => {
     return response.data;
   })
   .catch(error => {
-    console.error(error)
+    console.error(error);
+  });
+};
+
+const getGoogleData = (req, res, keyword) => {
+  lat = req.query.lat || 37.7825177;
+  long = req.query.long || -122.4106772;
+  //take results of nearby search and get their place ides
+  let idList = [];
+  let coordinates = [];     
+  //holder for response object
+  let result = [];
+  //to iterate over results
+  let counter = 0;      
+  getRadarData(keyword, lat, long)
+  .then(data => {
+    if (!data.results.length) {
+      console.error(`No google places data found for ${keyword}`);
+      res.sendStatus(500);
+      return;
+    }
+
+    log(data);
+    data.results.forEach(place => {
+      idList.push(place.place_id);
+      coordinates.push(place.geometry.location);
+    });
+    //can only use 25 destinations at a time for Google distance matrix
+    let shortList = idList.splice(0, 25); 
+    log(shortList);
+    getDistanceData(shortList, lat, long)
+    .then(data => {
+      if (data.error_message) {
+        console.error(`Not able to get distance data for ${keyword} [${data.error_message}]`);
+        res.sendStatus(500);
+        return;
+      }
+      if (!data.rows || !data.rows.length) {
+        console.error(`Not able to get distance data for ${keyword} (reached quota?).`);
+        res.sendStatus(500);
+        return;
+      }
+      data.destination_addresses.forEach(place => {
+        result.push({
+          'name': place, 
+          'time': data.rows[0].elements[counter].duration.text,
+          'location': coordinates[counter],
+          'distance': data.rows[0].elements[counter].distance.text,
+          'metric distance': data.rows[0].elements[counter].distance.value 
+        });
+        counter++;
+      });
+      res.status(200).json(result);
+    })
+    .catch(err => {
+      console.error(`Not able to get distance data for banks [${err}]`);
+      res.sendStatus(500);
+    });
+  })
+  .catch(err => {
+    console.error(err);
+    res.sendStatus(500);
   });
 };
 
 module.exports = {
-  getData, getRadarData, getDistanceData
+  getData, getRadarData, getDistanceData, getGoogleData
 };
