@@ -32,10 +32,9 @@ const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
 const LATITUDE_DELTA = roundCoordinate(0.1)
 const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
 
-const { width, height } = Dimensions.get('window')
-const ASPECT_RATIO = width / height
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
-const mapProvider = MapView.PROVIDER_GOOGLE
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 // temporary position until we get the current location
 let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
@@ -222,6 +221,7 @@ class TravContainer extends React.Component {
   }
 
   render () {
+    const { traffic, mapBrand } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -230,8 +230,8 @@ class TravContainer extends React.Component {
         <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
-          provider={mapProvider}
-          showsTraffic={this.props.map.traffic}
+          provider={mapBrand === 'Google Maps' ? MapView.PROVIDER_GOOGLE : MapView.PROVIDER_DEFAULT}
+          showsTraffic={traffic}
           style={styles.map}
           initialRegion={this.state.region}
           onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}
@@ -318,13 +318,15 @@ class TravContainer extends React.Component {
   }
 }
 
+TravContainer.propTypes = {
+  traffic: PropTypes.bool,
+  mapBrand: PropTypes.string
+}
+
 const mapStateToProps = (state) => {
   return {
-    map: state.map,
-    // duration: state.duration,
-    // traffic: state.traffic,
-    // mileType: state.mileType,
-    // mapType: state.mapType
+    traffic: state.map.traffic,
+    mapBrand: state.map.mapBrand
   }
 }
 
