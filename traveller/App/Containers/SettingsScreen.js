@@ -48,10 +48,10 @@ class SettingsScreen extends React.Component {
                   hasSwitch={true}
                   title='Traffic'
                 />
-                <SettingsList.Header headerText='isochrons' headerStyle={{color:'white', marginTop:50}}/>
+                <SettingsList.Header headerText='Isochrones' headerStyle={{color:'white', marginTop:50}}/>
                 <SettingsList.Item title='Max duration' titleInfo={duration.toString() + 'min'} onPress={() => NavigationActions.maxDuration()} />
                 <SettingsList.Item
-                  title='Clear isochron cache'
+                  title='Clear isochrone cache'
                   hasNavArrow={false}
                   titleStyle={{color: 'blue'}}
                   onPress={() => console.tron.log(this.props)}

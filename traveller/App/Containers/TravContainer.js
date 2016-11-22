@@ -221,7 +221,7 @@ class TravContainer extends React.Component {
   }
 
   render () {
-    const { traffic, mapBrand } = this.props
+    const { traffic, mapBrand, mapStyle } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -240,7 +240,7 @@ class TravContainer extends React.Component {
           showsCompass={true}
           showsScale={true}
           loadingEnabled={true}
-          showsTraffic={true}
+          mapType={mapStyle.toLowerCase()}
         >
           { 1 ? undefined :
             <MapView.UrlTile
@@ -320,13 +320,15 @@ class TravContainer extends React.Component {
 
 TravContainer.propTypes = {
   traffic: PropTypes.bool,
-  mapBrand: PropTypes.string
+  mapBrand: PropTypes.string,
+  mapStyle: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
   return {
     traffic: state.map.traffic,
-    mapBrand: state.map.mapBrand
+    mapBrand: state.map.mapBrand,
+    mapStyle: state.map.mapStyle
   }
 }
 

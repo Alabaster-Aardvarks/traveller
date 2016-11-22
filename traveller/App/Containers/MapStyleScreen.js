@@ -26,7 +26,7 @@ class MapStyleScreen extends React.Component {
             <View style={{flex:1}}>
               <SettingsList>
                 <SettingsList.Header />
-                  {['Normal', 'Terrain', 'Satellite'].map((mapStyleName, index) =>
+                  {['Standard', 'Satellite', 'Hybrid'].map((mapStyleName, index) =>
                     <SettingsList.Item
                       title={mapStyleName}
                       key={index}
