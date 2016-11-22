@@ -23,10 +23,9 @@ navitiaRouter.get('*', (req, res) => {
         log('saving to redis');
         redis.setRedisIso(req.query.url, data);
         res.status(200).json(data);
-      }).catch(err => res.sendStatus(500));
+      }).catch(err => res.sendStatus(500).send({error: 'error parsing navitia or redis data'}));
     }
-  }).catch(err => res.sendStatus(500));
-   
+  }).catch(err => res.sendStatus(500).send({error: 'error reaching navitia server' }));   
 });
 
 module.exports = navitiaRouter;
