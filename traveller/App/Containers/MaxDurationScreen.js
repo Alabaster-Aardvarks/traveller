@@ -19,29 +19,19 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import styles from './Styles/SettingsScreenStyle'
 
 class MaxDurationScreen extends React.Component {
-
-  // constructor (props: Object) {
-  //   super(props)
-  //   this.state = {
-  //     modalVisible: false
-  //   }
-  // }
-
   render () {
+    const { duration, setMaxDuration } = this.props
+
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
               <Picker
-                selectedValue={this.props.map.duration}
-                onValueChange={this.props.setMaxDuration}
+                selectedValue={duration}
+                onValueChange={setMaxDuration}
                 style={{backgroundColor: 'white'}}
                 >
-                <Picker.Item label="30min" value={30} />
-                <Picker.Item label="60min" value={60} />
-                <Picker.Item label="90min" value={90} />
-                <Picker.Item label="120min" value={120} />
-                <Picker.Item label="150min" value={150} />
+                {[30, 60, 90, 120, 150].map((time, index) => <Picker.Item label={time + "min"} value={time} key={index} />)}
               </Picker>
         </ScrollView>
       </View>
@@ -51,11 +41,7 @@ class MaxDurationScreen extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    map: state.map,
-    duration: state.duration,
-    traffic: state.traffic,
-    mileType: state.mileType,
-    mapType: state.mapType
+    duration: state.map.duration,
   }
 }
 
