@@ -1,0 +1,11 @@
+version: "2"
+services:
+  redis-cache-dev:
+    container_name: redis-cache-dev
+    hostname: redis-cache-dev
+    image: redis:3
+    restart: always
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
