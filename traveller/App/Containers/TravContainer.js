@@ -321,10 +321,10 @@ class TravContainer extends React.Component {
 const mapStateToProps = (state) => {
   return {
     map: state.map,
-    duration: state.duration,
-    traffic: state.traffic,
-    mileType: state.mileType,
-    mapType: state.mapType
+    // duration: state.duration,
+    // traffic: state.traffic,
+    // mileType: state.mileType,
+    // mapType: state.mapType
   }
 }
 

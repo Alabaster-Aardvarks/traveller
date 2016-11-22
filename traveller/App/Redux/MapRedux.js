@@ -10,7 +10,8 @@ const { Types, Creators } = createActions({
   temperatureSuccess: ['temperature'],
   temperatureFailure: null,
   toggleTraffic: null,
-  setMaxDuration: ['duration']
+  setMaxDuration: ['duration'],
+  setMapBrand: ['mapBrand']
 })
 
 export const MapTypes = Types
@@ -55,6 +56,11 @@ export const setMaxDuration = (state: Object, action: Object) => {
   return state.merge({ duration })
 }
 
+export const setMapBrand = (state : Object, action: Object) => {
+  const { mapBrand } = action
+  return state.merge({ mapBrand })
+}
+
 
 /* ------------- Hookup Reducers To Types ------------- */
 
@@ -63,5 +69,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.TEMPERATURE_SUCCESS]: success,
   [Types.TEMPERATURE_FAILURE]: failure,
   [Types.TOGGLE_TRAFFIC]: toggleTraffic,
-  [Types.SET_MAX_DURATION]: setMaxDuration
+  [Types.SET_MAX_DURATION]: setMaxDuration,
+  [Types.SET_MAP_BRAND]: setMapBrand
 })

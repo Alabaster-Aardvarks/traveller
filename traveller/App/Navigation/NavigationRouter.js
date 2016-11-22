@@ -12,6 +12,7 @@ import DeviceInfoScreen from '../Containers/DeviceInfoScreen'
 import TravContainer from '../Containers/TravContainer'
 import SettingsScreen from '../Containers/SettingsScreen'
 import MapSelectScreen from '../Containers/MapSelectScreen'
+import MapStyleScreen from '../Containers/MapSelectScreen'
 import MaxDurationScreen from '../Containers/MaxDurationScreen'
 
 // Documentation: https://github.com/aksonov/react-native-router-flux
@@ -27,6 +28,7 @@ class NavigationRouter extends Component {
             <Scene key='deviceInfo' component={DeviceInfoScreen} title='Device Info' navBar={CustomNavBar} />
             <Scene key='settings' component={SettingsScreen} title='Settings' />
             <Scene key='mapSelect' component={MapSelectScreen} title='Select Map type' />
+            <Scene key='mapStyle' component={MapStyleScreen} title='Select Map Style' />
             <Scene key='maxDuration' component={MaxDurationScreen} title='Max Duration' />
           </Scene>
         </Scene>
