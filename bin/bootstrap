@@ -1,0 +1,29 @@
+#!/bin/bash
+# Traveller Bootstrap Script by Daniel
+# Installs Vagrant Dependancies
+
+xcode-select --install 2> /dev/null
+
+function bin-exists {
+  echo "$(which $1 2> /dev/null)"
+}
+
+if [ "$(bin-exists brew)" = "" ]; then
+  echo "Homebrew is not isntalled. Installing"
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+if [ "$(bin-exists vagrant)" = "" ]; then
+  echo "Vagrant is not isntalled. Installing"
+  brew cask install vagrant
+fi
+
+if [ "$(bin-exists virtualbox)" = "" ]; then
+  echo "VirtualBox is not isntalled. Installing"
+  brew cask install virtualbox
+fi
+
+if [ "$(bin-exists VBoxManage)" = "" ]; then
+  echo "VBoxManage is not isntalled. Installing"
+  brew cask install VBoxManage
+fi
