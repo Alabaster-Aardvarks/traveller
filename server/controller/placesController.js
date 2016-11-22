@@ -65,9 +65,7 @@ const getDistanceData = (arrayOfPlaces, lat, long) => {
     log('getDistanceData response', response.data);
     return response.data;
   })
-  .catch(error => {
-    console.error(error);
-  });
+  .catch(error => console.error(error));
 };
 
 const getGoogleData = (req, res, keyword) => {
