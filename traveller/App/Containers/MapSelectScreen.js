@@ -32,11 +32,6 @@ class MapSelectScreen extends React.Component {
                     arrowIcon={ ( <Icon name="check" size={14} color={(mapBrand === mapName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
                   />
                 )}
-                <SettingsList.Item
-                  title='Clear isochrone cache'
-                  hasNavArrow={false}
-                  titleStyle={{color: 'blue'}}
-                  onPress={() => console.tron.log(this.props)} />
               </SettingsList>
             </View>
           </View>
