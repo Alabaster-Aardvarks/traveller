@@ -1,14 +1,9 @@
 import React, { PropTypes } from 'react'
 import { View, ScrollView, Switch, Picker, Text, TouchableOpacity, Image } from 'react-native'
 import { connect } from 'react-redux'
-import LoginActions, { isLoggedIn } from '../Redux/LoginRedux'
-import TemperatureActions from '../Redux/TemperatureRedux'
 import MapActions from '../Redux/MapRedux'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import { Colors, Images, Metrics } from '../Themes'
-import RoundedButton from '../Components/RoundedButton'
-import FullButton from '../Components/FullButton'
-import MapButtonGroup from '../Components/MapButtonGroup'
 import { CheckBox, Card, Button, List, ListItem, ButtonGroup } from 'react-native-elements'
 import CustomActionSheet from 'react-native-custom-action-sheet'
 import SettingsList from 'react-native-settings-list';
@@ -21,6 +16,8 @@ import styles from './Styles/SettingsScreenStyle'
 class MapStyleScreen extends React.Component {
 
   render () {
+    const { mapStyle, setMapStyle } = this.props
+
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
@@ -29,9 +26,14 @@ class MapStyleScreen extends React.Component {
             <View style={{flex:1}}>
               <SettingsList>
                 <SettingsList.Header />
-                  <SettingsList.Item title='Normal' />
-                  <SettingsList.Item title='Terrain' />
-                  <SettingsList.Item title='Satellite' />
+                  {['Normal', 'Terrain', 'Satellite'].map((mapStyleName, index) =>
+                    <SettingsList.Item
+                      title={mapStyleName}
+                      key={index}
+                      onPress={() => setMapStyle(mapStyleName)}
+                      arrowIcon={ ( <Icon name="check" size={14} color={(mapStyle === mapStyleName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
+                    />
+                  )}
               </SettingsList>
             </View>
           </View>
@@ -43,17 +45,13 @@ class MapStyleScreen extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    map: state.map,
-    mapType: state.mapType
+    mapStyle: state.map.mapStyle
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // logout: () => dispatch(LoginActions.logout()),
-    // requestTemperature: (city) => dispatch(TemperatureActions.temperatureRequest(city)),
-    // toggleTraffic: () => dispatch(MapActions.toggleTraffic())
-    // toggleMapType: () => dispatch(MapActions.toggleMapType())
+    setMapStyle: (mapStyleName) => dispatch(MapActions.setMapStyle(mapStyleName))
   }
 }
 

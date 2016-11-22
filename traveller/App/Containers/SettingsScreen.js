@@ -27,7 +27,7 @@ import styles from './Styles/SettingsScreenStyle'
 class SettingsScreen extends React.Component {
 
   render () {
-    const { mapBrand, traffic, toggleTraffic, duration } = this.props
+    const { mapBrand, mapStyle, traffic, toggleTraffic, duration } = this.props
 
     return (
       <View style={styles.mainContainer}>
@@ -44,7 +44,7 @@ class SettingsScreen extends React.Component {
                   titleInfo={mapBrand}
                   onPress={() => NavigationActions.mapSelect()}
                 />
-                <SettingsList.Item title='Map style' titleInfo='Normal' onPress={() => NavigationActions.deviceInfo()} />
+                <SettingsList.Item title='Map style' titleInfo={mapStyle} onPress={() => NavigationActions.mapStyle()} />
                 <SettingsList.Item title='Unit of measurement' titleInfo='Miles'/>
                 <SettingsList.Item
                   hasNavArrow={false}
@@ -77,7 +77,7 @@ SettingsScreen.propTypes = {
   duration: PropTypes.number,
   traffic: PropTypes.bool,
   mileType: PropTypes.string,
-  mapType: PropTypes.string,
+  mapStyle: PropTypes.string,
   toggleTraffic: PropTypes.func,
 }
 
@@ -86,7 +86,7 @@ const mapStateToProps = state => {
     mapBrand: state.map.mapBrand,
     duration: state.map.duration,
     traffic: state.map.traffic,
-    mileType: state.map.mileType,
+    mapStyle: state.map.mapStyle,
     mapType: state.map.mapType,
   }
 }

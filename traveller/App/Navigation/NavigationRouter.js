@@ -12,7 +12,7 @@ import DeviceInfoScreen from '../Containers/DeviceInfoScreen'
 import TravContainer from '../Containers/TravContainer'
 import SettingsScreen from '../Containers/SettingsScreen'
 import MapSelectScreen from '../Containers/MapSelectScreen'
-import MapStyleScreen from '../Containers/MapSelectScreen'
+import MapStyleScreen from '../Containers/MapStyleScreen'
 import MaxDurationScreen from '../Containers/MaxDurationScreen'
 
 // Documentation: https://github.com/aksonov/react-native-router-flux
