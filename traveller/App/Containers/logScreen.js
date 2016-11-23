@@ -1,3 +1,9 @@
+import { create } from 'apisauce'
+import Secrets from 'react-native-config'
+const debug = false
+const token = process.env.GOOGLE_KEY || Secrets.GOOGLE_KEY // google API key
+const serverUrl = process.env.PLACES_SERVER_URL || Secrets.PLACES_SERVER_URL
+const api = create({ baseURL: serverUrl })
 
 import React from 'react'
 import { ScrollView, View, Text, TouchableOpacity, Image } from 'react-native'
@@ -5,7 +11,6 @@ import { Metrics, Images } from '../Themes'
 import FullButton from '../Components/FullButton'
 
 // For API
-import API from '../Services/Api'
 import FJSON from 'format-json'
 
 // Styles
@@ -13,8 +18,7 @@ import styles from './Styles/APITestingScreenStyle'
 
 // API buttons here:
 const endpoints = [
-  { label: 'Get City (Boise)', endpoint: 'getCity', args: ['Boise'] },
-  { label: 'Get City (Toronto)', endpoint: 'getCity', args: ['Toronto'] }
+  { cafe: 'cafe'}
 ]
 
 export default class APITestingScreen extends React.Component {
@@ -44,7 +48,7 @@ export default class APITestingScreen extends React.Component {
 
   tryEndpoint (apiEndpoint: Object) {
     const { label, endpoint, args = [''] } = apiEndpoint
-    this.api[endpoint].apply(this, args).then((result) => {
+       this.api.get(`/places/${apiEndpoint}`, { lat: position.latitude, long: position.longitude })
       this.showResult(result, label || `${endpoint}(${args.join(', ')})`)
     })
   }
