@@ -48,7 +48,7 @@ class DrawerContent extends Component {
         <DrawerButton text='Map' onPress={this.handlePressTraveller} />
         <DrawerButton text='Settings' onPress={this.handlePressSettings} />
         <DrawerButton text='About' onPress={this.handlePressDevice} />
-        <DrawerButton text='APITestingScreen' onPress={this.handlePressAPITest} />
+        <DrawerButton text='Logs' onPress={this.handlePressAPITest} />
       </ScrollView>
     )
   }
