@@ -73,9 +73,10 @@ Ignite Documentation - [Ignite Wiki https://github.com/infinitered/ignite/wiki](
 
 | Method | Uri           | Comment                           | 
 |--------|---------------|-----------------------------------|
-| GET    | places/museum | Nearby Museums                    |
+| GET    | places/cafe   | Nearby Cafes                      |
 | GET    | places/park   | Nearby Parks                      |
 | GET    | places/bank   | Nearby Banks                      |
+| GET    | places/police | Nearby Police Station             |
 | GET    | navitia/      | Isochrone JSON Data               |
 
 
