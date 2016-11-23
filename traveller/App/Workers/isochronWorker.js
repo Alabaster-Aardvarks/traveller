@@ -98,6 +98,7 @@ const loadIsochron = params => {
 }
 
 const drawIsochron = (isochron, index, downSamplingCoordinates) => {
+  // isochron = { geojson: { coordinates: [ [ [lng,lat]...polygon... ], [ [lng,lat]...hole... ] ] } }
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'index', log: index })) }
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'isochron', log: isochron })) }
   let geojson = isochron.geojson
@@ -112,7 +113,9 @@ const drawIsochron = (isochron, index, downSamplingCoordinates) => {
       let keep = 0;
       for (let c = 0; c < coordinates.length; c++) {
         if (keep === 0) { p.push({ longitude: coordinates[c][0], latitude: coordinates[c][1] }) }
-        keep = ++keep % (downSamplingCoordinates - 1)
+        if (downSamplingCoordinates > 1) {
+          keep = ++keep % (downSamplingCoordinates - 1)
+        }
       }
       if (a === 0) { // polygon
         polygon = p
