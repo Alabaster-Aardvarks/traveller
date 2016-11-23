@@ -1,12 +1,8 @@
 // a library to wrap and simplify api calls
 import apisauce from 'apisauce'
-import Secrets from 'react-native-config'
-
-const serverUrl = process.env.PLACES_SERVER_URL || Secrets.PLACES_SERVER_URL
-
 
 // our "constructor"
-const create = ({ baseURL: serverUrl }) => {
+const create = (baseURL = 'http://api.openweathermap.org/data/2.5/') => {
   // ------
   // STEP 1
   // ------
@@ -21,19 +17,18 @@ const create = ({ baseURL: serverUrl }) => {
       'Cache-Control': 'no-cache'
     },
     // 10 second timeout...
-    timeout: 5000
+    timeout: 10000
   })
 
   // Force OpenWeather API Key on all requests
-  // api.addRequestTransform((request) => {
-  //   request.params['APPID'] = '0e44183e8d1018fc92eb3307d885379c'
-  // })
+  api.addRequestTransform((request) => {
+    request.params['APPID'] = '0e44183e8d1018fc92eb3307d885379c'
+  })
 
   // Wrap api's addMonitor to allow the calling code to attach
   // additional monitors in the future.  But only in __DEV__ and only
   // if we've attached Reactotron to console (it isn't during unit tests).
   if (__DEV__ && console.tron) {
-    console.tron.log('Hello, I\'m an example of how to log via Reactotron.')
     api.addMonitor(console.tron.apisauce)
   }
 
@@ -51,10 +46,9 @@ const create = ({ baseURL: serverUrl }) => {
   // Since we can't hide from that, we embrace it by getting out of the
   // way at this level.
   //
-  const getPlace = (place) => api.get(`places/${place}`, { lat: position.latitude, long: position.longitude });
-  //
- 
- // ------
+  const getCity = (city) => api.get('weather', {q: city})
+
+  // ------
   // STEP 3
   // ------
   //
@@ -68,7 +62,7 @@ const create = ({ baseURL: serverUrl }) => {
   //
   return {
     // a list of the API functions from step 2
-    getPlace
+    getCity
   }
 }
 

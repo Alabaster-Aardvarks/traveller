@@ -36,9 +36,9 @@ class DrawerContent extends Component {
     NavigationActions.settings()
   }
 
-  handlePresslogPage = () => {
+  handlePressAPITest = () => {
     this.toggleDrawer()
-    NavigationActions.logPage()
+    NavigationActions.APITestingScreen()
   }
 
   render () {
@@ -48,7 +48,7 @@ class DrawerContent extends Component {
         <DrawerButton text='Map' onPress={this.handlePressTraveller} />
         <DrawerButton text='Settings' onPress={this.handlePressSettings} />
         <DrawerButton text='About' onPress={this.handlePressDevice} />
-        <DrawerButton text='LogPage' onPress={this.handlePresslogPage} />
+        <DrawerButton text='APITestingScreen' onPress={this.handlePressAPITest} />
       </ScrollView>
     )
   }
