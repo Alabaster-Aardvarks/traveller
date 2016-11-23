@@ -362,12 +362,12 @@ class TravContainer extends React.Component {
           )
         }
 
-        <ActionButton buttonColor='rgba(231,76,60,1)'
-          degrees={90}
+        {/* Search Menu */}
+        <ActionButton
+          buttonColor='rgba(231,76,60,1)'
+          degrees={ 90 }
           icon={<Icon name='search' style={styles.actionButton}></Icon>}
-          spacing={10}
-          verticalOrientation='up'
-          offsetY={10}
+          spacing={ 10 }
         >
           <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => this.changePlacesType.call(this, 'bank')}>
             <Icon name='university' style={styles.actionButtonIcon}/>
@@ -379,6 +379,60 @@ class TravContainer extends React.Component {
             <Icon name='ambulance' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#1abc9c' title='Slider' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
+            <Icon name='info-circle' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+        </ActionButton>
+
+        {/* Duration Button */}
+        <ActionButton
+          buttonColor='rgba(131,106,90,1)'
+          icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
+          position='center'
+          offsetY={ 0.75 * height }
+          verticalOrientation='down'
+        >
+          <ActionButton.Item buttonColor='#9b59b6' title='60' onPress={() => this.changePlacesType.call(this, 'bank')}>
+            <Icon name='university' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#3498db' title='50' onPress={() => this.changePlacesType.call(this, 'transit')}>
+            <Icon name='bus' style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#ff6b6b' title='40' onPress={() => this.changePlacesType.call(this, 'health')}>
+            <Icon name='ambulance' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1abc9c' title='30' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
+            <Icon name='info-circle' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+        </ActionButton>
+
+        {/* Settings Button */}
+        <ActionButton
+          buttonColor='#1abc9c'
+          icon={<Icon name='cog' style={styles.actionButton}></Icon>}
+          position='left'
+          offsetY={ 0.75 * height }
+          verticalOrientation='down'
+        >
+        </ActionButton>
+
+        {/* Mode Button */}
+        <ActionButton
+          buttonColor='rgba(30,80,190,1)'
+          icon={<Icon name='car' style={styles.actionButton}></Icon>}
+          position='right'
+          offsetY={ 0.75 * height }
+          verticalOrientation='down'
+        >
+          <ActionButton.Item buttonColor='#9b59b6' title='60' onPress={() => this.changePlacesType.call(this, 'bank')}>
+            <Icon name='university' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#3498db' title='50' onPress={() => this.changePlacesType.call(this, 'transit')}>
+            <Icon name='bus' style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#ff6b6b' title='40' onPress={() => this.changePlacesType.call(this, 'health')}>
+            <Icon name='ambulance' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1abc9c' title='30' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
             <Icon name='info-circle' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
