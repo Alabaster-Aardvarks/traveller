@@ -27,3 +27,8 @@ if [ "$(bin-exists VBoxManage)" = "" ]; then
   echo "VBoxManage is not isntalled. Installing"
   brew cask install VBoxManage
 fi
+
+if [ "$(vagrant plugin list | grep vagrant-docker-compose)" = "" ]; then
+  echo "Vagrant Plugin: 'vagrant-docker-compose' not installed. Installing"
+ vagrant plugin install vagrant-docker-compose
+fi

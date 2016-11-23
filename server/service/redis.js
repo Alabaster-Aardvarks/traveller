@@ -1,7 +1,7 @@
 const Redis = require('ioredis');
 const redis = new Redis({
   port: 6379,          // Redis port
-  host: '127.0.0.1',   // Redis host, may have to revisit for test and production environment
+  host: '192.168.99.110',   // Redis host, may have to revisit for test and production environment
   db: 0
 });
 redis.config('set', 'maxmemory-policy', 'allkeys-lru');
