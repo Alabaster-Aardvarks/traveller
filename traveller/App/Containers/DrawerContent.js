@@ -36,6 +36,11 @@ class DrawerContent extends Component {
     NavigationActions.settings()
   }
 
+  handlePresslogPage = () => {
+    this.toggleDrawer()
+    NavigationActions.logPage()
+  }
+
   render () {
     return (
       <ScrollView style={styles.container}>
@@ -43,6 +48,7 @@ class DrawerContent extends Component {
         <DrawerButton text='Map' onPress={this.handlePressTraveller} />
         <DrawerButton text='Settings' onPress={this.handlePressSettings} />
         <DrawerButton text='About' onPress={this.handlePressDevice} />
+        <DrawerButton text='LogPage' onPress={this.handlePresslogPage} />
       </ScrollView>
     )
   }

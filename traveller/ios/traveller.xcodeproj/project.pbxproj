@@ -30,7 +30,6 @@
 		525D325FD1624FF58EC2F13D /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74C056F1756340A880A1AC0D /* libRNVectorIcons.a */; };
 		5E2EB947A2584769902411F7 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 096469870D0640EBAD7DFE57 /* MaterialIcons.ttf */; };
 		626461AFB3786945208D9735 /* Pods_travellerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB599D84221ED8A541DA88D0 /* Pods_travellerTests.framework */; };
-		628810B1893E430AACD219C8 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49375CFD1FDF4A1599891716 /* libRNSVG.a */; };
 		6D208A440C9B454590225D15 /* libRNI18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E22E29480C7427DB601E7AF /* libRNI18n.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		871886572AAF41FFABBADCFC /* libReactNativeConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB573EBE29554370BFDC1FA9 /* libReactNativeConfig.a */; };
@@ -244,13 +243,6 @@
 			remoteGlobalIDString = 2D2A28131D9B038B00D4039D;
 			remoteInfo = "React-tvOS";
 		};
-		CAAB20D81DD6FEAC008F7E60 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2879B60CC3D04A8D9B3FA037 /* RNSVG.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
-			remoteInfo = RNSVG;
-		};
 		CAAB21041DD6FEBA008F7E60 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 91C6B186D0CD45F4BE96BCAA /* ReactNativeConfig.xcodeproj */;
@@ -321,10 +313,8 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		1E22E29480C7427DB601E7AF /* libRNI18n.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNI18n.a; sourceTree = "<group>"; };
 		1E5ACDD82BD245BEA7C1483B /* RNI18n.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNI18n.xcodeproj; path = "../node_modules/react-native-i18n/RNI18n.xcodeproj"; sourceTree = "<group>"; };
-		2879B60CC3D04A8D9B3FA037 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		3F8E13CF1DDF4303A48F552F /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		415B4DC650CC400CBAF4EF98 /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
-		49375CFD1FDF4A1599891716 /* libRNSVG.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSVG.a; sourceTree = "<group>"; };
 		5285637E202C43B49A962FD6 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		62BB19241D606932341DA580 /* Pods-traveller.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-traveller.release.xcconfig"; path = "Pods/Target Support Files/Pods-traveller/Pods-traveller.release.xcconfig"; sourceTree = "<group>"; };
 		71C9C3456FAB4D04AC420F1C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -441,7 +431,6 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				4E27B876EBA657CFD4FAE968 /* Pods_traveller.framework in Frameworks */,
-				628810B1893E430AACD219C8 /* libRNSVG.a in Frameworks */,
 				871886572AAF41FFABBADCFC /* libReactNativeConfig.a in Frameworks */,
 				00C430E4A1B54336B6062E8F /* libRNDeviceInfo.a in Frameworks */,
 				6D208A440C9B454590225D15 /* libRNI18n.a in Frameworks */,
@@ -611,7 +600,6 @@
 				832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */,
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
-				2879B60CC3D04A8D9B3FA037 /* RNSVG.xcodeproj */,
 				91C6B186D0CD45F4BE96BCAA /* ReactNativeConfig.xcodeproj */,
 				415B4DC650CC400CBAF4EF98 /* RNDeviceInfo.xcodeproj */,
 				1E5ACDD82BD245BEA7C1483B /* RNI18n.xcodeproj */,
@@ -756,14 +744,6 @@
 				CA8103ED1DDA4A380059F2AD /* SMCalloutView.m */,
 			);
 			path = Callout;
-			sourceTree = "<group>";
-		};
-		CAAB20B61DD6FEAC008F7E60 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CAAB20D91DD6FEAC008F7E60 /* libRNSVG.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CAAB20F01DD6FEBA008F7E60 /* Products */ = {
@@ -936,10 +916,6 @@
 					ProjectRef = E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */;
 				},
 				{
-					ProductGroup = CAAB20B61DD6FEAC008F7E60 /* Products */;
-					ProjectRef = 2879B60CC3D04A8D9B3FA037 /* RNSVG.xcodeproj */;
-				},
-				{
 					ProductGroup = CAAB21191DD6FEBA008F7E60 /* Products */;
 					ProjectRef = 85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */;
 				},
@@ -1081,13 +1057,6 @@
 			fileType = archive.ar;
 			path = "libReact-tvOS.a";
 			remoteRef = CAAB20D51DD6FEAC008F7E60 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CAAB20D91DD6FEAC008F7E60 /* libRNSVG.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNSVG.a;
-			remoteRef = CAAB20D81DD6FEAC008F7E60 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CAAB21051DD6FEBA008F7E60 /* libReactNativeConfig.a */ = {
@@ -1382,7 +1351,7 @@
 			baseConfigurationReference = 7CF686A516E650B232DA7268 /* Pods-travellerTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = TYXC29FT67;
+				DEVELOPMENT_TEAM = 9MZ67Y5RT6;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1390,7 +1359,10 @@
 				INFOPLIST_FILE = travellerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/traveller.app/traveller";
@@ -1403,11 +1375,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = TYXC29FT67;
+				DEVELOPMENT_TEAM = 9MZ67Y5RT6;
 				INFOPLIST_FILE = travellerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/traveller.app/traveller";
@@ -1422,7 +1397,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = TYXC29FT67;
+				DEVELOPMENT_TEAM = 9MZ67Y5RT6;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1437,6 +1412,7 @@
 					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 				);
@@ -1461,7 +1437,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TYXC29FT67;
+				DEVELOPMENT_TEAM = 9MZ67Y5RT6;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1476,6 +1452,7 @@
 					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 				);
@@ -1548,6 +1525,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1601,6 +1579,7 @@
 					"$(SRCROOT)/../node_modules/react-native-spinkit/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
+					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 				);

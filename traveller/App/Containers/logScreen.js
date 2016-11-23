@@ -18,8 +18,14 @@ import styles from './Styles/APITestingScreenStyle'
 
 // API buttons here:
 const endpoints = [
-  { cafe: 'cafe'}
-]
+  { 
+    cafe: 'cafe', 
+    police:'police',
+    health:'health',
+    transit: 'transit',
+    banks: 'banks'
+  }
+];
 
 export default class APITestingScreen extends React.Component {
   api: Object
