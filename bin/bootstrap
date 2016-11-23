@@ -9,22 +9,22 @@ function bin-exists {
 }
 
 if [ "$(bin-exists brew)" = "" ]; then
-  echo "Homebrew is not isntalled. Installing"
+  echo "Homebrew is not installed. Installing"
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
 if [ "$(bin-exists vagrant)" = "" ]; then
-  echo "Vagrant is not isntalled. Installing"
+  echo "Vagrant is not installed. Installing"
   brew cask install vagrant
 fi
 
 if [ "$(bin-exists virtualbox)" = "" ]; then
-  echo "VirtualBox is not isntalled. Installing"
+  echo "VirtualBox is not installed. Installing"
   brew cask install virtualbox
 fi
 
 if [ "$(bin-exists VBoxManage)" = "" ]; then
-  echo "VBoxManage is not isntalled. Installing"
+  echo "VBoxManage is not installed. Installing"
   brew cask install VBoxManage
 fi
 
@@ -32,3 +32,7 @@ if [ "$(vagrant plugin list | grep vagrant-docker-compose)" = "" ]; then
   echo "Vagrant Plugin: 'vagrant-docker-compose' not installed. Installing"
  vagrant plugin install vagrant-docker-compose
 fi
+
+echo "Removing Vagrant's fault curl binary..."
+sudo /bin/rm /opt/vagrant/embedded/bin/curl
+echo "All done!"
