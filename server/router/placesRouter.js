@@ -24,6 +24,14 @@ placesRouter.get('/health', (req, res) => {
   placesController.getGoogleData(req, res, 'doctor');
 });
 
+placesRouter.get('/police', (req, res) => {
+  placesController.getGoogleData(req, res, 'police');
+});
+
+placesRouter.get('/cafe', (req, res) => {
+  placesController.getGoogleData(req, res, 'cafe');
+});
+
 //404 all other routes
 placesRouter.use('*', (req, res) => res.status(404).send({error: 'places/endpoint not found'}));
 
