@@ -34,5 +34,5 @@ if [ "$(vagrant plugin list | grep vagrant-docker-compose)" = "" ]; then
 fi
 
 echo "Removing Vagrant's fault curl binary..."
-sudo rm /opt/vagrant/embedded/bin/curl
+sudo /bin/rm /opt/vagrant/embedded/bin/curl
 echo "All done!"
