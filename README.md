@@ -71,13 +71,14 @@ Ignite Documentation - [Ignite Wiki https://github.com/infinitered/ignite/wiki](
 
 ### API
 
-| Method | Uri           | Comment                           | 
-|--------|---------------|-----------------------------------|
-| GET    | places/cafe   | Nearby Cafes                      |
-| GET    | places/park   | Nearby Parks                      |
-| GET    | places/bank   | Nearby Banks                      |
-| GET    | places/police | Nearby Police Station             |
-| GET    | navitia/      | Isochrone JSON Data               |
+| Method | Uri            | Comment                           | 
+|--------|----------------|-----------------------------------|
+| GET    | places/cafe    | Nearby Cafes                      |
+| GET    | places/health  | Nearby Medical Facilities         |
+| GET    | places/bank    | Nearby Banks                      |
+| GET    | places/transit | Nearby Public Transit Locations   |
+| GET    | places/police  | Nearby Police Station             |
+| GET    | navitia/       | Isochrone JSON Data               |
 
 
 ### Redis Installation
