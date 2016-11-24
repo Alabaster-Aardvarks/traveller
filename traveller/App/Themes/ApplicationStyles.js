@@ -1,5 +1,3 @@
-// @flow
-
 import Fonts from './Fonts'
 import Metrics from './Metrics'
 import Colors from './Colors'
@@ -11,7 +9,8 @@ const ApplicationStyles = {
   screen: {
     mainContainer: {
       flex: 1,
-      marginTop: Metrics.navBarHeight,
+      // marginTop: Metrics.navBarHeight,
+      marginTop: 0,
       backgroundColor: Colors.transparent
     },
     backgroundImage: {
@@ -23,7 +22,8 @@ const ApplicationStyles = {
     },
     container: {
       flex: 1,
-      paddingTop: Metrics.baseMargin
+      // paddingTop: Metrics.baseMargin
+      paddingTop: 0,
     },
     section: {
       margin: Metrics.section,
