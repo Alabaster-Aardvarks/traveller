@@ -7,10 +7,12 @@ import Immutable from 'seamless-immutable'
 
 const { Types, Creators } = createActions({
   toggleTraffic: null,
+  toggleMapTile: null,
   setMaxDuration: ['duration'],
   setMapBrand: ['mapBrand'],
   setMapStyle: ['mapStyle'],
-  setUnitOfMeasurement: ['unitOfMeasurement']
+  setUnitOfMeasurement: ['unitOfMeasurement'],
+  setTileStyle: ['tileStyleUrl']
 })
 
 export const MapTypes = Types
@@ -23,7 +25,9 @@ export const INITIAL_STATE = Immutable({
   duration: 60,
   traffic: false,
   unitOfMeasurement: 'Miles',
-  mapStyle: 'Standard'
+  mapStyle: 'Standard',
+  mapTile: false,
+  mapTileUrl: 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
 })
 
 /* ------------- Reducers ------------- */
@@ -33,6 +37,14 @@ export const toggleTraffic = (state: Object) => {
     return state.merge({ traffic: true })
   } else {
     return state.merge({ traffic: false })
+  }
+}
+
+export const toggleMapTile = (state: Object) => {
+  if (state.mapTile === false) {
+    return state.merge({ mapTile: true })
+  } else {
+    return state.merge({ mapTile: false })
   }
 }
 
@@ -56,13 +68,20 @@ export const setUnitOfMeasurement = (state : Object, action: Object) => {
   return state.merge({ unitOfMeasurement })
 }
 
+export const setTileStyle = (state : Object, action: Object) => {
+  const { tileStyleUrl } = action
+  return state.merge({ tileStyleUrl })
+}
+
 
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.TOGGLE_TRAFFIC]: toggleTraffic,
+  [Types.TOGGLE_MAP_TILE]: toggleMapTile,
   [Types.SET_MAX_DURATION]: setMaxDuration,
   [Types.SET_MAP_BRAND]: setMapBrand,
   [Types.SET_MAP_STYLE]: setMapStyle,
-  [Types.SET_UNIT_OF_MEASUREMENT]: setUnitOfMeasurement
+  [Types.SET_UNIT_OF_MEASUREMENT]: setUnitOfMeasurement,
+  [Types.SET_TILE_STYLE]: setTileStyle
 })

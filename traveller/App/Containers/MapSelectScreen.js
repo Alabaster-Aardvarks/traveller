@@ -15,7 +15,7 @@ import styles from './Styles/SettingsScreenStyle'
 class MapSelectScreen extends React.Component {
 
   render () {
-    const { mapBrand, setMapBrand } = this.props
+    const { mapBrand, setMapBrand, mapTile, mapTileUrl, toggleMapTile } = this.props
 
     return (
       <View style={styles.mainContainer}>
@@ -32,6 +32,13 @@ class MapSelectScreen extends React.Component {
                     arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapBrand === mapName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
                   />
                 )}
+                <SettingsList.Item
+                  hasNavArrow={false}
+                  switchState={mapTile}
+                  switchOnValueChange={toggleMapTile}
+                  hasSwitch={true}
+                  title='Map tiles'
+                />
               </SettingsList>
             </View>
           </View>
@@ -43,18 +50,22 @@ class MapSelectScreen extends React.Component {
 
 MapSelectScreen.propTypes = {
   mapBrand: PropTypes.string,
-  setMapBrand: PropTypes.func
+  setMapBrand: PropTypes.func,
+  mapTile: PropTypes.bool,
+  toggleMapTile: PropTypes.func
 }
 
 const mapStateToProps = state => {
   return {
-    mapBrand: state.map.mapBrand
+    mapBrand: state.map.mapBrand,
+    mapTile: state.map.mapTile
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    setMapBrand: mapName => dispatch(MapActions.setMapBrand(mapName))
+    setMapBrand: mapName => dispatch(MapActions.setMapBrand(mapName)),
+    toggleMapTile: () => dispatch(MapActions.toggleMapTile())
   }
 }
 
