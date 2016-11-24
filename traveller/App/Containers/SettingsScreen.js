@@ -26,7 +26,7 @@ class SettingsScreen extends React.Component {
 
     return (
       <View style={styles.mainContainer}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
+        <Image source={Images.bg} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
 
           <View style={{flex:1}}>
@@ -83,6 +83,7 @@ const mapStateToProps = state => {
     traffic: state.map.traffic,
     unitOfMeasurement: state.map.unitOfMeasurement,
     mapStyle: state.map.mapStyle,
+    mapTileName: state.map.mapTileName
   }
 }
 

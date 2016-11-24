@@ -15,11 +15,11 @@ import styles from './Styles/SettingsScreenStyle'
 class MapSelectScreen extends React.Component {
 
   render () {
-    const { mapBrand, setMapBrand, mapTile, mapTileUrl, toggleMapTile } = this.props
+    const { mapBrand, setMapBrand, mapTile, mapTileUrl, toggleMapTile, mapTileName, setMapTile } = this.props
 
     return (
       <View style={styles.mainContainer}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
+        <Image source={Images.bg} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
           <View style={{flex:1}}>
             <View style={{flex:1}}>
@@ -32,6 +32,7 @@ class MapSelectScreen extends React.Component {
                     arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapBrand === mapName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
                   />
                 )}
+                <SettingsList.Header headerText='Tiles' headerStyle={{color:'white', marginTop:50}}/>
                 <SettingsList.Item
                   hasNavArrow={false}
                   switchState={mapTile}
@@ -39,6 +40,14 @@ class MapSelectScreen extends React.Component {
                   hasSwitch={true}
                   title='Map tiles'
                 />
+                {['Basic', 'Black & White'].map((tileName, index) =>
+                  <SettingsList.Item
+                    title={tileName}
+                    key={index}
+                    onPress={() => setMapTile(tileName)}
+                    arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapTileName === tileName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
+                  />
+                )}
               </SettingsList>
             </View>
           </View>
@@ -52,20 +61,23 @@ MapSelectScreen.propTypes = {
   mapBrand: PropTypes.string,
   setMapBrand: PropTypes.func,
   mapTile: PropTypes.bool,
-  toggleMapTile: PropTypes.func
+  toggleMapTile: PropTypes.func,
+  setMapTile: PropTypes.func
 }
 
 const mapStateToProps = state => {
   return {
     mapBrand: state.map.mapBrand,
-    mapTile: state.map.mapTile
+    mapTile: state.map.mapTile,
+    mapTileName: state.map.mapTileName
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     setMapBrand: mapName => dispatch(MapActions.setMapBrand(mapName)),
-    toggleMapTile: () => dispatch(MapActions.toggleMapTile())
+    toggleMapTile: () => dispatch(MapActions.toggleMapTile()),
+    setMapTile: mapTileName => dispatch(MapActions.setMapTile(mapTileName))
   }
 }
 

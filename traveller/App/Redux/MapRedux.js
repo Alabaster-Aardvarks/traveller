@@ -12,7 +12,7 @@ const { Types, Creators } = createActions({
   setMapBrand: ['mapBrand'],
   setMapStyle: ['mapStyle'],
   setUnitOfMeasurement: ['unitOfMeasurement'],
-  setTileStyle: ['tileStyleUrl']
+  setMapTile: ['mapTileName']
 })
 
 export const MapTypes = Types
@@ -27,7 +27,8 @@ export const INITIAL_STATE = Immutable({
   unitOfMeasurement: 'Miles',
   mapStyle: 'Standard',
   mapTile: false,
-  mapTileUrl: 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
+  mapTileName: 'Basic',
+  mapTileUrl: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
 })
 
 /* ------------- Reducers ------------- */
@@ -68,9 +69,13 @@ export const setUnitOfMeasurement = (state : Object, action: Object) => {
   return state.merge({ unitOfMeasurement })
 }
 
-export const setTileStyle = (state : Object, action: Object) => {
-  const { tileStyleUrl } = action
-  return state.merge({ tileStyleUrl })
+export const setMapTile = (state : Object, action: Object) => {
+  const { mapTileName } = action
+  const mapTileObj = {'Black & White': 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+                      'Basic': 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
+                     }
+
+  return state.merge({ mapTileName, mapTileUrl: mapTileObj[mapTileName] })
 }
 
 
@@ -83,5 +88,5 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_MAP_BRAND]: setMapBrand,
   [Types.SET_MAP_STYLE]: setMapStyle,
   [Types.SET_UNIT_OF_MEASUREMENT]: setUnitOfMeasurement,
-  [Types.SET_TILE_STYLE]: setTileStyle
+  [Types.SET_MAP_TILE]: setMapTile
 })
