@@ -9,8 +9,7 @@ const ApplicationStyles = {
   screen: {
     mainContainer: {
       flex: 1,
-      // marginTop: Metrics.navBarHeight,
-      marginTop: 0,
+      marginTop: Metrics.navBarHeight,
       backgroundColor: Colors.transparent
     },
     backgroundImage: {
@@ -22,8 +21,7 @@ const ApplicationStyles = {
     },
     container: {
       flex: 1,
-      // paddingTop: Metrics.baseMargin
-      paddingTop: 0,
+      paddingTop: Metrics.baseMargin
     },
     section: {
       margin: Metrics.section,
