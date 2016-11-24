@@ -9,16 +9,16 @@ import FullButton from '../Components/FullButton'
 import API from '../Services/Api'
 import FJSON from 'format-json'
 
-// Styles
+/// Styles
 import styles from './Styles/APITestingScreenStyle'
 
 // API buttons here:
 const endpoints = [
-  { label: 'Get Banks', endpoint: 'places/banks' },
-  { label: 'Get Police', endpoint: 'places/police' },
-  { label: 'Get Medical', endpoint: 'places/medical' },
-  { label: 'Get Cafe', endpoint: 'places/cafe' },
-  { label: 'Get Transit', endpoint: 'places/transit' },
+  { label: 'Get Police', endpoint: 'getData', args: ['places/police'] },
+  { label: 'Get Cafe', endpoint: 'getData', args: ['places/cafe'] },
+  { label: 'Get Transit', endpoint: 'getData', args: ['places/transit'] },
+  { label: 'Get Bank', endpoint: 'getData', args: ['places/bank'] },
+  { label: 'Get Medical', endpoint: 'getData', args: ['places/medical'] }
 ]
 
 export default class APITestingScreen extends React.Component {
