@@ -21,8 +21,12 @@ const endpoints = [
   { label: 'Get Medical', endpoint: 'getData', args: ['places/medical'] }
 ]
 
+const debug = true
+
 export default class APITestingScreen extends React.Component {
   api: Object
+
+  debug:true
 
   state: {
     visibleHeight: number
@@ -41,6 +45,7 @@ export default class APITestingScreen extends React.Component {
     this.refs.container.scrollTo({x: 0, y: 0, animated: true})
     if (response.ok) {
       this.refs.result.setState({message: FJSON.plain(response.data), title: title})
+      if (debug) console.tron.display({ name: 'getPlaces response', value: resp.data })
     } else {
       this.refs.result.setState({message: `${response.problem} - ${response.status}`, title: title})
     }
