@@ -230,8 +230,15 @@ class TravContainer extends React.Component {
     updateLocationIsochrons(this, true, newPosition)
   }
 
+  // mapTileToMapTileUrl (mapTile) {
+  //   const mapTileObj = {'Black & White': 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+  //                       'Basic': 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
+  //                      }
+  //         return mapTileObj[mapTile]
+  // }
+
   render () {
-    const { traffic, mapBrand, mapStyle, mapTile, mapTileUrl } = this.props
+    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -258,9 +265,9 @@ class TravContainer extends React.Component {
               * The url template of the tile server. The patterns {x} {y} {z} will be replaced at runtime
               * For example, http://c.tile.openstreetmap.org/{z}/{x}/{y}.png
               */
-              urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}
+              // urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}
               // urlTemplate={'https://tangrams.github.io/carousel/?tron{z}/{x}/{y}'}
-              // urlTemplate={mapTileUrl}
+              urlTemplate={mapTileUrl}
             />
             : undefined
           }
@@ -337,7 +344,8 @@ TravContainer.propTypes = {
   mapBrand: PropTypes.string,
   mapStyle: PropTypes.string,
   mapTile: PropTypes.bool,
-  mapTileUrl: PropTypes.string,
+  mapTileName: PropTypes.string,
+  mapTileUrl: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
@@ -346,7 +354,8 @@ const mapStateToProps = (state) => {
     mapBrand: state.map.mapBrand,
     mapStyle: state.map.mapStyle,
     mapTile: state.map.mapTile,
-    mapTileUrl: state.map.mapTileUrl,
+    mapTileName: state.map.mapTileName,
+    mapTileUrl: state.map.mapTileUrl
   }
 }
 
