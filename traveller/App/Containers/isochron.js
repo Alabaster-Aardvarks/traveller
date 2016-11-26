@@ -1,14 +1,14 @@
 import { Worker } from 'react-native-workers'
 
-const debug = false
+const debug = false // enable log messages for debug
 
 export const ISOCHRON_NOT_LOADED = 'ISOCHRON_NOT_LOADED'
 export const ISOCHRON_LOADING = 'ISOCHRON_LOADING'
 export const ISOCHRON_LOADED = 'ISOCHRON_LOADED'
 export const ISOCHRON_ERROR = 'ISOCHRON_ERROR'
 
-let savedArgString = ''
 let isochronsState = ISOCHRON_NOT_LOADED
+let savedArgString = ''
 let updateIsochronsState = null
 let worker = null
 
@@ -168,5 +168,5 @@ export const checkIsochronAPI = args => {
     }
 
     checkWorker.postMessage(JSON.stringify({ id: 'start', params: params }))
-  }
+  })
 }
