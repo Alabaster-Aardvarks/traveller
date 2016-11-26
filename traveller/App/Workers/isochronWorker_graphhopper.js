@@ -3,8 +3,9 @@ import { encode } from 'base-64'
 import { self } from 'react-native-workers'
 import Secrets from 'react-native-config'
 
-const debug = true // enable log messages for debug
-const useBoundaryDuration = false // if true, will fetch all isochrons at once, otherwise one by one
+const debug = false // enable log messages for debug
+// NOTE: if fetching all isochrons at once, we need equitemporal travel times
+const useBoundaryDuration = true // if true, will fetch all isochrons at once, otherwise one by one
 
 // get message from application
 self.onmessage = messageString => {
@@ -18,19 +19,21 @@ self.onmessage = messageString => {
   }
 }
 
-const key = process.env.GRASSHOPPER_KEY || Secrets.GRASSHOPPER_KEY // API key
-const grasshopperUrl = 'https://graphhopper.com/api/1'
-const serverUrl = grasshopperUrl //process.env.ISOCHRON_SERVER_URL || Secrets.ISOCHRON_SERVER_URL || grasshopperUrl
+const provider = 'GRAPHHOPPER'
+const key = process.env.GRAPHHOPPER_KEY || Secrets.GRAPHHOPPER_KEY // API key
+const directUrl = 'https://graphhopper.com/api/1'
+const serverEndpointUrl = process.env.GRAPHHOPPER_ISOCHRON_SERVER_ENDPOINT || Secrets.GRAPHHOPPER_ISOCHRON_SERVER_ENDPOINT
+const serverUrl = serverEndpointUrl ? process.env.ISOCHRON_SERVER_URL || Secrets.ISOCHRON_SERVER_URL || directUrl : directUrl
+const useDirect = serverUrl.match(/graphhopper\.com/) ? true : false
+
 const api = create({ baseURL: serverUrl })
-const useGrasshopper = serverUrl.match(/graphhopper/) ? true : false
-const serverEndpointUrl = '/grasshopper'
 
 const loadIsochron = params => {
 
   // isochron starting point
   let latitude = params.latitude
   let longitude = params.longitude
-  let durations = useBoundaryDuration ? [ params.durations ] : params.durations
+  let durations = useBoundaryDuration ? [ params.durations.slice(1) ] : params.durations.slice(1) // skip first index (always 0)
   let dateTime = params.dateTime.replace(/\.\d{3}/,'').replace(/[-:]*/g, '').replace(/Z$/, '') // remove second decimals, separators, and ending Z
   let downSamplingCoordinates = 0 * params.downSamplingCoordinates
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'params', log: params })) }
@@ -39,53 +42,66 @@ const loadIsochron = params => {
     durations.map((duration, index) => {
       let durationQuery = ''
       if (Array.isArray(duration)) {
-        duration.map((d, i) => {
-          // FIXME? not supported yet
-          //durationQuery += (i === 0) ? `&min_duration=${d}` : `&boundary_duration[]=${d}`
-        })
+        // IMPORTANT: we can only support equitemporal travel times
+        durationQuery += `&time_limit=${duration[duration.length - 1]}&buckets=${duration.length}`
       } else {
-        if (index === 0) { return } // first duration is min duration
         durationQuery += `&time_limit=${duration}`
       }
-      durationQuery += `&vehicle=car`
+      durationQuery += `&vehicle=car` // FIXME: bike, car, foot, bus, hike
 
-      // Grasshopper query for this isochron
+      // Query for this isochron
       // https://graphhopper.com/api/1/isochrone?point=51.131108%2C12.414551&key=[YOUR_KEY]
       let keyQuery = `&key=${key}`
-      let grasshopperIsochronUrl = `/isochrone?point=${latitude},${longitude}&datetime=${dateTime}${durationQuery}${keyQuery}`
-      let url = useGrasshopper ? grasshopperIsochronUrl : serverEndpointUrl
-      let query = useGrasshopper ? null : { url: `${grasshopperUrl}${grasshopperIsochronUrl}` }
+      let isochronEndpointUrl = `/isochrone?point=${latitude},${longitude}&datetime=${dateTime}${durationQuery}${keyQuery}`
+      let url = useDirect ? isochronEndpointUrl : serverEndpointUrl
+      let query = useDirect ? null : { url: `${directUrl}${isochronEndpointUrl}` }
 
-      if (debug) self.postMessage(JSON.stringify({ id: 'log', name: 'grasshopper request url', log: url }))
+      if (debug) self.postMessage(JSON.stringify({ id: 'log', name: `${provider} request url`, log: url }))
       return api.get(url, query)
       .then(resp => {
         if (!resp.ok) {
           self.postMessage(JSON.stringify({ id: 'error', error: 'Request to ' + url + ' failed [' + resp.problem + ']' }))
           return
         }
-        if (debug) self.postMessage(JSON.stringify({ id: 'log', name: 'grasshopper isochron response', log: resp.data }))
+        if (debug) self.postMessage(JSON.stringify({ id: 'log', name: `${provider} isochron response`, log: resp.data }))
 
-        if (Array.isArray(duration)) { // FIXME? not supported yet
-          duration.shift() // remove first entry
-          duration.map((d, idx) => drawIsochron(resp.data.polygons[idx], idx))
-        } else {
-          let isochron = {}
-          isochron.geojson = {}
-          isochron.geojson.coordinates = [ resp.data.polygons[0].geometry.coordinates ]
-
-          if (debug) self.postMessage(JSON.stringify({ id: 'log', name: 'grasshopper isochron', log: isochron }))
-          drawIsochron(isochron, index - 1, downSamplingCoordinates) // we have only one isochrone
-        }
+        return useBoundaryDuration ? resp.data.polygons : resp.data.polygons[0]
       })
     })
   )
-  .then(() => self.postMessage(JSON.stringify({ id: 'done' })))
+  .then(polygonsArray => {
+    let polygons = useBoundaryDuration ? polygonsArray[0] : polygonsArray
+
+    if (debug) self.postMessage(JSON.stringify({ id: 'log', name: `${provider} polygons`, log: polygons }))
+    let holes = []
+    polygons.map((polygon, index) => {
+      //console.log('polygon', polygon)
+      if (debug) self.postMessage(JSON.stringify({ id: 'log', name: `${provider} polygon ${index}`, log: polygon }))
+      let isochron = {}
+      isochron.geojson = {}
+      isochron.geojson.coordinates = []
+      let a = []
+      for (let l = 0; l < polygon.geometry.coordinates.length; l++) {
+        let p = polygon.geometry.coordinates[l]
+        a.push(p)
+        if (l === 0 && holes.length) {
+          //console.log(`Polygon #${index}, adding ${holes.length} holes...`)
+          holes.map(hole => a.push(hole))
+        }
+        holes.push(p)
+      }
+      isochron.geojson.coordinates.push(a)
+      if (debug) self.postMessage(JSON.stringify({ id: 'log', name: `${provider} isochron ${index}`, log: isochron }))
+      drawIsochron(isochron, index, downSamplingCoordinates)
+    })
+    self.postMessage(JSON.stringify({ id: 'done' }))
+  })
   .catch(err => self.postMessage(JSON.stringify({ id: 'error', error: err })))
 
 }
 
 const drawIsochron = (isochron, index, downSamplingCoordinates) => {
-  // isochron = { geojson: { coordinates: [ [ [lng,lat]...polygon... ], [ [lng,lat]...hole... ] ] } }
+  // isochron = { geojson: { coordinates: [ [ [ [lng,lat]...polygon... ], [ [lng,lat]...hole... ] ] ] } }
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'index', log: index })) }
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'isochron', log: isochron })) }
   let geojson = isochron.geojson

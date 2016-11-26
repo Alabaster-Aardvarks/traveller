@@ -71,10 +71,10 @@ DEST=$CONFIGURATION_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/App/Workers
 mkdir -p $DEST
 
 # Get list of entry files
-for ENTRY_FILE in ${1:-App/Workers/*Worker.js}
+for ENTRY_FILE in ${1:-App/Workers/*Worker*.js}
 do
 
-  ENTRY_FILE_BASENAME=$(basename $ENTRY_FILE | cut -d. -f1) 
+  ENTRY_FILE_BASENAME=$(basename $ENTRY_FILE | cut -d. -f1)
   BUNDLE_FILE="$DEST/$ENTRY_FILE_BASENAME.jsbundle"
 
   $NODE_BINARY "$REACT_NATIVE_DIR/local-cli/cli.js" bundle \
