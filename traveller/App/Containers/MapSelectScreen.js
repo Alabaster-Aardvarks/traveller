@@ -24,6 +24,7 @@ class MapSelectScreen extends React.Component {
           <View style={{flex:1}}>
             <View style={{flex:1}}>
               <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
+                <SettingsList.Header headerText='Provider' headerStyle={{color:'white', marginTop:50}}/>
                 {['Google Maps', 'Apple Maps'].map((mapName, index) =>
                   <SettingsList.Item
                     title={mapName}
@@ -40,14 +41,14 @@ class MapSelectScreen extends React.Component {
                   hasSwitch={true}
                   title='Map tiles'
                 />
-                {['Basic', 'Black & White'].map((tileName, index) =>
+                {mapTile ? ['Basic', 'Black & White'].map((tileName, index) =>
                   <SettingsList.Item
                     title={tileName}
                     key={index}
                     onPress={() => setMapTile(tileName)}
                     arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapTileName === tileName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
                   />
-                )}
+                ) : undefined}
               </SettingsList>
             </View>
           </View>
