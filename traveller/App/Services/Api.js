@@ -44,7 +44,7 @@ const create = (baseURL = serverUrl) => {
   // Since we can't hide from that, we embrace it by getting out of the
   // way at this level.
   //
-  const getData = (destination) => api.get(`${destination}`)
+  const getData = (destination) => api.get(`${destination}`, { lat: 37.78825, long: -122.4324})
 
   // ------
   // STEP 3

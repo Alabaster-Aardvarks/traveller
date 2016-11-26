@@ -25,7 +25,7 @@ const debug = true
 
 export default class APITestingScreen extends React.Component {
   
-  api: Object
+  api:  Object
 
   debug:true
 
@@ -45,7 +45,7 @@ export default class APITestingScreen extends React.Component {
   showResult (response: Object, title: string = 'Response') {
     this.refs.container.scrollTo({x: 0, y: 0, animated: true})
     if (response.ok) {
-      this.refs.result.setState({message: FJSON.plain(response.data), title: title})
+      this.refs.result.setState({message: response.status, title: title})
     } else {
       this.refs.result.setState({message: `${response.problem} - ${response.status}`, title: title})
     }
