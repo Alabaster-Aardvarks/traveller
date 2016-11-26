@@ -28,9 +28,9 @@ const roundDateTime = dateTime => {
   return date.toISOString()
 }
 const DATETIME = roundDateTime('now') // '2016-11-09T18:49:27.000Z'
-const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
+const DURATIONS = [ 0, 600, 1200, 1800 ] //, 2400, 3600, 4200 ]
 const LATITUDE_DELTA = roundCoordinate(0.1)
-const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
+const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every N
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -45,6 +45,8 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
   // get current location
   navigator.geolocation.getCurrentPosition(position => {
     if (newPosition) { position = newPosition }
+    // position.coords.latitude = 43.5086
+    // position.coords.longitude = 16.43787
     currentPosition = { latitude: position.coords.latitude, longitude: position.coords.longitude }
     if (debug) console.tron.display({ name: 'current position', value: currentPosition })
     let locations = [ {
@@ -290,6 +292,8 @@ class TravContainer extends React.Component {
           degrees={90}
           icon={<Icon name='search' style={styles.actionButton}></Icon>}
           spacing={10}
+          verticalOrientation='up'
+          offsetY={10}
         >
           <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => this.changePlacesType.call(this, 'bank')}>
             <Icon name='university' style={styles.actionButtonIcon}/>
