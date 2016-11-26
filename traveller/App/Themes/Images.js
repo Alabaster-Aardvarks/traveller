@@ -2,7 +2,7 @@
 
 // leave off @2x/@3x
 const images = {
-  bg: require('../Images/BG.png'),
+  background: require('../Images/BG.png'),
   logo: require('../Images/Logo.png'),
   igniteLogo1: require('../Images/ignite_logo1.png'),
   ir: require('../Images/ir.png'),

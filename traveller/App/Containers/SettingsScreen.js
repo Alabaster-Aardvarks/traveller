@@ -83,6 +83,7 @@ const mapStateToProps = state => {
     traffic: state.map.traffic,
     unitOfMeasurement: state.map.unitOfMeasurement,
     mapStyle: state.map.mapStyle,
+    mapTileName: state.map.mapTileName
   }
 }
 

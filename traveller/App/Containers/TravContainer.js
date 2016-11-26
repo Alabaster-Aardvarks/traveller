@@ -230,8 +230,15 @@ class TravContainer extends React.Component {
     updateLocationIsochrons(this, true, newPosition)
   }
 
+  // mapTileToMapTileUrl (mapTile) {
+  //   const mapTileObj = {'Black & White': 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+  //                       'Basic': 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
+  //                      }
+  //         return mapTileObj[mapTile]
+  // }
+
   render () {
-    const { traffic, mapBrand, mapStyle } = this.props
+    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -252,15 +259,17 @@ class TravContainer extends React.Component {
           loadingEnabled={true}
           mapType={mapStyle.toLowerCase()}
         >
-          { 1 ? undefined :
+          { mapTile ?
             <MapView.UrlTile
               /**
               * The url template of the tile server. The patterns {x} {y} {z} will be replaced at runtime
               * For example, http://c.tile.openstreetmap.org/{z}/{x}/{y}.png
               */
-              /**urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}*/
-              urlTemplate={'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'}
+              // urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}
+              // urlTemplate={'https://tangrams.github.io/carousel/?tron{z}/{x}/{y}'}
+              urlTemplate={mapTileUrl}
             />
+            : undefined
           }
           { Object.keys(this.state.placesTypes).map(type => {
               return (!this.state.placesTypes[type] || !savedPlaces[type] || savedPlaces[type].length === 0) ? undefined : savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type))
@@ -333,14 +342,20 @@ class TravContainer extends React.Component {
 TravContainer.propTypes = {
   traffic: PropTypes.bool,
   mapBrand: PropTypes.string,
-  mapStyle: PropTypes.string
+  mapStyle: PropTypes.string,
+  mapTile: PropTypes.bool,
+  mapTileName: PropTypes.string,
+  mapTileUrl: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
   return {
     traffic: state.map.traffic,
     mapBrand: state.map.mapBrand,
-    mapStyle: state.map.mapStyle
+    mapStyle: state.map.mapStyle,
+    mapTile: state.map.mapTile,
+    mapTileName: state.map.mapTileName,
+    mapTileUrl: state.map.mapTileUrl
   }
 }
 
