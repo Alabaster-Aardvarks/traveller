@@ -389,7 +389,6 @@ class TravContainer extends React.Component {
           degrees={ 0 }
           icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
           position='center'
-          offsetY={ 0.85 * height }
           verticalOrientation='down'
         >
           <ActionButton.Item buttonColor='#9b59b6' title='60' onPress={() => this.changePlacesType.call(this, 'bank')}>
@@ -411,7 +410,6 @@ class TravContainer extends React.Component {
           buttonColor='#1abc9c'
           icon={<Icon name='cog' style={styles.actionButton}></Icon>}
           position='left'
-          offsetY={ 0.85 * height }
           verticalOrientation='down'
           onPress={ NavigationActions.settings }
         >
@@ -422,7 +420,6 @@ class TravContainer extends React.Component {
           buttonColor='rgba(30,80,190,1)'
           icon={<Icon name='car' style={styles.actionButton}></Icon>}
           position='right'
-          offsetY={ 0.85 * height }
           verticalOrientation='down'
           autoInactive={ false }
         >
