@@ -125,3 +125,48 @@ const brightness = (r, g, b) => {
 //
 //   return { r: red, g: grn, b: blu }
 // }
+
+let checkWorker = null
+
+export const terminateCheckIsochronAPIWorker = () => {
+  if (checkWorker) {
+    if (debug) console.tron.display({ name: 'terminateCheckIsochronAPIWorker', value: 'terminating checkIsochronAPI worker' })
+    checkWorker.terminate() // terminate worker if it was running
+    checkWorker = null
+  }
+}
+
+export const checkIsochronAPI = args => {
+  return new Promise((resolve, reject) => {
+    let params = args.params
+    if (params.durations.length > 2) {
+      params.durations = params.durations.slice(0, 2)
+    }
+
+    terminateCheckIsochronAPIWorker()
+    // create worker and send it some work
+    checkWorker = new Worker(`App/Workers/isochronWorker_${params.provider}.js`)
+
+    checkWorker.onmessage = messageString => {
+      let message = JSON.parse(messageString)
+      if (message.id === 'update') {
+        if (debug) console.tron.display({ name: 'checkIsochronAPI update from worker', value: message.polygons.length })
+        resolve({ polygonIndex: message.index, polygons: message.polygons })
+      } else if (message.id === 'done') {
+        terminateCheckIsochronAPIWorker()
+      } else if (message.id === 'log') {
+        console.tron.display({ name: 'checkIsochronAPI worker ' + message.name, value: message.log })
+      } else if (message.id === 'error') {
+        console.tron.error('checkIsochronAPI worker reported an error: ' + message.error)
+        terminateCheckIsochronAPIWorker()
+        reject({ error: message.error })
+      } else {
+        console.tron.error('checkIsochronAPI worker unknown message: ' + messageString)
+        terminateCheckIsochronAPIWorker()
+        reject({ error: messageString })
+      }
+    }
+
+    checkWorker.postMessage(JSON.stringify({ id: 'start', params: params }))
+  }
+}

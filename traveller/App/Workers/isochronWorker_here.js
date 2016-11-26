@@ -54,13 +54,14 @@ const loadIsochron = params => {
       // see https://developer.here.com/rest-apis/documentation/routing/topics/resource-calculate-isoline.html
 
       // query for this isochron
-      //   other possible options: resolution=10 (meters per pixel), maxpoints=100, quality=1 [1,2,3] 1 is default & best
+      //   other possible options: maxpoints=100, quality=1 [1,2,3] 1 is default & best
       const modeQuery = `mode=fastest;${transportMode === 'car' ? 'car' : 'pedestrian'};traffic:${trafficMode}`
+      const resolutionQuery = '' // `&resolution=1` // meters per pixel
       const startDestQuery = `&${fromTo === 'from' ? 'start' : 'destination'}=geo!${latitude},${longitude}`
       const timeQuery = `&${fromTo === 'from' ? 'departure' : 'arrival'}=${dateTime}`
       const singleComponentQuery = `&singlecomponent=true`
       const appIdCodeQuery = `&app_id=${appId}&app_code=${appCode}`
-      const isochronEndpointUrl = `/calculateisoline.json?${modeQuery}${startDestQuery}${timeQuery}&rangetype=time${durationQuery}${singleComponentQuery}${appIdCodeQuery}`
+      const isochronEndpointUrl = `/calculateisoline.json?${modeQuery}${startDestQuery}${timeQuery}&rangetype=time${resolutionQuery}${durationQuery}${singleComponentQuery}${appIdCodeQuery}`
       const url = useDirect ? isochronEndpointUrl : serverEndpointUrl
       const query = useDirect ? null : { url: `${directUrl}${isochronEndpointUrl}` }
 
