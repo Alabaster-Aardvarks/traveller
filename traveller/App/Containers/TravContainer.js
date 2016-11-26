@@ -14,7 +14,7 @@ import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIso
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
 
-const debug = false
+const debug = false // enable log messages for debug
 
 const COORDINATE_PRECISION = 0.001 // degrees
 const DATETIME_PRECISION = 60 // seconds
@@ -28,9 +28,13 @@ const roundDateTime = dateTime => {
   return date.toISOString()
 }
 const DATETIME = roundDateTime('now') // '2016-11-09T18:49:27.000Z'
-const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
 const LATITUDE_DELTA = roundCoordinate(0.1)
-const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
+const DURATIONS = [ 0, 600, 1200, 1800 ] //, 2400, 3600, 4200 ]
+const DOWNSAMPLING_COORDINATES = { 'navitia': 5, 'here': 0, 'graphhopper': 5, 'route360': 5 } // keep 1 point out of every N
+const FROM_TO_MODE = 'from' // [from,to]
+const TRANSPORT_MODE = 'car' // [car,bike,walk,transit]
+const TRAFFIC_MODE = 'enabled' // [enabled,disabled] HERE API only, enable always
+const ISOCHRON_PROVIDER = 'here' // [navitia,here,route360,graphhopper]
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -55,11 +59,15 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
 
     // isochron parameters
     let params = {
+      provider: ISOCHRON_PROVIDER,
       latitude: roundCoordinate(locations[0].latitude),
       longitude: roundCoordinate(locations[0].longitude),
       durations: context ? context.state.isochronDurations : DURATIONS,
       dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
-      downSamplingCoordinates: context ? context.state.downSamplingCoordinates : DOWNSAMPLING_COORDINATES,
+      downSamplingCoordinates: context ? context.state.downSamplingCoordinates[ISOCHRON_PROVIDER] : DOWNSAMPLING_COORDINATES[ISOCHRON_PROVIDER],
+      fromTo: context ? context.state.fromTo : FROM_TO_MODE,
+      transportMode: context ? context.state.transportMode : TRANSPORT_MODE,
+      trafficMode: TRAFFIC_MODE,
       skip: skipIsochrons
     }
 
@@ -110,6 +118,8 @@ class TravContainer extends React.Component {
       polygonsFillColor: [...Array(DURATIONS.length - 1)].map(() => 1),
       dateTime: DATETIME,
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
+      fromTo: FROM_TO_MODE,
+      transportMode: TRANSPORT_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
       sliderVisible: false,
@@ -290,6 +300,8 @@ class TravContainer extends React.Component {
           degrees={90}
           icon={<Icon name='search' style={styles.actionButton}></Icon>}
           spacing={10}
+          verticalOrientation='up'
+          offsetY={10}
         >
           <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => this.changePlacesType.call(this, 'bank')}>
             <Icon name='university' style={styles.actionButtonIcon}/>
