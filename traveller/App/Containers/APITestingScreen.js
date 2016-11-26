@@ -118,7 +118,7 @@ class APIResult extends React.Component {
           style={{backgroundColor: 'white', padding: 20}}
           onPress={this.onApiPress}
         >
-          <Text>{this.state.title} Response:</Text>
+          <Text>{this.state.title} API Status:</Text>
           <Text allowFontScaling={false} style={{fontFamily: 'CourierNewPS-BoldMT', fontSize: 10}}>
             {this.state.message}
           </Text>
