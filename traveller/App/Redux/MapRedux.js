@@ -71,8 +71,12 @@ export const setUnitOfMeasurement = (state : Object, action: Object) => {
 
 export const setMapTile = (state : Object, action: Object) => {
   const { mapTileName } = action
-  const mapTileObj = {'Black & White': 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
-                      'Basic': 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
+  const mapTileObj = {Toner: 'https://stamen-tiles-d.a.ssl.fastly.net/toner/{z}/{x}/{y}.png',
+                      Terrain: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg',
+                      Watercolor: 'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg',
+                      'Burning Map': 'https://stamen-tiles-d.a.ssl.fastly.net/burningmap/{z}/{x}/{y}.jpg',
+                      'trees-cabs-crime': 'https://stamen-tiles-d.a.ssl.fastly.net/trees-cabs-crime/{z}/{x}/{y}.jpg',
+                      Mars: 'https://stamen-tiles-d.a.ssl.fastly.net/mars/{z}/{x}/{y}.jpg',
                      }
 
   return state.merge({ mapTileName, mapTileUrl: mapTileObj[mapTileName] })

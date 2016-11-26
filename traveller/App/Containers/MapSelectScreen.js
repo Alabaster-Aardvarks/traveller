@@ -41,7 +41,7 @@ class MapSelectScreen extends React.Component {
                   hasSwitch={true}
                   title='Map tiles'
                 />
-                {mapTile ? ['Basic', 'Black & White'].map((tileName, index) =>
+                {mapTile ? ['Toner', 'Terrain', 'Watercolor', 'Burning Map', 'trees-cabs-crime', 'Mars'].map((tileName, index) =>
                   <SettingsList.Item
                     title={tileName}
                     key={index}
