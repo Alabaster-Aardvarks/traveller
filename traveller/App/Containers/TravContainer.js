@@ -14,7 +14,7 @@ import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIso
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
 
-const debug = false
+const debug = false // enable log messages for debug
 
 const COORDINATE_PRECISION = 0.001 // degrees
 const DATETIME_PRECISION = 60 // seconds
@@ -33,7 +33,7 @@ const DURATIONS = [ 0, 600, 1200, 1800 ] //, 2400, 3600, 4200 ]
 const DOWNSAMPLING_COORDINATES = { 'navitia': 5, 'here': 0, 'graphhopper': 5, 'route360': 5 } // keep 1 point out of every N
 const FROM_TO_MODE = 'from' // [from,to]
 const TRANSPORT_MODE = 'car' // [car,bike,walk,transit]
-const TRAFFIC_MODE = 'enabled' // [enabled,disabled]
+const TRAFFIC_MODE = 'enabled' // [enabled,disabled] HERE API only, enable always
 const ISOCHRON_PROVIDER = 'here' // [navitia,here,route360,graphhopper]
 
 const { width, height } = Dimensions.get('window');
@@ -67,7 +67,7 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       downSamplingCoordinates: context ? context.state.downSamplingCoordinates[ISOCHRON_PROVIDER] : DOWNSAMPLING_COORDINATES[ISOCHRON_PROVIDER],
       fromTo: context ? context.state.fromTo : FROM_TO_MODE,
       transportMode: context ? context.state.transportMode : TRANSPORT_MODE,
-      trafficMode: context ? context.state.trafficMode : TRAFFIC_MODE,
+      trafficMode: TRAFFIC_MODE,
       skip: skipIsochrons
     }
 
@@ -120,7 +120,6 @@ class TravContainer extends React.Component {
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
       fromTo: FROM_TO_MODE,
       transportMode: TRANSPORT_MODE,
-      trafficMode: TRAFFIC_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
       sliderVisible: false,
