@@ -74,9 +74,6 @@ export const setMapTile = (state : Object, action: Object) => {
   const mapTileObj = {Toner: 'https://stamen-tiles-d.a.ssl.fastly.net/toner/{z}/{x}/{y}.png',
                       Terrain: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg',
                       Watercolor: 'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg',
-                      'Burning Map': 'https://stamen-tiles-d.a.ssl.fastly.net/burningmap/{z}/{x}/{y}.jpg',
-                      'trees-cabs-crime': 'https://stamen-tiles-d.a.ssl.fastly.net/trees-cabs-crime/{z}/{x}/{y}.jpg',
-                      Mars: 'https://stamen-tiles-d.a.ssl.fastly.net/mars/{z}/{x}/{y}.jpg',
                      }
 
   return state.merge({ mapTileName, mapTileUrl: mapTileObj[mapTileName] })
