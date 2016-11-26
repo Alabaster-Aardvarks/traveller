@@ -6,6 +6,7 @@ import { Metrics, Images } from '../Themes'
 import FullButton from '../Components/FullButton'
 
 // For API
+//the services API page is 'hooked' up to our AWS places api
 import API from '../Services/Api'
 import FJSON from 'format-json'
 
@@ -13,6 +14,8 @@ import FJSON from 'format-json'
 import styles from './Styles/APITestingScreenStyle'
 
 // API buttons here:
+// this 'pattern' for endpoints, is kind of deceptive, the endpoint: is really the 
+// api service function and the args are the ACTUAL endpoint 
 const endpoints = [
   { label: 'Get Police', endpoint: 'getData', args: ['places/police'] },
   { label: 'Get Cafe', endpoint: 'getData', args: ['places/cafe'] },
@@ -26,7 +29,7 @@ const debug = true
 export default class APITestingScreen extends React.Component {
   
   api:  Object
-
+  //unnecessary line #33
   debug:true
 
   state: {
@@ -45,6 +48,8 @@ export default class APITestingScreen extends React.Component {
   showResult (response: Object, title: string = 'Response') {
     this.refs.container.scrollTo({x: 0, y: 0, animated: true})
     if (response.ok) {
+      //this actually will be what's displayed on the top 1/2 of the page
+      //right now, we only know that the code is working, response.body is "too big?"
       this.refs.result.setState({message: response.status, title: title})
     } else {
       this.refs.result.setState({message: `${response.problem} - ${response.status}`, title: title})
@@ -110,7 +115,7 @@ class APIResult extends React.Component {
   onApiPress = () => {
     this.setState({message: false})
   }
-
+    //will display test result return
   renderView () {
     return (
       <ScrollView style={{ top: 0, bottom: 0, left: 0, right: 0, position: 'absolute' }} overflow='hidden'>
@@ -120,7 +125,7 @@ class APIResult extends React.Component {
         >
           <Text>{this.state.title} API Status:</Text>
           <Text allowFontScaling={false} style={{fontFamily: 'CourierNewPS-BoldMT', fontSize: 10}}>
-            {this.state.message}
+            {this.state.message} 
           </Text>
         </TouchableOpacity>
       </ScrollView>
