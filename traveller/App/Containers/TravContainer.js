@@ -28,9 +28,13 @@ const roundDateTime = dateTime => {
   return date.toISOString()
 }
 const DATETIME = roundDateTime('now') // '2016-11-09T18:49:27.000Z'
-const DURATIONS = [ 0, 600, 1200, 1800 ] //, 2400, 3600, 4200 ]
 const LATITUDE_DELTA = roundCoordinate(0.1)
-const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every N
+const DURATIONS = [ 0, 600, 1200, 1800 ] //, 2400, 3600, 4200 ]
+const DOWNSAMPLING_COORDINATES = { 'navitia': 5, 'here': 0, 'graphhopper': 5, 'route360': 5 } // keep 1 point out of every N
+const FROM_TO_MODE = 'from' // [from,to]
+const TRANSPORT_MODE = 'car' // [car,bike,walk,transit]
+const TRAFFIC_MODE = 'enabled' // [enabled,disabled]
+const ISOCHRON_PROVIDER = 'here' // [navitia,here,route360,graphhopper]
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -45,8 +49,6 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
   // get current location
   navigator.geolocation.getCurrentPosition(position => {
     if (newPosition) { position = newPosition }
-    // position.coords.latitude = 43.5086
-    // position.coords.longitude = 16.43787
     currentPosition = { latitude: position.coords.latitude, longitude: position.coords.longitude }
     if (debug) console.tron.display({ name: 'current position', value: currentPosition })
     let locations = [ {
@@ -57,11 +59,15 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
 
     // isochron parameters
     let params = {
+      provider: ISOCHRON_PROVIDER,
       latitude: roundCoordinate(locations[0].latitude),
       longitude: roundCoordinate(locations[0].longitude),
       durations: context ? context.state.isochronDurations : DURATIONS,
       dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
-      downSamplingCoordinates: context ? context.state.downSamplingCoordinates : DOWNSAMPLING_COORDINATES,
+      downSamplingCoordinates: context ? context.state.downSamplingCoordinates[ISOCHRON_PROVIDER] : DOWNSAMPLING_COORDINATES[ISOCHRON_PROVIDER],
+      fromTo: context ? context.state.fromTo : FROM_TO_MODE,
+      transportMode: context ? context.state.transportMode : TRANSPORT_MODE,
+      trafficMode: context ? context.state.trafficMode : TRAFFIC_MODE,
       skip: skipIsochrons
     }
 
@@ -112,6 +118,9 @@ class TravContainer extends React.Component {
       polygonsFillColor: [...Array(DURATIONS.length - 1)].map(() => 1),
       dateTime: DATETIME,
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
+      fromTo: FROM_TO_MODE,
+      transportMode: TRANSPORT_MODE,
+      trafficMode: TRAFFIC_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
       sliderVisible: false,

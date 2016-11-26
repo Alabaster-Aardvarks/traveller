@@ -64,10 +64,7 @@ export const updateIsochrons = args => {
   isochronsState = ISOCHRON_LOADING
   updateIsochronsState && updateIsochronsState(isochronsState)
   // create worker and send it some work
-  worker = new Worker( 0 ? 'App/Workers/isochronWorker_navitia.js' :
-                       0 ? 'App/Workers/isochronWorker_route360.js' :
-                       0 ? 'App/Workers/isochronWorker_graphhopper.js' :
-                           'App/Workers/isochronWorker_here.js' )
+  worker = new Worker(`App/Workers/isochronWorker_${params.provider}.js`)
 
   worker.onmessage = messageString => {
     let message = JSON.parse(messageString)
