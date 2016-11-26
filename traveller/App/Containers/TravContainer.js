@@ -388,6 +388,7 @@ class TravContainer extends React.Component {
           buttonColor='rgba(131,106,90,1)'
           degrees={ 0 }
           icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
+          spacing={ 10 }
           position='center'
           verticalOrientation='down'
         >
@@ -409,6 +410,7 @@ class TravContainer extends React.Component {
         <ActionButton
           buttonColor='#1abc9c'
           icon={<Icon name='cog' style={styles.actionButton}></Icon>}
+          spacing={ 10 }
           position='left'
           verticalOrientation='down'
           onPress={ NavigationActions.settings }
@@ -419,6 +421,7 @@ class TravContainer extends React.Component {
         <ActionButton
           buttonColor='rgba(30,80,190,1)'
           icon={<Icon name='car' style={styles.actionButton}></Icon>}
+          spacing={ 10 }
           position='right'
           verticalOrientation='down'
           autoInactive={ false }
