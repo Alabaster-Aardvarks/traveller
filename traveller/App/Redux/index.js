@@ -10,7 +10,7 @@ export default () => {
     login: require('./LoginRedux').reducer,
     temperature: require('./TemperatureRedux').reducer,
     map: require('./MapRedux').reducer,
-    api: require('./ApiRedux').reducer
+    // api: require('./ApiRedux').reducer
   })
 
   return configureStore(rootReducer, rootSaga)
