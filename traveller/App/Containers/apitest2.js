@@ -9,25 +9,17 @@ import FullButton from '../Components/FullButton'
 import API from '../Services/Api'
 import FJSON from 'format-json'
 
-/// Styles
+// Styles
 import styles from './Styles/APITestingScreenStyle'
 
 // API buttons here:
 const endpoints = [
-  { label: 'Get Police', endpoint: 'getData', args: ['places/police'] },
-  { label: 'Get Cafe', endpoint: 'getData', args: ['places/cafe'] },
-  { label: 'Get Transit', endpoint: 'getData', args: ['places/transit'] },
-  { label: 'Get Bank', endpoint: 'getData', args: ['places/bank'] },
-  { label: 'Get Medical', endpoint: 'getData', args: ['places/medical'] }
+  { label: 'Get City (Boise)', endpoint: 'getCity', args: ['Boise'] },
+  { label: 'Get City (Toronto)', endpoint: 'getCity', args: ['Toronto'] }
 ]
 
-const debug = true
-
 export default class APITestingScreen extends React.Component {
-  
   api: Object
-
-  debug:true
 
   state: {
     visibleHeight: number
@@ -55,7 +47,7 @@ export default class APITestingScreen extends React.Component {
     const { label, endpoint, args = [''] } = apiEndpoint
     this.api[endpoint].apply(this, args).then((result) => {
       this.showResult(result, label || `${endpoint}(${args.join(', ')})`)
-    }).catch(error=>{message: error})
+    })
   }
 
   renderButton (apiEndpoint: Object) {
