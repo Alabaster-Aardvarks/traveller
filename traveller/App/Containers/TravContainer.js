@@ -29,7 +29,7 @@ const roundDateTime = dateTime => {
 }
 const DATETIME = roundDateTime('now') // '2016-11-09T18:49:27.000Z'
 const LATITUDE_DELTA = roundCoordinate(0.1)
-const DURATIONS = [ 0, 600, 1200, 1800 ] //, 2400, 3600, 4200 ]
+const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3600, 4200, 4800 ]
 const DOWNSAMPLING_COORDINATES = { 'navitia': 5, 'here': 0, 'graphhopper': 5, 'route360': 5 } // keep 1 point out of every N
 const FROM_TO_MODE = 'from' // [from,to]
 const TRANSPORT_MODE = 'car' // [car,bike,walk,transit]
