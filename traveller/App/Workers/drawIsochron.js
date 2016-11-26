@@ -1,5 +1,7 @@
+// Isochron object format:
+//   isochron = { geojson: { coordinates: [ [ [ [lng,lat]...polygon... ], [ [lng,lat]...hole... ] ] ] } }
+
 export const drawIsochron = (self, debug, isochron, index, downSamplingCoordinates) => {
-  // isochron = { geojson: { coordinates: [ [ [ [lng,lat]...polygon... ], [ [lng,lat]...hole... ] ] ] } }
 
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'index', log: index })) }
   if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'isochron', log: isochron })) }
