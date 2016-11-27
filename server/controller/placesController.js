@@ -31,12 +31,13 @@ const getData = (place, lat, long) => {
 };
 
 //how to use google radar search -searching in a 50 mile area
-const getRadarData = (place, lat, long) => {
+const getRadarData = (place, lat, long, radius) => {
   lat = lat || 37.7825177;
   long = long || -122.4106772;
+  radius = radius || 50000;
   return axios({
     method: 'get',
-    url: `${radar}location=${lat},${long}&radius=50000&type=${place}&key=${key}` // FIXME: distance needs to be sent by client
+    url: `${radar}location=${lat},${long}&radius=${radius}&type=${place}&key=${key}` // FIXME: distance needs to be sent by client
   })
   .then(response => {
     //log('getRadarData response', response.data);
@@ -46,9 +47,10 @@ const getRadarData = (place, lat, long) => {
 };
 
 //google distance matrix 
-const getDistanceData = (arrayOfPlaces, lat, long) => {
+const getDistanceData = (arrayOfPlaces, lat, long, mode) => {
   lat = lat || 37.7825177;
   long = long || -122.4106772;
+  mode = mode || 'transit';
   let destinationString = 'place_id:';
   for (let i = 0; i < arrayOfPlaces.length; i++) {
     destinationString += arrayOfPlaces[i];
@@ -59,7 +61,7 @@ const getDistanceData = (arrayOfPlaces, lat, long) => {
   log('getDistanceData destinationString', destinationString);
   return axios({
     method: 'get',
-    url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=transit&departure_time=now&transit_mode=bus|rail`
+    url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=${transit}&departure_time=now`
   })
   .then(response => {
     log('getDistanceData response', response.data);
@@ -71,6 +73,8 @@ const getDistanceData = (arrayOfPlaces, lat, long) => {
 const getGoogleData = (req, res, keyword) => {
   lat = req.query.lat || 37.7825177;
   long = req.query.long || -122.4106772;
+  radius = req.query.radius || 50000;
+  mode = req.query.mode || 'transit';
   //take results of nearby search and get their place ides
   let idList = [];
   let coordinates = [];     
@@ -78,7 +82,7 @@ const getGoogleData = (req, res, keyword) => {
   let result = [];
   //to iterate over results
   let counter = 0;      
-  getRadarData(keyword, lat, long)
+  getRadarData(keyword, lat, long, radius)
   .then(data => {
     if (!data.results.length) {
       console.error(`No google places data found for ${keyword}`);
@@ -95,7 +99,7 @@ const getGoogleData = (req, res, keyword) => {
     let shortList = idList.splice(0, 99); 
     console.log(shortList.length);
     log(shortList);
-    getDistanceData(shortList, lat, long)
+    getDistanceData(shortList, lat, long, mode)
     .then(data => {
       if (data.error_message) {
         console.error(`Not able to get distance data for ${keyword} [${data.error_message}]`);
