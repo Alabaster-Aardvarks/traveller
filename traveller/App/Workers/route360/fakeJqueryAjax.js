@@ -18,7 +18,7 @@ function parseArguments(url, data, success, dataType) {
 }
 
 const ajax = options => {
-  console.log('ajax', options)
+  //console.log('ajax', options)
 
   axios({
     method: options.type.toLowerCase(),

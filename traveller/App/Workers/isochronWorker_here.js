@@ -74,10 +74,11 @@ const loadIsochron = params => {
         }
 
         if (debug) self.postMessage(JSON.stringify({ id: 'log', name: `${provider} isochron`, log: resp.data }))
-        // resp.data.response.isoline[0].component[0].shape
 
         let holes = []
         for (let l = 0; l < resp.data.response.isoline.length; l++) {
+          // FIXME? get idx from resp.data.response.isoline[l].range?
+          let idx = Array.isArray(duration) ? l : index
           let isochron = {}
           isochron.geojson = {}
           isochron.geojson.coordinates = []
@@ -110,15 +111,15 @@ const loadIsochron = params => {
               }
               a.push(p)
               if (holes.length) {
-                //console.log(`Polygon #${index}, adding ${holes.length} holes...`)
-                holes.map(hole => a.push(hole))
+                //console.log(`Polygon #${idx}, adding last hole only...`)
+                //holes.map(hole => a.push(hole))
+                a.push(holes[holes.length - 1])
               }
               holes.push(p)
               isochron.geojson.coordinates.push(a)
             }
           })
-          // FIXME? get idx from resp.data.response.isoline[l].range?
-          let idx = Array.isArray(duration) ? l : index
+
           drawIsochron(self, debug, isochron, idx, downSamplingCoordinates)
         }
       })
