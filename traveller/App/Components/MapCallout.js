@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, TouchableOpacity } from 'react-native'
+import { Text, TouchableOpacity, TextInput } from 'react-native'
 import MapView from 'react-native-maps'
 import Styles from './Styles/MapCalloutStyle'
 import ExamplesRegistry from '../Services/ExamplesRegistry'
@@ -25,6 +25,9 @@ export default class MapCallout extends React.Component {
   constructor (props: MapCalloutProps) {
     super(props)
     this.onPress = this.props.onPress.bind(this, this.props.location)
+    this.state = {
+      searchInputValue: 'Search Here',
+    };
   }
 
   render () {
@@ -35,9 +38,15 @@ export default class MapCallout extends React.Component {
     const { location } = this.props
     return (
       <MapView.Callout style={Styles.callout}>
-        <TouchableOpacity onPress={this.onPress}>
-          <Text>{location.title}</Text>
-        </TouchableOpacity>
+        {/* <TouchableOpacity onPress={this.onPress}> */}
+          {/* <Text>{location.title}</Text> */}
+          <TextInput
+            style={ {height: 30, width: 100, borderColor: 'gray', borderWidth: 0.5} }
+            onChangeText={(text) => this.setState({searchInputValue})}
+            value={this.state.searchInputValue}
+            editable={true}
+          />
+        {/* </TouchableOpacity> */}
       </MapView.Callout>
     )
   }

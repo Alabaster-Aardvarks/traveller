@@ -107,6 +107,7 @@
 		CA8104321DDA4A380059F2AD /* RCTConvert+MoreMapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8103EF1DDA4A380059F2AD /* RCTConvert+MoreMapKit.m */; };
 		CA8104331DDA4A380059F2AD /* RCTConvert+MoreMapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8103EF1DDA4A380059F2AD /* RCTConvert+MoreMapKit.m */; };
 		CE0EF9F1B9C94A949946FC5D /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 71C9C3456FAB4D04AC420F1C /* Octicons.ttf */; };
+		E6B3DC7346684ADCB2EC8C85 /* libRNSearchBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C4ABE833683A43B79CDD1522 /* libRNSearchBar.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -285,6 +286,13 @@
 			remoteGlobalIDString = 9F97656B1CDC87F00091EE06;
 			remoteInfo = Workers;
 		};
+		E7C92B891DEA615600905EF5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 949204B1DC3342B093B4AD66 /* RNSearchBar.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNSearchBar;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -325,8 +333,10 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		91C6B186D0CD45F4BE96BCAA /* ReactNativeConfig.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeConfig.xcodeproj; path = "../node_modules/react-native-config/ios/ReactNativeConfig.xcodeproj"; sourceTree = "<group>"; };
+		949204B1DC3342B093B4AD66 /* RNSearchBar.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSearchBar.xcodeproj; path = "../node_modules/react-native-search-bar/RNSearchBar.xcodeproj"; sourceTree = "<group>"; };
 		96E8608A93F47979999FBC66 /* Pods-travellerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-travellerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-travellerTests/Pods-travellerTests.release.xcconfig"; sourceTree = "<group>"; };
 		B4C38BA6141943C78FAC7A02 /* libRNSpinkit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSpinkit.a; sourceTree = "<group>"; };
+		C4ABE833683A43B79CDD1522 /* libRNSearchBar.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSearchBar.a; sourceTree = "<group>"; };
 		CA8103A91DDA4A380059F2AD /* AIRGMSMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGMSMarker.h; sourceTree = "<group>"; };
 		CA8103AA1DDA4A380059F2AD /* AIRGMSMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIRGMSMarker.m; sourceTree = "<group>"; };
 		CA8103AB1DDA4A380059F2AD /* AIRGoogleMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGoogleMap.h; sourceTree = "<group>"; };
@@ -437,6 +447,7 @@
 				525D325FD1624FF58EC2F13D /* libRNVectorIcons.a in Frameworks */,
 				A35099DA714446759FFC0A47 /* libRNSpinkit.a in Frameworks */,
 				92A0A8381A804DBE8B5BF12E /* libWorkers.a in Frameworks */,
+				E6B3DC7346684ADCB2EC8C85 /* libRNSearchBar.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,6 +617,7 @@
 				85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */,
 				E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */,
 				0BD16B5FBF3548B9B8BA3F39 /* Workers.xcodeproj */,
+				949204B1DC3342B093B4AD66 /* RNSearchBar.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -787,6 +799,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E7C92B711DEA615500905EF5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E7C92B8A1DEA615600905EF5 /* libRNSearchBar.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -910,6 +930,10 @@
 				{
 					ProductGroup = CAAB210C1DD6FEBA008F7E60 /* Products */;
 					ProjectRef = 1E5ACDD82BD245BEA7C1483B /* RNI18n.xcodeproj */;
+				},
+				{
+					ProductGroup = E7C92B711DEA615500905EF5 /* Products */;
+					ProjectRef = 949204B1DC3342B093B4AD66 /* RNSearchBar.xcodeproj */;
 				},
 				{
 					ProductGroup = CA3ECC321DDB9FAE00AB2642 /* Products */;
@@ -1099,6 +1123,13 @@
 			fileType = archive.ar;
 			path = libWorkers.a;
 			remoteRef = E7528DD71DDE940200750036 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E7C92B8A1DEA615600905EF5 /* libRNSearchBar.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNSearchBar.a;
+			remoteRef = E7C92B891DEA615600905EF5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1359,7 +1390,10 @@
 				INFOPLIST_FILE = travellerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/traveller.app/traveller";
@@ -1376,7 +1410,10 @@
 				INFOPLIST_FILE = travellerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/traveller.app/traveller";
@@ -1408,6 +1445,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-search-bar/**",
 				);
 				INFOPLIST_FILE = traveller/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
@@ -1447,6 +1485,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-search-bar/**",
 				);
 				INFOPLIST_FILE = traveller/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
@@ -1517,6 +1556,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-search-bar/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1572,6 +1612,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-search-bar/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = NO;

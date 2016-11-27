@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
@@ -186,7 +186,7 @@ class TravContainer extends React.Component {
     let context = this
     if (state === ISOCHRON_ERROR) {
       context.setState({ spinnerVisible: false })
-      alert('No isochrons found for this location.')
+      alert('Could not generate isochrons for this location.')
     } else if (state === ISOCHRON_LOADED) {
       // delay the removal of the spinner overlay to give time for the isochrons to appear
       setTimeout(() => { context.setState({ spinnerVisible: false }) }, 150)
@@ -227,7 +227,7 @@ class TravContainer extends React.Component {
     return (
       <MapView.Marker
         pinColor={pinColor}
-        draggable={ type || index !== 0 ? false : true}
+        // draggable={ type || index !== 0 ? false : true} // Not friendly with MapView's long-press refresh
         key={location.title}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
         onDragEnd={ type || index !== 0 ? undefined : e => {
@@ -237,7 +237,8 @@ class TravContainer extends React.Component {
           this.refs.map.animateToRegion(newRegion, 500)
         }}
       >
-        <MapCallout location={location} onPress={this.calloutPress} />
+        <MapCallout location={location} onPress={this.calloutPress} >
+        </MapCallout>
       </MapView.Marker>
     )
   }
@@ -443,7 +444,7 @@ class TravContainer extends React.Component {
         { this.state.spinnerVisible && (
             <View style={styles.spinnerContainer} key={2}>
               <Spinner style={styles.spinner} size={75} type={'Circle'} color={'#ffffff'} />
-              <Text style={styles.spinnerText}>Loading isochrones...</Text>
+              <Text style={styles.spinnerText}>Refreshing Map...</Text>
             </View>
           )
         }
