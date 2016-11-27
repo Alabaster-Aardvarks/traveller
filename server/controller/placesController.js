@@ -74,7 +74,7 @@ const getGoogleData = (req, res, keyword) => {
   lat = req.query.lat || 37.7825177;
   long = req.query.long || -122.4106772;
   radius = req.query.radius || 50000;
-  mode = req.query.mode || 'transit';
+  mode = req.query.mode || 'transit'; 
   //take results of nearby search and get their place ides
   let idList = [];
   let coordinates = [];     
