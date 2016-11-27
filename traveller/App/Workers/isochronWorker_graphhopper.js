@@ -64,7 +64,7 @@ const loadIsochron = params => {
       const query = useDirect ? null : { url: `${directUrl}${isochronEndpointUrl}` }
 
       if (debug) self.postMessage(JSON.stringify({ id: 'log', name: `${provider} request url`, log: url }))
-      console.log('url', url)
+      //console.log('url', url)
       return api.get(url, query)
       .then(resp => {
         if (!resp.ok) {
@@ -93,8 +93,9 @@ const loadIsochron = params => {
         let p = polygon.geometry.coordinates[l]
         a.push(p)
         if (l === 0 && holes.length) {
-          //console.log(`Polygon #${index}, adding ${holes.length} holes...`)
-          holes.map(hole => a.push(hole))
+          //console.log(`Polygon #${index}, adding last hole...`)
+          //holes.map(hole => a.push(hole))
+          a.push(holes[holes.length - 1])
         }
         holes.push(p)
       }

@@ -34,4 +34,5 @@ export const drawIsochron = (self, debug, isochron, index, downSamplingCoordinat
   }
 
   self.postMessage(JSON.stringify({ id: 'update', index: index, polygons: polygons }))
+  
 }
