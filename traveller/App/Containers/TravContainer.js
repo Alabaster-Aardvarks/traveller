@@ -42,6 +42,7 @@ const ASPECT_RATIO = width / height;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 let savedMapBrand = null
+let savedDuration = null
 let onRegionChangeCompleteCounter = 0
 
 // temporary position until we get the current location
@@ -55,16 +56,16 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
     if (newPosition) { position = newPosition }
     currentPosition = { latitude: position.coords.latitude, longitude: position.coords.longitude }
     if (debug) console.tron.display({ name: 'current position', value: currentPosition })
-    let locations = [ {
+    const locations = [ {
       title: 'Starting Location',
       latitude: currentPosition.latitude,
       longitude: currentPosition.longitude,
     } ]
 
-    let durations = context ? context.getIsochronDurations(context.props.duration) : DURATIONS
+    const durations = context ? context.getIsochronDurations(context.props.duration) : DURATIONS
 
     // isochron parameters
-    let params = {
+    const params = {
       provider: ISOCHRON_PROVIDER,
       latitude: roundCoordinate(locations[0].latitude),
       longitude: roundCoordinate(locations[0].longitude),
@@ -84,8 +85,8 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
     if (!context) {
       updateIsochrons({ params: params })
     } else {
-      let initialPosition = JSON.stringify(position)
-      let newRegion = {
+      const initialPosition = JSON.stringify(position)
+      const newRegion = {
         latitude: currentPosition.latitude,
         longitude: currentPosition.longitude,
         latitudeDelta: LATITUDE_DELTA,
@@ -96,6 +97,7 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       context.setState({ region: newRegion })
       context.setState({ durations: durations })
       savedMapBrand = context.props.mapBrand
+      savedDuration = context.props.duration
       animateToRegion && context.refs.map.animateToRegion(newRegion, 500)
       context.updatePolygons.call(context, { isochrons: params })
       context.polygonsFillColorUpdate()
@@ -145,6 +147,22 @@ class TravContainer extends React.Component {
     updateLocationIsochrons(this, true)
   }
 
+  componentDidUpdate() {
+    const { duration } = this.props
+    if (savedDuration && duration !== savedDuration) {
+      savedDuration = duration
+      const locations = this.state.locations
+      const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+      const durations = this.getIsochronDurations(duration)
+      if (this.state.sliderValue > Math.max(1, durations.length - 1)) {
+        // make sure the slider is not over the new max duration
+        this.sliderValueChange(Math.max(1, durations.length - 1))
+      }
+      // reload isochron when duration changes, no change of position, no animate to region
+      updateLocationIsochrons(this, false, position)
+    }
+  }
+
   componentWillUnmount () {
     //console.log('componentWillUnmount')
     setUpdateIsochronsStateFn(null)
@@ -185,12 +203,12 @@ class TravContainer extends React.Component {
   updatePolygonsState (state) {
     this.setState({ polygonsState: state })
     this.setState({ networkActivityIndicatorVisible: (state === ISOCHRON_LOADING) ? true : false })
-    let context = this
     if (state === ISOCHRON_ERROR) {
-      context.setState({ spinnerVisible: false })
+      this.setState({ spinnerVisible: false })
       alert('Could not generate isochrons for this location.')
     } else if (state === ISOCHRON_LOADED) {
       // delay the removal of the spinner overlay to give time for the isochrons to appear
+      const context = this
       setTimeout(() => { context.setState({ spinnerVisible: false }) }, 150)
     } else {
       this.setState({ spinnerVisible: true })
@@ -219,7 +237,7 @@ class TravContainer extends React.Component {
     if (!type) {
       location = place
     } else {
-      let placeTravelTime = convertDayHourMinToSeconds(place.time)
+      const placeTravelTime = convertDayHourMinToSeconds(place.time)
       if (this.state.sliderValue > 0) {
         if (placeTravelTime < this.state.durations[this.state.sliderValue - 1] ||
             placeTravelTime > this.state.durations[this.state.sliderValue]) {
@@ -241,7 +259,7 @@ class TravContainer extends React.Component {
     return (
       <MapView.Marker
         pinColor={pinColor}
-        draggable={ type || index !== 0 ? false : true} // Not friendly with MapView's long-press refresh
+        draggable={ type || index !== 0 ? false : true} // Not friendly with MapView long-press refresh
         key={location.title}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
         onDragEnd={ type || index !== 0 ? undefined : e => {
@@ -274,7 +292,7 @@ class TravContainer extends React.Component {
   }
 
   polygonsFillColorUpdate (value) {
-    value = value || this.state.sliderValue
+    value = (value !== undefined) ? value : this.state.sliderValue
 
     let polygonsFillColor = [...Array(this.state.durations.length - 1)].map(() => 1)
     if (value > 0) {
@@ -295,7 +313,7 @@ class TravContainer extends React.Component {
   }
 
   onMapLongPress ({ coordinate }) {
-    console.tron.display({ name: 'onMapLongPress', value: coordinate })
+    if (debug) console.tron.display({ name: 'onMapLongPress', value: coordinate })
     let newPosition = { coords: coordinate }
     updateLocationIsochrons(this, true, newPosition)
   }
