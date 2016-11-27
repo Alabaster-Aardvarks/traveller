@@ -14,7 +14,7 @@ import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIso
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
 
-const debug = false
+const debug = false // enable log messages for debug
 
 const COORDINATE_PRECISION = 0.001 // degrees
 const DATETIME_PRECISION = 60 // seconds
@@ -28,13 +28,20 @@ const roundDateTime = dateTime => {
   return date.toISOString()
 }
 const DATETIME = roundDateTime('now') // '2016-11-09T18:49:27.000Z'
-const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600, 4200 ]
 const LATITUDE_DELTA = roundCoordinate(0.1)
-const DOWNSAMPLING_COORDINATES = 5 // keep 1 point out of every 5
+const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600 ] // equitemporal intervals in seconds
+const DOWNSAMPLING_COORDINATES = { 'navitia': 5, 'here': 0, 'graphhopper': 5, 'route360': 5 } // keep 1 point out of every N
+const FROM_TO_MODE = 'from' // [from,to]
+const TRANSPORT_MODE = 'car' // [car,bike,walk,transit]
+const TRAFFIC_MODE = 'enabled' // [enabled,disabled] HERE API only, enable always
+const ISOCHRON_PROVIDER = 'here' // [navitia,here,route360,graphhopper]
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+let savedMapBrand = null
+let onRegionChangeCompleteCounter = 0
 
 // temporary position until we get the current location
 let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
@@ -53,13 +60,19 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       longitude: currentPosition.longitude,
     } ]
 
+    let durations = context ? context.getIsochronDurations(context.props.duration) : DURATIONS
+
     // isochron parameters
     let params = {
+      provider: ISOCHRON_PROVIDER,
       latitude: roundCoordinate(locations[0].latitude),
       longitude: roundCoordinate(locations[0].longitude),
-      durations: context ? context.state.isochronDurations : DURATIONS,
+      durations: durations,
       dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
-      downSamplingCoordinates: context ? context.state.downSamplingCoordinates : DOWNSAMPLING_COORDINATES,
+      downSamplingCoordinates: context ? context.state.downSamplingCoordinates[ISOCHRON_PROVIDER] : DOWNSAMPLING_COORDINATES[ISOCHRON_PROVIDER],
+      fromTo: context ? context.state.fromTo : FROM_TO_MODE,
+      transportMode: context ? context.state.transportMode : TRANSPORT_MODE,
+      trafficMode: TRAFFIC_MODE,
       skip: skipIsochrons
     }
 
@@ -80,8 +93,11 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       context.setState({ initialPosition })
       context.setState({ locations })
       context.setState({ region: newRegion })
+      context.setState({ durations: durations })
+      savedMapBrand = context.props.mapBrand
       animateToRegion && context.refs.map.animateToRegion(newRegion, 500)
       context.updatePolygons.call(context, { isochrons: params })
+      context.polygonsFillColorUpdate()
     }
   },
   error => console.tron.error(error),
@@ -94,6 +110,7 @@ updateLocationIsochrons()
 class TravContainer extends React.Component {
   constructor (props: Object) {
     super(props)
+    const durations = this.getIsochronDurations(props.duration)
     this.state = {
       initialPosition: 'unknown',
       lastPosition: 'unknown',
@@ -105,11 +122,13 @@ class TravContainer extends React.Component {
       },
       locations: [],
       showUserLocation: true,
-      isochronDurations: DURATIONS,
       polygonsState: ISOCHRON_NOT_LOADED,
-      polygonsFillColor: [...Array(DURATIONS.length - 1)].map(() => 1),
+      polygonsFillColor: [...Array(durations.length - 1)].map(() => 1),
       dateTime: DATETIME,
+      durations: durations,
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
+      fromTo: FROM_TO_MODE,
+      transportMode: TRANSPORT_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
       sliderVisible: false,
@@ -119,13 +138,41 @@ class TravContainer extends React.Component {
   }
 
   componentDidMount() {
+    //console.log('componentDidMount')
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
     updateLocationIsochrons(this, true)
   }
 
   componentWillUnmount () {
+    //console.log('componentWillUnmount')
     setUpdateIsochronsStateFn(null)
     terminateIsochronWorker()
+  }
+
+  getIsochronDurations(duration) {
+    //return [ 0, 600, 1200, 1800 ]
+    duration = duration || this.props.duration
+    let durations = []
+
+    // divide duration into 4 to 10 intervals (interval is a multiple of 5min)
+    let interval
+    for (let i = 5; i < duration; i += 5) {
+      if (duration % i === 0 && (duration / i <= 10) && (duration / i >= 4)) {
+        interval = i
+        break
+      }
+    }
+    if (!interval) {
+      durations = [ 0, duration * 60 ]
+    } else {
+      for (let i = 0; i <= duration; i += interval) {
+        durations.push(i * 60)
+      }
+    }
+
+    if (debug) { console.tron.display({ name: 'getIsochronDurations', value: durations }) }
+    //console.log('getIsochronDurations', durations)
+    return durations
   }
 
   updatePolygons (params) {
@@ -160,12 +207,12 @@ class TravContainer extends React.Component {
     } else {
       let placeTravelTime = convertDayHourMinToSeconds(place.time)
       if (this.state.sliderValue > 0) {
-        if (placeTravelTime < this.state.isochronDurations[this.state.sliderValue - 1] ||
-            placeTravelTime > this.state.isochronDurations[this.state.sliderValue]) {
+        if (placeTravelTime < this.state.durations[this.state.sliderValue - 1] ||
+            placeTravelTime > this.state.durations[this.state.sliderValue]) {
           return undefined
         }
       } else {
-        if (placeTravelTime > this.state.isochronDurations[this.state.isochronDurations.length - 1]) {
+        if (placeTravelTime > this.state.durations[this.state.durations.length - 1]) {
           return undefined
         }
       }
@@ -196,16 +243,35 @@ class TravContainer extends React.Component {
   }
 
   onRegionChangeComplete (region) {
-    this.setState({ region }) // Update region when map is finishing dragging
+    //console.log('onRegionChangeComplete', region)
+    const { mapBrand } = this.props
+    if (savedMapBrand && savedMapBrand !== mapBrand) {
+      //console.log('... re-center map on saved region')
+      this.refs.map && this.refs.map.animateToRegion(this.state.region, 0)
+      onRegionChangeCompleteCounter++
+      if (onRegionChangeCompleteCounter > 1) {
+        onRegionChangeCompleteCounter = 0
+        savedMapBrand = mapBrand
+      }
+    } else {
+      //console.log('... updating region')
+      this.setState({ region }) // Update region when map is finishing dragging
+    }
   }
 
-  sliderValueChange (value) {
-    let polygonsFillColor = [...Array(this.state.isochronDurations.length - 1)].map(() => 1)
+  polygonsFillColorUpdate (value) {
+    value = value || this.state.sliderValue
+
+    let polygonsFillColor = [...Array(this.state.durations.length - 1)].map(() => 1)
     if (value > 0) {
       polygonsFillColor[value - 1] = 2
     }
     //if (debug) console.tron.display({ name: 'polygonsFillColor', value: polygonsFillColor })
     this.setState({ polygonsFillColor: polygonsFillColor, sliderValue: value })
+  }
+
+  sliderValueChange (value) {
+    this.polygonsFillColorUpdate(value)
   }
 
   changePlacesType (type) {
@@ -220,8 +286,16 @@ class TravContainer extends React.Component {
     updateLocationIsochrons(this, true, newPosition)
   }
 
+  // mapTileToMapTileUrl (mapTile) {
+  //   const mapTileObj = {'Black & White': 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+  //                       'Basic': 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
+  //                      }
+  //         return mapTileObj[mapTile]
+  // }
+
   render () {
-    const { traffic, mapBrand, mapStyle } = this.props
+    //console.log('render')
+    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -239,18 +313,20 @@ class TravContainer extends React.Component {
           showsUserLocation={this.state.showUserLocation}
           showsCompass={true}
           showsScale={true}
-          loadingEnabled={true}
+          loadingEnabled={false}
           mapType={mapStyle.toLowerCase()}
         >
-          { 1 ? undefined :
+          { mapTile ?
             <MapView.UrlTile
               /**
               * The url template of the tile server. The patterns {x} {y} {z} will be replaced at runtime
               * For example, http://c.tile.openstreetmap.org/{z}/{x}/{y}.png
               */
-              /**urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}*/
-              urlTemplate={'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'}
+              // urlTemplate={'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'}
+              // urlTemplate={'https://tangrams.github.io/carousel/?tron{z}/{x}/{y}'}
+              urlTemplate={mapTileUrl}
             />
+            : undefined
           }
           { Object.keys(this.state.placesTypes).map(type => {
               return (!this.state.placesTypes[type] || !savedPlaces[type] || savedPlaces[type].length === 0) ? undefined : savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type))
@@ -277,7 +353,7 @@ class TravContainer extends React.Component {
         { this.state.sliderVisible && (
             <Slider
               minimumValue={ 0 }
-              maximumValue={ Math.max(1, this.state.isochronDurations.length - 1) }
+              maximumValue={ Math.max(1, this.state.durations.length - 1) }
               step={ 1 }
               style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }}
               value={ this.state.sliderValue }
@@ -290,6 +366,8 @@ class TravContainer extends React.Component {
           degrees={90}
           icon={<Icon name='search' style={styles.actionButton}></Icon>}
           spacing={10}
+          verticalOrientation='up'
+          offsetY={10}
         >
           <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => this.changePlacesType.call(this, 'bank')}>
             <Icon name='university' style={styles.actionButtonIcon}/>
@@ -321,14 +399,22 @@ class TravContainer extends React.Component {
 TravContainer.propTypes = {
   traffic: PropTypes.bool,
   mapBrand: PropTypes.string,
-  mapStyle: PropTypes.string
+  mapStyle: PropTypes.string,
+  mapTile: PropTypes.bool,
+  mapTileName: PropTypes.string,
+  mapTileUrl: PropTypes.string,
+  duration: PropTypes.number,
 }
 
 const mapStateToProps = (state) => {
   return {
     traffic: state.map.traffic,
     mapBrand: state.map.mapBrand,
-    mapStyle: state.map.mapStyle
+    mapStyle: state.map.mapStyle,
+    mapTile: state.map.mapTile,
+    mapTileName: state.map.mapTileName,
+    mapTileUrl: state.map.mapTileUrl,
+    duration: state.map.duration,
   }
 }
 
