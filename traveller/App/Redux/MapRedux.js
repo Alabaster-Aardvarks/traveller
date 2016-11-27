@@ -12,7 +12,7 @@ const { Types, Creators } = createActions({
   setMapBrand: ['mapBrand'],
   setMapStyle: ['mapStyle'],
   setUnitOfMeasurement: ['unitOfMeasurement'],
-  setMapTile: ['mapTileName']
+  setMapTile: ['mapTileName'],
   setTransportMode: ['transportMode']
 })
 
