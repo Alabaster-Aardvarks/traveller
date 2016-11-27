@@ -13,6 +13,7 @@ import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
+import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base';
 
 const debug = false // enable log messages for debug
 
@@ -134,6 +135,7 @@ class TravContainer extends React.Component {
       sliderVisible: false,
       sliderValue: 0,
       placesTypes: {},
+      searchBarVisible: false,
     }
   }
 
@@ -197,6 +199,18 @@ class TravContainer extends React.Component {
 
   calloutPress (location) {
     if (debug) console.tron.display({ name: 'calloutPress location', value: location })
+    console.log('PRESSED')
+  }
+
+  searchTogglePressed () {
+    console.tron.log('Pressed!');
+
+    return (
+      <SearchBar
+        placeholder='Search'
+        textFieldBackgroundColor='blue'
+      />
+    )
   }
 
   renderMapMarkers (place, index, type) {
@@ -227,7 +241,7 @@ class TravContainer extends React.Component {
     return (
       <MapView.Marker
         pinColor={pinColor}
-        // draggable={ type || index !== 0 ? false : true} // Not friendly with MapView's long-press refresh
+        draggable={ type || index !== 0 ? false : true} // Not friendly with MapView's long-press refresh
         key={location.title}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
         onDragEnd={ type || index !== 0 ? undefined : e => {
@@ -237,8 +251,7 @@ class TravContainer extends React.Component {
           this.refs.map.animateToRegion(newRegion, 500)
         }}
       >
-        <MapCallout location={location} onPress={this.calloutPress} >
-        </MapCallout>
+      <MapCallout location={location} onPress={this.calloutPress}/>
       </MapView.Marker>
     )
   }
@@ -441,10 +454,36 @@ class TravContainer extends React.Component {
           </ActionButton.Item>
         </ActionButton>
 
+        {/* Search Toggle */}
+        <ActionButton
+          buttonColor='#1abc9c'
+          icon={<Icon name='cog' style={styles.actionButton}></Icon>}
+          spacing={ 10 }
+          position='left'
+          verticalOrientation='up'
+          onPress={() => {this.setState({ searchBarVisible: !this.state.searchBarVisible })} }
+        >
+        </ActionButton>
+
+        {/* Search Bar */}
+        { this.state.searchBarVisible && (
+          <Header searchBar rounded>
+            <InputGroup>
+              <NBIcon name="ios-search" />
+              <Input placeholder="Search" />
+              <NBIcon name="ios-people" />
+            </InputGroup>
+            <Button transparent>
+              Search
+            </Button>
+        </Header>
+        ) }
+
+        {/* Spinner */}
         { this.state.spinnerVisible && (
             <View style={styles.spinnerContainer} key={2}>
               <Spinner style={styles.spinner} size={75} type={'Circle'} color={'#ffffff'} />
-              <Text style={styles.spinnerText}>Refreshing Map...</Text>
+              <Text style={styles.spinnerText}>Refreshing Map</Text>
             </View>
           )
         }
