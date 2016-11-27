@@ -75,7 +75,7 @@ export const setMapTile = (state : Object, action: Object) => {
                       Terrain: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg',
                       Watercolor: 'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg',
                      }
-
+  state.merge({ mapStyle: 'Standard' })
   return state.merge({ mapTileName, mapTileUrl: mapTileObj[mapTileName] })
 }
 
