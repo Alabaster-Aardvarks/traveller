@@ -15,6 +15,7 @@ import MapSelectScreen from '../Containers/MapSelectScreen'
 import MapStyleScreen from '../Containers/MapStyleScreen'
 import MaxDurationScreen from '../Containers/MaxDurationScreen'
 import MeasurementScreen from '../Containers/MeasurementScreen'
+import TransportModeScreen from '../Containers/TransportModeScreen'
 
 // Documentation: https://github.com/aksonov/react-native-router-flux
 
@@ -32,6 +33,7 @@ class NavigationRouter extends Component {
             <Scene key='mapStyle' component={MapStyleScreen} title='Map Style' />
             <Scene key='maxDuration' component={MaxDurationScreen} title='Max Duration' />
             <Scene key='measurement' component={MeasurementScreen} title='Unit of Measurement' />
+            <Scene key='transportMode' component={TransportModeScreen} title='Transport Mode' />
           </Scene>
         </Scene>
       </Router>

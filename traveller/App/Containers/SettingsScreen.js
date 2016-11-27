@@ -22,7 +22,7 @@ import styles from './Styles/SettingsScreenStyle'
 class SettingsScreen extends React.Component {
 
   render () {
-    const { mapBrand, mapStyle, traffic, toggleTraffic, duration, unitOfMeasurement } = this.props
+    const { mapBrand, mapStyle, traffic, toggleTraffic, duration, unitOfMeasurement, transportMode } = this.props
 
     return (
       <View style={styles.mainContainer}>
@@ -50,6 +50,7 @@ class SettingsScreen extends React.Component {
                 />
                 <SettingsList.Header headerText='Isochrones' headerStyle={{color:'white', marginTop:50}}/>
                 <SettingsList.Item title='Max duration' titleInfo={duration.toString() + 'min'} onPress={() => NavigationActions.maxDuration()} />
+                <SettingsList.Item title='Transport Mode' titleInfo={ transportMode } onPress={() => NavigationActions.transportMode()} />
                 <SettingsList.Item
                   title='Clear isochrone cache'
                   hasNavArrow={false}
@@ -74,6 +75,7 @@ SettingsScreen.propTypes = {
   unitOfMeasurement: PropTypes.string,
   mapStyle: PropTypes.string,
   toggleTraffic: PropTypes.func,
+  transportMode: PropTypes.string
 }
 
 const mapStateToProps = state => {
@@ -83,7 +85,8 @@ const mapStateToProps = state => {
     traffic: state.map.traffic,
     unitOfMeasurement: state.map.unitOfMeasurement,
     mapStyle: state.map.mapStyle,
-    mapTileName: state.map.mapTileName
+    mapTileName: state.map.mapTileName,
+    transportMode: state.map.transportMode
   }
 }
 
