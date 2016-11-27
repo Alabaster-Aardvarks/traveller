@@ -1,0 +1,21 @@
+version: "2"
+services:
+  redis-cache:
+    container_name: redis-cache
+    hostname: redis-cache
+    image: redis:3
+    restart: always
+    expose:
+      - 6379
+  traveller-node:
+    container_name: traveller-node
+    hostname: traveller
+    image: mhart/alpine-node:6
+    restart: always
+    command: node /app/server/server.js
+    env_file: traveller/.env
+    volumes:
+      - /app:/app:ro
+    ports:
+      - 80:3000
+      - 443:443
