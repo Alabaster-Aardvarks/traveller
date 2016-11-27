@@ -13,6 +13,7 @@ const { Types, Creators } = createActions({
   setMapStyle: ['mapStyle'],
   setUnitOfMeasurement: ['unitOfMeasurement'],
   setMapTile: ['mapTileName']
+  setTransportMode: ['transportMode']
 })
 
 export const MapTypes = Types
@@ -28,7 +29,8 @@ export const INITIAL_STATE = Immutable({
   mapStyle: 'Standard',
   mapTile: false,
   mapTileName: 'Basic',
-  mapTileUrl: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
+  mapTileUrl: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png',
+  transportMode: 'transit'
 })
 
 /* ------------- Reducers ------------- */
@@ -79,6 +81,10 @@ export const setMapTile = (state : Object, action: Object) => {
   return state.merge({ mapTileName, mapTileUrl: mapTileObj[mapTileName] })
 }
 
+export const setTransportMode = (state : Object, action: Object) => {
+  const { transportMode } = action
+  return state.merge({ transportMode })
+}
 
 /* ------------- Hookup Reducers To Types ------------- */
 
@@ -89,5 +95,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_MAP_BRAND]: setMapBrand,
   [Types.SET_MAP_STYLE]: setMapStyle,
   [Types.SET_UNIT_OF_MEASUREMENT]: setUnitOfMeasurement,
-  [Types.SET_MAP_TILE]: setMapTile
+  [Types.SET_MAP_TILE]: setMapTile,
+  [Types.SET_TRANSPORT_MODE]: setTransportMode
 })
