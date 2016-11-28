@@ -12,7 +12,9 @@ const { Types, Creators } = createActions({
   setMapBrand: ['mapBrand'],
   setMapStyle: ['mapStyle'],
   setUnitOfMeasurement: ['unitOfMeasurement'],
-  setMapTile: ['mapTileName']
+  setMapTile: ['mapTileName'],
+  setTransportMode: ['transportMode'],
+  toggleTravelTime: null
 })
 
 export const MapTypes = Types
@@ -28,7 +30,10 @@ export const INITIAL_STATE = Immutable({
   mapStyle: 'Standard',
   mapTile: false,
   mapTileName: 'Basic',
-  mapTileUrl: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
+  mapTileUrl: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png',
+  transportMode: 'transit',
+  travelTime: false,
+  travelTimeName: 'from'
 })
 
 /* ------------- Reducers ------------- */
@@ -75,10 +80,22 @@ export const setMapTile = (state : Object, action: Object) => {
                       Terrain: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg',
                       Watercolor: 'https://stamen-tiles-d.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg',
                      }
-
+  state.merge({ mapStyle: 'Standard' })
   return state.merge({ mapTileName, mapTileUrl: mapTileObj[mapTileName] })
 }
 
+export const setTransportMode = (state : Object, action: Object) => {
+  const { transportMode } = action
+  return state.merge({ transportMode })
+}
+
+export const toggleTravelTime = (state: Object) => {
+  if (state.travelTime === false) {
+    return state.merge({ travelTime: true, travelTimeName: 'to' })
+  } else {
+    return state.merge({ travelTime: false, travelTimeName: 'from' })
+  }
+}
 
 /* ------------- Hookup Reducers To Types ------------- */
 
@@ -89,5 +106,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_MAP_BRAND]: setMapBrand,
   [Types.SET_MAP_STYLE]: setMapStyle,
   [Types.SET_UNIT_OF_MEASUREMENT]: setUnitOfMeasurement,
-  [Types.SET_MAP_TILE]: setMapTile
+  [Types.SET_MAP_TILE]: setMapTile,
+  [Types.SET_TRANSPORT_MODE]: setTransportMode,
+  [Types.TOGGLE_TRAVEL_TIME]: toggleTravelTime
 })

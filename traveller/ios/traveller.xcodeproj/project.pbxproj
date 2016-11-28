@@ -106,6 +106,18 @@
 		CA8104321DDA4A380059F2AD /* RCTConvert+MoreMapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8103EF1DDA4A380059F2AD /* RCTConvert+MoreMapKit.m */; };
 		CA8104331DDA4A380059F2AD /* RCTConvert+MoreMapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8103EF1DDA4A380059F2AD /* RCTConvert+MoreMapKit.m */; };
 		CE0EF9F1B9C94A949946FC5D /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 71C9C3456FAB4D04AC420F1C /* Octicons.ttf */; };
+		5531984667E5437582252B3B /* Andale Mono.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A20D1D2CE294484947B2377 /* Andale Mono.ttf */; };
+		D160B94F105249E7B4B56184 /* Arial Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 037EFD9000FF4DAB8D7294F0 /* Arial Black.ttf */; };
+		57AB56B0F53141389B0F12C4 /* Arial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0317D135F7504D0C8ABE05CB /* Arial.ttf */; };
+		C98F788CC90A4A039F7CE32E /* Comic Sans MS.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBE1107756484A4A9D3720D7 /* Comic Sans MS.ttf */; };
+		26640C540AA44D01A56E9521 /* Courier New.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0455BC766F6943F390BA3D75 /* Courier New.ttf */; };
+		2CA7D23BF90D43D78BC950F4 /* Georgia.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 582D488A94CA414CB943037F /* Georgia.ttf */; };
+		505DD6011F194F63B053F299 /* Microsoft Sans Serif.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BAB81954B26D444A8A4A863B /* Microsoft Sans Serif.ttf */; };
+		942E0C060BEE49DE9769A613 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 20DEE6D80E724E14939C4080 /* Roboto_medium.ttf */; };
+		DD2860D5DDB5428B845B8C34 /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9069028EDC374FD69076A619 /* Roboto.ttf */; };
+		EB5404D33E0843009F7E4EA9 /* SF-UI-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 09BFD0562694494DB1F317A2 /* SF-UI-Text-Regular.otf */; };
+		ECC798A507DE498D9D963272 /* Skia.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4936D877D1BA46828C0AF22D /* Skia.ttf */; };
+		DCF6EA32F0AE4FC3870C5FB4 /* Times New Roman.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 36B394BEF77E45C98A03A1B0 /* Times New Roman.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -403,6 +415,18 @@
 		E05A75B89A0E5F190A0589D9 /* Pods-traveller.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-traveller.debug.xcconfig"; path = "Pods/Target Support Files/Pods-traveller/Pods-traveller.debug.xcconfig"; sourceTree = "<group>"; };
 		E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSpinkit.xcodeproj; path = "../node_modules/react-native-spinkit/ios/RNSpinkit.xcodeproj"; sourceTree = "<group>"; };
 		EB599D84221ED8A541DA88D0 /* Pods_travellerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_travellerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A20D1D2CE294484947B2377 /* Andale Mono.ttf */ = {isa = PBXFileReference; name = "Andale Mono.ttf"; path = "../node_modules/native-base/Fonts/Andale Mono.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		037EFD9000FF4DAB8D7294F0 /* Arial Black.ttf */ = {isa = PBXFileReference; name = "Arial Black.ttf"; path = "../node_modules/native-base/Fonts/Arial Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0317D135F7504D0C8ABE05CB /* Arial.ttf */ = {isa = PBXFileReference; name = "Arial.ttf"; path = "../node_modules/native-base/Fonts/Arial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EBE1107756484A4A9D3720D7 /* Comic Sans MS.ttf */ = {isa = PBXFileReference; name = "Comic Sans MS.ttf"; path = "../node_modules/native-base/Fonts/Comic Sans MS.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0455BC766F6943F390BA3D75 /* Courier New.ttf */ = {isa = PBXFileReference; name = "Courier New.ttf"; path = "../node_modules/native-base/Fonts/Courier New.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		582D488A94CA414CB943037F /* Georgia.ttf */ = {isa = PBXFileReference; name = "Georgia.ttf"; path = "../node_modules/native-base/Fonts/Georgia.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BAB81954B26D444A8A4A863B /* Microsoft Sans Serif.ttf */ = {isa = PBXFileReference; name = "Microsoft Sans Serif.ttf"; path = "../node_modules/native-base/Fonts/Microsoft Sans Serif.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		20DEE6D80E724E14939C4080 /* Roboto_medium.ttf */ = {isa = PBXFileReference; name = "Roboto_medium.ttf"; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9069028EDC374FD69076A619 /* Roboto.ttf */ = {isa = PBXFileReference; name = "Roboto.ttf"; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		09BFD0562694494DB1F317A2 /* SF-UI-Text-Regular.otf */ = {isa = PBXFileReference; name = "SF-UI-Text-Regular.otf"; path = "../node_modules/native-base/Fonts/SF-UI-Text-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4936D877D1BA46828C0AF22D /* Skia.ttf */ = {isa = PBXFileReference; name = "Skia.ttf"; path = "../node_modules/native-base/Fonts/Skia.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		36B394BEF77E45C98A03A1B0 /* Times New Roman.ttf */ = {isa = PBXFileReference; name = "Times New Roman.ttf"; path = "../node_modules/native-base/Fonts/Times New Roman.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -523,6 +547,18 @@
 				096469870D0640EBAD7DFE57 /* MaterialIcons.ttf */,
 				71C9C3456FAB4D04AC420F1C /* Octicons.ttf */,
 				DFEB690EE5C446F78B4DDE25 /* Zocial.ttf */,
+				1A20D1D2CE294484947B2377 /* Andale Mono.ttf */,
+				037EFD9000FF4DAB8D7294F0 /* Arial Black.ttf */,
+				0317D135F7504D0C8ABE05CB /* Arial.ttf */,
+				EBE1107756484A4A9D3720D7 /* Comic Sans MS.ttf */,
+				0455BC766F6943F390BA3D75 /* Courier New.ttf */,
+				582D488A94CA414CB943037F /* Georgia.ttf */,
+				BAB81954B26D444A8A4A863B /* Microsoft Sans Serif.ttf */,
+				20DEE6D80E724E14939C4080 /* Roboto_medium.ttf */,
+				9069028EDC374FD69076A619 /* Roboto.ttf */,
+				09BFD0562694494DB1F317A2 /* SF-UI-Text-Regular.otf */,
+				4936D877D1BA46828C0AF22D /* Skia.ttf */,
+				36B394BEF77E45C98A03A1B0 /* Times New Roman.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1124,6 +1160,18 @@
 				5E2EB947A2584769902411F7 /* MaterialIcons.ttf in Resources */,
 				CE0EF9F1B9C94A949946FC5D /* Octicons.ttf in Resources */,
 				AFD5E157CEDE47799F612B2F /* Zocial.ttf in Resources */,
+				5531984667E5437582252B3B /* Andale Mono.ttf in Resources */,
+				D160B94F105249E7B4B56184 /* Arial Black.ttf in Resources */,
+				57AB56B0F53141389B0F12C4 /* Arial.ttf in Resources */,
+				C98F788CC90A4A039F7CE32E /* Comic Sans MS.ttf in Resources */,
+				26640C540AA44D01A56E9521 /* Courier New.ttf in Resources */,
+				2CA7D23BF90D43D78BC950F4 /* Georgia.ttf in Resources */,
+				505DD6011F194F63B053F299 /* Microsoft Sans Serif.ttf in Resources */,
+				942E0C060BEE49DE9769A613 /* Roboto_medium.ttf in Resources */,
+				DD2860D5DDB5428B845B8C34 /* Roboto.ttf in Resources */,
+				EB5404D33E0843009F7E4EA9 /* SF-UI-Text-Regular.otf in Resources */,
+				ECC798A507DE498D9D963272 /* Skia.ttf in Resources */,
+				DCF6EA32F0AE4FC3870C5FB4 /* Times New Roman.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1392,9 +1440,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = K3EMCGN7CP;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1419,7 +1469,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.hr49.traveller;
+				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.traveller;
 				PRODUCT_NAME = traveller;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1431,8 +1481,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = K3EMCGN7CP;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1458,7 +1511,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.hr49.traveller;
+				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.traveller;
 				PRODUCT_NAME = traveller;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1483,8 +1536,10 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1544,8 +1599,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
