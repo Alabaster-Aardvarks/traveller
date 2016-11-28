@@ -32,15 +32,16 @@ class SettingsScreen extends React.Component {
           <View style={{flex:1}}>
             <View style={{flex:1}}>
               <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
-        	      <SettingsList.Header headerText='Map' headerStyle={{color:'white'}}/>
+        	      <SettingsList.Header headerText='Map' headerStyle={{color:'#68676d'}}/>
                 <SettingsList.Item
                   itemWidth={50}
                   title='Map type'
                   titleInfo={mapBrand}
+                  titleInfoStyle={{color: '#828186'}}
                   onPress={() => NavigationActions.mapSelect()}
                 />
-                <SettingsList.Item title='Map style' titleInfo={mapStyle} onPress={() => NavigationActions.mapStyle()} />
-                <SettingsList.Item title='Unit of measurement' titleInfo={unitOfMeasurement} onPress={() => NavigationActions.measurement()} />
+                <SettingsList.Item title='Map style' titleInfo={mapStyle} titleInfoStyle={{color: '#828186'}} onPress={() => NavigationActions.mapStyle()} />
+                <SettingsList.Item title='Unit of measurement' titleInfo={unitOfMeasurement} titleInfoStyle={{color: '#828186'}} onPress={() => NavigationActions.measurement()} />
                 <SettingsList.Item
                   hasNavArrow={ false }
                   switchState={ traffic }
@@ -48,9 +49,9 @@ class SettingsScreen extends React.Component {
                   hasSwitch={ true }
                   title='Traffic'
                 />
-                <SettingsList.Header headerText='Isochrones' headerStyle={{color:'white', marginTop:50}}/>
-                <SettingsList.Item title='Max duration' titleInfo={duration.toString() + 'min'} onPress={() => NavigationActions.maxDuration()} />
-                <SettingsList.Item title='Transport Mode' titleInfo={ transportMode } onPress={() => NavigationActions.transportMode()} />
+                <SettingsList.Header headerText='Isochrones' headerStyle={{color:'#68676d', marginTop:50}}/>
+                <SettingsList.Item title='Max duration' titleInfo={duration.toString() + 'min'} titleInfoStyle={{color: '#828186'}} onPress={() => NavigationActions.maxDuration()} />
+                <SettingsList.Item title='Transport Mode' titleInfo={ transportMode } titleInfoStyle={{color: '#828186'}} onPress={() => NavigationActions.transportMode()} />
                 <SettingsList.Item
                   hasNavArrow={false}
                   switchState={ travelTime }
@@ -64,7 +65,7 @@ class SettingsScreen extends React.Component {
                   titleStyle={{color: 'blue'}}
                   onPress={() => console.tron.log(this.props)}
                 />
-                <SettingsList.Header headerStyle={{color:'white', marginTop:50}}/>
+                <SettingsList.Header headerStyle={{marginTop:50}}/>
                 <SettingsList.Item title='About' onPress={() => NavigationActions.deviceInfo()} />
               </SettingsList>
             </View>
