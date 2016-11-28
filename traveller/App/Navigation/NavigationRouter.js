@@ -28,7 +28,7 @@ class NavigationRouter extends Component {
             {/* <Scene initial key='presentationScreen' component={TravContainer} title='Traveller' renderLeftButton={NavItems.hamburgerButton} /> */}
             <Scene initial key='travContainer' component={TravContainer} hideNavBar />
             <Scene key='deviceInfo' component={DeviceInfoScreen} title='Device Info' />
-            <Scene key='settings' component={SettingsScreen} title='Settings' hideNavBar={ false } />
+            <Scene key='settings' component={SettingsScreen} title='Settings' hideNavBar={ false } direction='vertical' backTitle='Done' hideBackImage={ true } backButtonTextStyle={{color: 'white'}} />
             <Scene key='mapSelect' component={MapSelectScreen} title='Map Type' />
             <Scene key='mapStyle' component={MapStyleScreen} title='Map Style' />
             <Scene key='maxDuration' component={MaxDurationScreen} title='Max Duration' />
