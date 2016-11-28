@@ -22,7 +22,7 @@ import styles from './Styles/SettingsScreenStyle'
 class SettingsScreen extends React.Component {
 
   render () {
-    const { mapBrand, mapStyle, traffic, toggleTraffic, duration, unitOfMeasurement, transportMode } = this.props
+    const { mapBrand, mapStyle, traffic, toggleTraffic, duration, unitOfMeasurement, transportMode, travelTime, travelTimeName, toggleTravelTime } = this.props
 
     return (
       <View style={styles.mainContainer}>
@@ -42,15 +42,22 @@ class SettingsScreen extends React.Component {
                 <SettingsList.Item title='Map style' titleInfo={mapStyle} onPress={() => NavigationActions.mapStyle()} />
                 <SettingsList.Item title='Unit of measurement' titleInfo={unitOfMeasurement} onPress={() => NavigationActions.measurement()} />
                 <SettingsList.Item
-                  hasNavArrow={false}
-                  switchState={traffic}
-                  switchOnValueChange={toggleTraffic}
-                  hasSwitch={true}
+                  hasNavArrow={ false }
+                  switchState={ traffic }
+                  switchOnValueChange={ toggleTraffic }
+                  hasSwitch={ true }
                   title='Traffic'
                 />
                 <SettingsList.Header headerText='Isochrones' headerStyle={{color:'white', marginTop:50}}/>
                 <SettingsList.Item title='Max duration' titleInfo={duration.toString() + 'min'} onPress={() => NavigationActions.maxDuration()} />
                 <SettingsList.Item title='Transport Mode' titleInfo={ transportMode } onPress={() => NavigationActions.transportMode()} />
+                <SettingsList.Item
+                  hasNavArrow={false}
+                  switchState={ travelTime }
+                  switchOnValueChange={ toggleTravelTime }
+                  hasSwitch={ true }
+                  title={ 'Travel Time ' + travelTimeName }
+                />
                 <SettingsList.Item
                   title='Clear isochrone cache'
                   hasNavArrow={false}
@@ -75,7 +82,10 @@ SettingsScreen.propTypes = {
   unitOfMeasurement: PropTypes.string,
   mapStyle: PropTypes.string,
   toggleTraffic: PropTypes.func,
-  transportMode: PropTypes.string
+  transportMode: PropTypes.string,
+  travelTime: PropTypes.bool,
+  travelTimeName: PropTypes.string,
+  toggleTravelTime: PropTypes.func
 }
 
 const mapStateToProps = state => {
@@ -86,13 +96,16 @@ const mapStateToProps = state => {
     unitOfMeasurement: state.map.unitOfMeasurement,
     mapStyle: state.map.mapStyle,
     mapTileName: state.map.mapTileName,
-    transportMode: state.map.transportMode
+    transportMode: state.map.transportMode,
+    travelTime: state.map.travelTime,
+    travelTimeName: state.map.travelTimeName
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    toggleTraffic: () => dispatch(MapActions.toggleTraffic())
+    toggleTraffic: () => dispatch(MapActions.toggleTraffic()),
+    toggleTravelTime: () => dispatch(MapActions.toggleTravelTime())
   }
 }
 
