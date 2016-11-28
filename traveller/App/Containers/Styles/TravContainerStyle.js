@@ -1,10 +1,11 @@
 // @flow
 
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Dimensions } from 'react-native'
 import { Colors, Metrics, ApplicationStyles } from '../../Themes/'
 
+const { width, height } = Dimensions.get('window');
+
 export default StyleSheet.create({
-  // ...ApplicationStyles.screen,
   travContainer: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -17,21 +18,14 @@ export default StyleSheet.create({
     fontSize: 17,
     color: 'white',
   },
-  // container: {
-  //   flex: 1,
-  //   // justifyContent: 'flex-end',
-  //   // alignItems: 'center',
-  //   marginTop: Metrics.navBarHeight,
-  //   backgroundColor: Colors.background
-  // },
   container: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
-    // For Android :/
+    // ...StyleSheet.absoluteFillObject,
+    // For Android :
     position: 'absolute',
     top: 0,
     left: 0,

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
@@ -13,6 +13,7 @@ import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
+// import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
 
 const debug = false // enable log messages for debug
 
@@ -134,6 +135,7 @@ class TravContainer extends React.Component {
       sliderVisible: false,
       sliderValue: 0,
       placesTypes: {},
+      searchBarVisible: false,
     }
   }
 
@@ -186,7 +188,7 @@ class TravContainer extends React.Component {
     let context = this
     if (state === ISOCHRON_ERROR) {
       context.setState({ spinnerVisible: false })
-      alert('No isochrons found for this location.')
+      alert('Could not generate isochrons for this location.')
     } else if (state === ISOCHRON_LOADED) {
       // delay the removal of the spinner overlay to give time for the isochrons to appear
       setTimeout(() => { context.setState({ spinnerVisible: false }) }, 150)
@@ -197,6 +199,18 @@ class TravContainer extends React.Component {
 
   calloutPress (location) {
     if (debug) console.tron.display({ name: 'calloutPress location', value: location })
+    console.log('PRESSED')
+  }
+
+  searchTogglePressed () {
+    console.tron.log('Pressed!');
+
+    return (
+      <SearchBar
+        placeholder='Search'
+        textFieldBackgroundColor='blue'
+      />
+    )
   }
 
   renderMapMarkers (place, index, type) {
@@ -227,7 +241,7 @@ class TravContainer extends React.Component {
     return (
       <MapView.Marker
         pinColor={pinColor}
-        draggable={ type || index !== 0 ? false : true}
+        draggable={ type || index !== 0 ? false : true} // Not friendly with MapView's long-press refresh
         key={location.title}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
         onDragEnd={ type || index !== 0 ? undefined : e => {
@@ -237,7 +251,7 @@ class TravContainer extends React.Component {
           this.refs.map.animateToRegion(newRegion, 500)
         }}
       >
-        <MapCallout location={location} onPress={this.calloutPress} />
+      <MapCallout location={location} onPress={this.calloutPress}/>
       </MapView.Marker>
     )
   }
@@ -362,12 +376,12 @@ class TravContainer extends React.Component {
           )
         }
 
-        <ActionButton buttonColor='rgba(231,76,60,1)'
-          degrees={90}
+        {/* Search Menu */}
+        <ActionButton
+          buttonColor='rgba(231,76,60,1)'
+          degrees={ 90 }
           icon={<Icon name='search' style={styles.actionButton}></Icon>}
-          spacing={10}
-          verticalOrientation='up'
-          offsetY={10}
+          spacing={ 10 }
         >
           <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => this.changePlacesType.call(this, 'bank')}>
             <Icon name='university' style={styles.actionButtonIcon}/>
@@ -383,10 +397,81 @@ class TravContainer extends React.Component {
           </ActionButton.Item>
         </ActionButton>
 
+        {/* Duration Button */}
+        <ActionButton
+          buttonColor='rgba(131,106,90,1)'
+          degrees={ 0 }
+          icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
+          spacing={ 10 }
+          position='center'
+          verticalOrientation='down'
+        >
+          <ActionButton.Item buttonColor='#9b59b6' title='60' onPress={() => this.changePlacesType.call(this, 'bank')}>
+            <Icon name='university' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#3498db' title='50' onPress={() => this.changePlacesType.call(this, 'transit')}>
+            <Icon name='bus' style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#ff6b6b' title='40' onPress={() => this.changePlacesType.call(this, 'health')}>
+            <Icon name='ambulance' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1abc9c' title='30' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
+            <Icon name='info-circle' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+        </ActionButton>
+
+        {/* Settings Button */}
+        <ActionButton
+          buttonColor='#1abc9c'
+          icon={<Icon name='cog' style={styles.actionButton}></Icon>}
+          spacing={ 10 }
+          position='left'
+          verticalOrientation='down'
+          onPress={ NavigationActions.settings }
+        >
+        </ActionButton>
+
+        {/* Mode Button */}
+        <ActionButton
+          buttonColor='rgba(30,80,190,1)'
+          icon={<Icon name='car' style={styles.actionButton}></Icon>}
+          spacing={ 10 }
+          position='right'
+          verticalOrientation='down'
+          autoInactive={ false }
+        >
+          <ActionButton.Item buttonColor='#9b59b6' title='60' onPress={() => this.changePlacesType.call(this, 'bank')}>
+            <Icon name='university' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#3498db' title='50' onPress={() => this.changePlacesType.call(this, 'transit')}>
+            <Icon name='bus' style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#ff6b6b' title='40' onPress={() => this.changePlacesType.call(this, 'health')}>
+            <Icon name='ambulance' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1abc9c' title='30' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
+            <Icon name='info-circle' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+        </ActionButton>
+
+        {/* Search Toggle */}
+        <ActionButton
+          buttonColor='#1abc9c'
+          icon={<Icon name='cog' style={styles.actionButton}></Icon>}
+          spacing={ 10 }
+          position='left'
+          verticalOrientation='up'
+          onPress={() => {this.setState({ searchBarVisible: !this.state.searchBarVisible })} }
+        >
+        </ActionButton>
+
+        {/* Search Bar Will Go Here*/}
+
+        {/* Spinner */}
         { this.state.spinnerVisible && (
             <View style={styles.spinnerContainer} key={2}>
               <Spinner style={styles.spinner} size={75} type={'Circle'} color={'#ffffff'} />
-              <Text style={styles.spinnerText}>Loading isochrones...</Text>
+              <Text style={styles.spinnerText}>Refreshing Map</Text>
             </View>
           )
         }

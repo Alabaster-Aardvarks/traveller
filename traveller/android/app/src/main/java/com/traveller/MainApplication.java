@@ -11,7 +11,6 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import com.i18n.reactnativei18n.ReactNativeI18n;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
-import com.horcrux.svg.RNSvgPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -38,8 +37,7 @@ public class MainApplication extends Application implements ReactApplication {
             new VectorIconsPackage(),
             new ReactNativeI18n(),
             new RNDeviceInfo(),
-            new ReactNativeConfigPackage(),
-            new RNSvgPackage()
+            new ReactNativeConfigPackage()
       );
     }
   };
