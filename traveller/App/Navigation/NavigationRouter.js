@@ -3,10 +3,10 @@ import { Scene, Router } from 'react-native-router-flux'
 import Styles from './Styles/NavigationContainerStyle'
 import NavigationDrawer from './NavigationDrawer'
 import NavItems from './NavItems'
-import CustomNavBar from '../Components/CustomNavBar'
+// import CustomNavBar from '../Components/CustomNavBar'
 
 // Screens Identified By The Router
-import PresentationScreen from '../Containers/PresentationScreen'
+// import PresentationScreen from '../Containers/PresentationScreen'
 import LoginScreen from '../Containers/LoginScreen'
 import DeviceInfoScreen from '../Containers/DeviceInfoScreen'
 import TravContainer from '../Containers/TravContainer'
@@ -24,10 +24,10 @@ class NavigationRouter extends Component {
       <Router>
         <Scene key='drawer' component={NavigationDrawer} open={false}>
           <Scene key='drawerChildrenWrapper' navigationBarStyle={Styles.navBar} titleStyle={Styles.title} leftButtonIconStyle={Styles.leftButton} rightButtonTextStyle={Styles.rightButton}>
-            <Scene initial key='presentationScreen' component={TravContainer} title='Traveller' renderLeftButton={NavItems.hamburgerButton} />
-            <Scene key='travContainer' component={TravContainer} title='Traveller' />
+            {/* <Scene initial key='presentationScreen' component={TravContainer} title='Traveller' renderLeftButton={NavItems.hamburgerButton} /> */}
+            <Scene initial key='travContainer' component={TravContainer} hideNavBar />
             <Scene key='deviceInfo' component={DeviceInfoScreen} title='Device Info' />
-            <Scene key='settings' component={SettingsScreen} title='Settings' />
+            <Scene key='settings' component={SettingsScreen} title='Settings' hideNavBar={ false } />
             <Scene key='mapSelect' component={MapSelectScreen} title='Map Type' />
             <Scene key='mapStyle' component={MapStyleScreen} title='Map Style' />
             <Scene key='maxDuration' component={MaxDurationScreen} title='Max Duration' />
