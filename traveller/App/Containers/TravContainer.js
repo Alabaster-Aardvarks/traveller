@@ -13,7 +13,7 @@ import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
-import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base';
+// import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
 
 const debug = false // enable log messages for debug
 
@@ -465,19 +465,7 @@ class TravContainer extends React.Component {
         >
         </ActionButton>
 
-        {/* Search Bar */}
-        { this.state.searchBarVisible && (
-          <Header searchBar rounded>
-            <InputGroup>
-              <NBIcon name="ios-search" />
-              <Input placeholder="Search" />
-              <NBIcon name="ios-people" />
-            </InputGroup>
-            <Button transparent>
-              Search
-            </Button>
-        </Header>
-        ) }
+        {/* Search Bar Will Go Here*/}
 
         {/* Spinner */}
         { this.state.spinnerVisible && (
