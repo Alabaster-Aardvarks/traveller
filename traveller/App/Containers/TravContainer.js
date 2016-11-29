@@ -13,6 +13,7 @@ import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
+import MapActions from '../Redux/MapRedux'
 // import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
 
 const debug = false // enable log messages for debug
@@ -316,7 +317,7 @@ class TravContainer extends React.Component {
 
   render () {
     //console.log('render')
-    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl } = this.props
+    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, transportIcon, setTransportMode } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -431,20 +432,23 @@ class TravContainer extends React.Component {
         {/* Mode Button */}
         <ActionButton
           buttonColor='rgba(30,80,190,1)'
-          icon={<Icon name='car' style={styles.actionButton}></Icon>}
+          icon={<Icon name={ transportIcon } style={ styles.actionButton } />}
           spacing={ 10 }
           position='right'
           verticalOrientation='down'
           autoInactive={ false }
         >
-          <ActionButton.Item buttonColor='#9b59b6' title='60' onPress={() => this.changePlacesType.call(this, 'bank')}>
-            <Icon name='university' style={styles.actionButtonIcon}/>
+          <ActionButton.Item buttonColor='#9b59b6' title='Walking' onPress={() => setTransportMode('walking')}>
+            <Icon name='paw' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title='50' onPress={() => this.changePlacesType.call(this, 'transit')}>
-            <Icon name='bus' style={styles.actionButtonIcon} />
+          <ActionButton.Item buttonColor='#3498db' title='Bicycling' onPress={() => setTransportMode('bicycling')}>
+            <Icon name='bicycle' style={styles.actionButtonIcon} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' title='40' onPress={() => this.changePlacesType.call(this, 'health')}>
-            <Icon name='ambulance' style={styles.actionButtonIcon}/>
+          <ActionButton.Item buttonColor='#ff6b6b' title='Driving' onPress={() => setTransportMode('driving')}>
+            <Icon name='car' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#1abc9c' title='Transist' onPress={() => setTransportMode('transit')}>
+            <Icon name='subway' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
 
@@ -483,6 +487,9 @@ TravContainer.propTypes = {
   mapTileName: PropTypes.string,
   mapTileUrl: PropTypes.string,
   duration: PropTypes.number,
+  transportMode: PropTypes.string,
+  transportIcon: PropTypes.string,
+  setTransportMode: PropTypes.func,
 }
 
 const mapStateToProps = (state) => {
@@ -494,9 +501,13 @@ const mapStateToProps = (state) => {
     mapTileName: state.map.mapTileName,
     mapTileUrl: state.map.mapTileUrl,
     duration: state.map.duration,
+    transportMode: state.map.transportMode,
+    transportIcon: state.map.transportIcon,
   }
 }
 
-const mapDispatchToProps = (dispatch) => { return {} }
+const mapDispatchToProps = (dispatch) => { return {
+  setTransportMode: (transportModeName) => dispatch(MapActions.setTransportMode(transportModeName))
+} }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TravContainer)

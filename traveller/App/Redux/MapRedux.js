@@ -33,7 +33,8 @@ export const INITIAL_STATE = Immutable({
   mapTileUrl: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png',
   transportMode: 'transit',
   travelTime: false,
-  travelTimeName: 'from'
+  travelTimeName: 'from',
+  transportIcon: 'subway'
 })
 
 /* ------------- Reducers ------------- */
@@ -86,7 +87,12 @@ export const setMapTile = (state : Object, action: Object) => {
 
 export const setTransportMode = (state : Object, action: Object) => {
   const { transportMode } = action
-  return state.merge({ transportMode: transportMode.toLowerCase() })
+  const transportModeObj = {'walking': 'paw',
+                            'bicycling': 'bicycle',
+                            'driving': 'car',
+                            'transit': 'subway',
+                            }
+  return state.merge({ transportMode: transportMode.toLowerCase(), transportIcon: transportModeObj[transportMode] })
 }
 
 export const toggleTravelTime = (state: Object) => {
