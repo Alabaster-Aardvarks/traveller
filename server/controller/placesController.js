@@ -97,7 +97,6 @@ const getGoogleData = (req, res, keyword) => {
     });
     //can only use 25 destinations at a time for Google distance matrix
     let shortList = idList.splice(0, 99); 
-    console.log(shortList.length);
     log(shortList);
     getDistanceData(shortList, lat, long, mode)
     .then(data => {
@@ -112,6 +111,7 @@ const getGoogleData = (req, res, keyword) => {
         return;
       }
       data.destination_addresses.forEach(place => {
+        place = place.split('').splice(0, place.indexOf(',')).join('');
         result.push({
           'name': place, 
           'time': data.rows[0].elements[counter].duration.text,
