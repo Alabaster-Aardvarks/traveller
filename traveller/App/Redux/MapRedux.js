@@ -87,9 +87,9 @@ export const setMapTile = (state : Object, action: Object) => {
 
 export const setTransportMode = (state : Object, action: Object) => {
   const { transportMode } = action
-  const transportModeObj = {'walking': 'paw',
-                            'bicycling': 'bicycle',
-                            'driving': 'car',
+  const transportModeObj = {'walk': 'paw',
+                            'bike': 'bicycle',
+                            'car': 'car',
                             'transit': 'subway',
                             }
   return state.merge({ transportMode: transportMode.toLowerCase(), transportIcon: transportModeObj[transportMode] })
