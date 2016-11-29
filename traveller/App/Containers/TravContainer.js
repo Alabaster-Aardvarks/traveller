@@ -437,16 +437,36 @@ class TravContainer extends React.Component {
           verticalOrientation='down'
           autoInactive={ true }
         >
-          <ActionButton.Item buttonColor='#9b59b6' onPress={() => setTransportMode('walking')}>
+          <ActionButton.Item buttonColor='#9b59b6' onPress={() => {
+            setTransportMode('walking')
+            Object.keys(placesTypes).map(type => {
+              getPlaces(type, currentPosition, 'walking')
+            })
+          }}>
             <Icon name='paw' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' onPress={() => setTransportMode('bicycling')}>
+          <ActionButton.Item buttonColor='#3498db' onPress={() => {
+            setTransportMode('bicycling')
+            Object.keys(placesTypes).map(type => {
+              getPlaces(type, currentPosition, 'bicycling')
+            })
+          }}>
             <Icon name='bicycle' style={styles.actionButtonIcon} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' onPress={() => setTransportMode('driving')}>
+          <ActionButton.Item buttonColor='#ff6b6b' onPress={() => {
+            setTransportMode('driving')
+            Object.keys(placesTypes).map(type => {
+              getPlaces(type, currentPosition, 'driving')
+            })
+          }}>
             <Icon name='car' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' onPress={() => setTransportMode('transit')}>
+          <ActionButton.Item buttonColor='#1abc9c' onPress={() => {
+            setTransportMode('transit')
+            Object.keys(placesTypes).map(type => {
+              getPlaces(type, currentPosition, 'transit')
+            })
+          }}>
             <Icon name='subway' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
