@@ -73,14 +73,14 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       durations: durations,
       dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
       downSamplingCoordinates: context ? context.state.downSamplingCoordinates[ISOCHRON_PROVIDER] : DOWNSAMPLING_COORDINATES[ISOCHRON_PROVIDER],
-      fromTo: context ? context.state.fromTo : FROM_TO_MODE,
-      transportMode: context ? context.state.transportMode : TRANSPORT_MODE,
+      fromTo: context ? 'from' : FROM_TO_MODE,
+      transportMode: context ? 'car' : TRANSPORT_MODE,
       trafficMode: TRAFFIC_MODE,
       skip: skipIsochrons
     }
 
     Object.keys(placesTypes).map(type => {
-      placesTypes[type] && getPlaces(type, currentPosition)
+      placesTypes[type] && getPlaces(type, currentPosition, params.transportMode)
     })
 
     if (!context) {
@@ -132,7 +132,6 @@ class TravContainer extends React.Component {
       durations: durations,
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
       fromTo: FROM_TO_MODE,
-      transportMode: TRANSPORT_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
       placesTypes: {},
@@ -317,7 +316,7 @@ class TravContainer extends React.Component {
 
   render () {
     //console.log('render')
-    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, transportIcon, setTransportMode } = this.props
+    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName, transportIcon, setTransportMode, transportMode } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -438,16 +437,16 @@ class TravContainer extends React.Component {
           verticalOrientation='down'
           autoInactive={ true }
         >
-          <ActionButton.Item buttonColor='#9b59b6' title='Walking' onPress={() => setTransportMode('walking')}>
+          <ActionButton.Item buttonColor='#9b59b6' onPress={() => setTransportMode('walking')}>
             <Icon name='paw' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title='Bicycling' onPress={() => setTransportMode('bicycling')}>
+          <ActionButton.Item buttonColor='#3498db' onPress={() => setTransportMode('bicycling')}>
             <Icon name='bicycle' style={styles.actionButtonIcon} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' title='Driving' onPress={() => setTransportMode('driving')}>
+          <ActionButton.Item buttonColor='#ff6b6b' onPress={() => setTransportMode('driving')}>
             <Icon name='car' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title='Transist' onPress={() => setTransportMode('transit')}>
+          <ActionButton.Item buttonColor='#1abc9c' onPress={() => setTransportMode('transit')}>
             <Icon name='subway' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
@@ -490,6 +489,7 @@ TravContainer.propTypes = {
   transportMode: PropTypes.string,
   transportIcon: PropTypes.string,
   setTransportMode: PropTypes.func,
+  travelTimeName: PropTypes.string,
 }
 
 const mapStateToProps = (state) => {
@@ -503,6 +503,7 @@ const mapStateToProps = (state) => {
     duration: state.map.duration,
     transportMode: state.map.transportMode,
     transportIcon: state.map.transportIcon,
+    travelTimeName: state.map.travelTimeName,
   }
 }
 
