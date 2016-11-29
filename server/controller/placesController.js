@@ -61,7 +61,7 @@ const getDistanceData = (arrayOfPlaces, lat, long, mode) => {
   log('getDistanceData destinationString', destinationString);
   return axios({
     method: 'get',
-    url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=${transit}&departure_time=now`
+    url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=${mode}&departure_time=now`
   })
   .then(response => {
     log('getDistanceData response', response.data);
