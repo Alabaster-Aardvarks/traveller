@@ -260,7 +260,7 @@ class TravContainer extends React.Component {
       <MapView.Marker
         pinColor={pinColor}
         draggable={ type || index !== 0 ? false : true} // Not friendly with MapView long-press refresh
-        key={location.title}
+        key={`${location.title} ${index}`}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
         onDragEnd={ type || index !== 0 ? undefined : e => {
           let newRegion = this.state.region
