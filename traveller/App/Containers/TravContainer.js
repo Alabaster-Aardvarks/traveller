@@ -436,7 +436,7 @@ class TravContainer extends React.Component {
           spacing={ 10 }
           position='right'
           verticalOrientation='down'
-          autoInactive={ false }
+          autoInactive={ true }
         >
           <ActionButton.Item buttonColor='#9b59b6' title='Walking' onPress={() => setTransportMode('walking')}>
             <Icon name='paw' style={styles.actionButtonIcon}/>
