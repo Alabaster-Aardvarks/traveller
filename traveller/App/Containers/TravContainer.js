@@ -73,8 +73,8 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       durations: durations,
       dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
       downSamplingCoordinates: context ? context.state.downSamplingCoordinates[ISOCHRON_PROVIDER] : DOWNSAMPLING_COORDINATES[ISOCHRON_PROVIDER],
-      fromTo: context ? 'from' : FROM_TO_MODE,
-      transportMode: context ? 'car' : TRANSPORT_MODE,
+      fromTo: context ? context.props.travelTimeName : FROM_TO_MODE,
+      transportMode: context ? context.props.transportMode : TRANSPORT_MODE,
       trafficMode: TRAFFIC_MODE,
       skip: skipIsochrons
     }
@@ -438,7 +438,7 @@ class TravContainer extends React.Component {
           autoInactive={ true }
         >
           <ActionButton.Item buttonColor='#9b59b6' onPress={() => {
-            setTransportMode('walking')
+            setTransportMode('walk')
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'walking')
             })
@@ -446,7 +446,7 @@ class TravContainer extends React.Component {
             <Icon name='paw' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' onPress={() => {
-            setTransportMode('bicycling')
+            setTransportMode('bike')
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'bicycling')
             })
@@ -454,7 +454,7 @@ class TravContainer extends React.Component {
             <Icon name='bicycle' style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#ff6b6b' onPress={() => {
-            setTransportMode('driving')
+            setTransportMode('car')
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'driving')
             })
@@ -463,9 +463,12 @@ class TravContainer extends React.Component {
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#1abc9c' onPress={() => {
             setTransportMode('transit')
+
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'transit')
             })
+
+            // updateIsochrons({ params: params })
           }}>
             <Icon name='subway' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
