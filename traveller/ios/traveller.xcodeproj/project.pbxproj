@@ -1398,7 +1398,7 @@
 			baseConfigurationReference = 7CF686A516E650B232DA7268 /* Pods-travellerTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = K3EMCGN7CP;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1421,7 +1421,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = K3EMCGN7CP;
+				DEVELOPMENT_TEAM = TYXC29FT67;
 				INFOPLIST_FILE = travellerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

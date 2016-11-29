@@ -86,7 +86,7 @@ export const setMapTile = (state : Object, action: Object) => {
 
 export const setTransportMode = (state : Object, action: Object) => {
   const { transportMode } = action
-  return state.merge({ transportMode })
+  return state.merge({ transportMode: transportMode.toLowerCase() })
 }
 
 export const toggleTravelTime = (state: Object) => {
