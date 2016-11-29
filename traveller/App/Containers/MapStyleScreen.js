@@ -22,21 +22,17 @@ class MapStyleScreen extends React.Component {
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
-          <View style={{flex:1}}>
-            <View style={{flex:1}}>
-              <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
-                <SettingsList.Header />
-                  {['Standard', 'Satellite', 'Hybrid'].map((mapStyleName, index) =>
-                    <SettingsList.Item
-                      title={mapStyleName}
-                      key={index}
-                      onPress={() => setMapStyle(mapStyleName)}
-                      arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapStyle === mapStyleName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
-                    />
-                  )}
-              </SettingsList>
-            </View>
-          </View>
+          <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
+            <SettingsList.Header />
+              {['Standard', 'Satellite', 'Hybrid'].map((mapStyleName, index) =>
+                <SettingsList.Item
+                  title={mapStyleName}
+                  key={index}
+                  onPress={() => setMapStyle(mapStyleName)}
+                  arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapStyle === mapStyleName) ? "#0079fe" : "rgba(255,255,255,0)"} /> ) }
+                />
+              )}
+          </SettingsList>
         </ScrollView>
       </View>
     )

@@ -14,6 +14,10 @@ import styles from './Styles/SettingsScreenStyle'
 
 class TransportModeScreen extends React.Component {
 
+  capitalizeFirstLetter (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   render () {
     const { transportMode, setTransportMode } = this.props
 
@@ -25,12 +29,12 @@ class TransportModeScreen extends React.Component {
             <View style={{flex:1}}>
               <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
                 <SettingsList.Header />
-                  {[ 'Walk', 'Bike', 'Car', 'Transit'].map((transportModeName, index) =>
+                  {[ 'Walking', 'Bicycling', 'Driving', 'Transit'].map((transportModeName, index) =>
                     <SettingsList.Item
                       title={transportModeName}
                       key={index}
                       onPress={() => setTransportMode(transportModeName)}
-                      arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(transportMode === transportModeName) ? "blue" : "rgba(255,255,255,0)"} /> ) }
+                      arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(this.capitalizeFirstLetter(transportMode) === transportModeName) ? "#0079fe" : "rgba(255,255,255,0)"} /> ) }
                     />
                   )}
               </SettingsList>
