@@ -13,11 +13,11 @@ export let placesTypes = { 'bank': true, 'health': true, 'transit': true  } // F
 
 api.setHeaders({ 'Authorization': 'Basic ' + encode(token) })
 
-export const getPlaces = (type, position) => {
+export const getPlaces = (type, position, mode) => {
 
   if (debug) console.tron.display({ name: 'getPlaces', value: 'fetching ' + type })
 
-  return api.get(`/places/${type}`, { lat: position.latitude, long: position.longitude })
+  return api.get(`/places/${type}`, { lat: position.latitude, long: position.longitude, mode: mode})
   .then(resp => {
     if (!resp.ok) {
       console.tron.error(`Could not fetch ${type} places from server [${resp.problem}]`)
