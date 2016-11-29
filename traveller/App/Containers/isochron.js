@@ -1,4 +1,5 @@
 import { Worker } from 'react-native-workers'
+import Color from 'color'
 
 const debug = false // enable log messages for debug
 
@@ -36,8 +37,8 @@ export const terminateIsochronWorker = () => {
 }
 
 export const updateIsochrons = args => {
-  let params = args.params
-  let argString = JSON.stringify(params)
+  const params = args.params
+  const argString = JSON.stringify(params)
 
   if (params.skip) {
     // pretend isochrons are loaded
@@ -67,7 +68,7 @@ export const updateIsochrons = args => {
   worker = new Worker(`App/Workers/isochronWorker_${params.provider}.js`)
 
   worker.onmessage = messageString => {
-    let message = JSON.parse(messageString)
+    const message = JSON.parse(messageString)
     if (message.id === 'update') {
       if (debug) console.tron.display({ name: 'isochron update from worker', value: message.polygons.length })
       savePolygon(message.index, message.polygons)
@@ -93,7 +94,7 @@ export const updateIsochrons = args => {
   worker.postMessage(JSON.stringify({ id: 'start', params: params }))
 }
 
-export const isochronFillColor = (ratio, opacityFactor) => {
+export const isochronFillColor = (ratio, opacityFactor, buttonMode) => {
   let r = 255
   let g = 255
   let b = 0
@@ -105,8 +106,11 @@ export const isochronFillColor = (ratio, opacityFactor) => {
     g = Math.ceil(255 * (1 - ratio) * 2)
   }
   //let { r, g, b } = makeColorGradient(ratio * 3.14)
-  let opacity = 0.2 * opacityFactor * (brightness(r, g, b) / 255)
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`
+  let a = buttonMode ? 1.0 : 0.2 * opacityFactor * (brightness(r, g, b) / 255)
+  if (buttonMode) {
+    ({ r, g, b } = Color({ r, g, b }).rotate(-10).saturate(0.5).darken(0.2).rgb())
+  }
+  return `rgba(${r}, ${g}, ${b}, ${a})`
 }
 
 const brightness = (r, g, b) => {
@@ -148,7 +152,7 @@ export const checkIsochronAPI = args => {
     checkWorker = new Worker(`App/Workers/isochronWorker_${params.provider}.js`)
 
     checkWorker.onmessage = messageString => {
-      let message = JSON.parse(messageString)
+      const message = JSON.parse(messageString)
       if (message.id === 'update') {
         if (debug) console.tron.display({ name: 'checkIsochronAPI update from worker', value: message.polygons.length })
         resolve({ polygonIndex: message.index, polygons: message.polygons })

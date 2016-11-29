@@ -18,6 +18,12 @@ export default StyleSheet.create({
     fontSize: 17,
     color: 'white',
   },
+  durationButtonText: {
+    textAlign: 'center',
+    fontSize: 12,
+    color: 'white',
+    fontWeight: '700',
+  },
   container: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',

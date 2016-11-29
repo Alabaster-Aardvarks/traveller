@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, StatusBar, LayoutAnimation } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
@@ -134,8 +134,6 @@ class TravContainer extends React.Component {
       transportMode: TRANSPORT_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
-      sliderVisible: false,
-      sliderValue: 0,
       placesTypes: {},
       searchBarVisible: false,
     }
@@ -154,10 +152,6 @@ class TravContainer extends React.Component {
       const locations = this.state.locations
       const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
       const durations = this.getIsochronDurations(duration)
-      if (this.state.sliderValue > Math.max(1, durations.length - 1)) {
-        // make sure the slider is not over the new max duration
-        this.sliderValueChange(Math.max(1, durations.length - 1))
-      }
       // reload isochron when duration changes, no change of position, no animate to region
       updateLocationIsochrons(this, false, position)
     }
@@ -174,10 +168,10 @@ class TravContainer extends React.Component {
     duration = duration || this.props.duration
     let durations = []
 
-    // divide duration into 4 to 10 intervals (interval is a multiple of 5min)
+    // divide duration into 4 to 6 intervals (interval is a multiple of 5min)
     let interval
     for (let i = 5; i < duration; i += 5) {
-      if (duration % i === 0 && (duration / i <= 10) && (duration / i >= 4)) {
+      if (duration % i === 0 && (duration / i <= 6) && (duration / i >= 4)) {
         interval = i
         break
       }
@@ -237,17 +231,6 @@ class TravContainer extends React.Component {
     if (!type) {
       location = place
     } else {
-      const placeTravelTime = convertDayHourMinToSeconds(place.time)
-      if (this.state.sliderValue > 0) {
-        if (placeTravelTime < this.state.durations[this.state.sliderValue - 1] ||
-            placeTravelTime > this.state.durations[this.state.sliderValue]) {
-          return undefined
-        }
-      } else {
-        if (placeTravelTime > this.state.durations[this.state.durations.length - 1]) {
-          return undefined
-        }
-      }
       location.title = `${place.name} - ${place.time}`
       location.latitude = place.location.lat
       location.longitude = place.location.lng
@@ -291,19 +274,25 @@ class TravContainer extends React.Component {
     }
   }
 
-  polygonsFillColorUpdate (value) {
-    value = (value !== undefined) ? value : this.state.sliderValue
+  polygonsFillColorUpdate (index) {
+    let polygonsFillColor = this.state.polygonsFillColor
 
-    let polygonsFillColor = [...Array(this.state.durations.length - 1)].map(() => 1)
-    if (value > 0) {
-      polygonsFillColor[value - 1] = 2
+    if (index === undefined) {
+      // reset all colors
+      polygonsFillColor = [...Array(this.state.durations.length - 1)].map(() => 1)
+    } else {
+      if (index === 0) {
+        // if any color is highlighted, disable all, otherwise enable all
+        const v = (polygonsFillColor.indexOf(2) !== -1) ? 1 : 2
+        polygonsFillColor = [...Array(this.state.durations.length - 1)].map(() => v)
+      } else {
+        // switch the corresponding isochron
+        polygonsFillColor[index - 1] = (polygonsFillColor[index - 1] === 1) ? 2 : 1
+      }
     }
-    //if (debug) console.tron.display({ name: 'polygonsFillColor', value: polygonsFillColor })
-    this.setState({ polygonsFillColor: polygonsFillColor, sliderValue: value })
-  }
 
-  sliderValueChange (value) {
-    this.polygonsFillColorUpdate(value)
+    //if (debug) console.tron.display({ name: 'polygonsFillColor', value: polygonsFillColor })
+    this.setState({ polygonsFillColor: polygonsFillColor })
   }
 
   changePlacesType (type) {
@@ -382,18 +371,6 @@ class TravContainer extends React.Component {
           { this.state.locations.map((location, index) => this.renderMapMarkers.call(this, location, index)) }
         </MapView>
 
-        { this.state.sliderVisible && (
-            <Slider
-              minimumValue={ 0 }
-              maximumValue={ Math.max(1, this.state.durations.length - 1) }
-              step={ 1 }
-              style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }}
-              value={ this.state.sliderValue }
-              onValueChange={this.sliderValueChange.bind(this)}
-            />
-          )
-        }
-
         {/* Search Menu */}
         <ActionButton
           buttonColor='rgba(231,76,60,1)'
@@ -410,32 +387,34 @@ class TravContainer extends React.Component {
           <ActionButton.Item buttonColor='#ff6b6b' title='Medical' onPress={() => this.changePlacesType.call(this, 'health')}>
             <Icon name='ambulance' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title='Slider' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
-            <Icon name='info-circle' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
         </ActionButton>
 
         {/* Duration Button */}
         <ActionButton
-          buttonColor='rgba(131,106,90,1)'
+          buttonColor='rgba(0,101,85,1)'
           degrees={ 0 }
           icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
           spacing={ 10 }
           position='center'
           verticalOrientation='down'
+          key='duration'
         >
-          <ActionButton.Item buttonColor='#9b59b6' title='60' onPress={() => this.changePlacesType.call(this, 'bank')}>
-            <Icon name='university' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title='50' onPress={() => this.changePlacesType.call(this, 'transit')}>
-            <Icon name='bus' style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' title='40' onPress={() => this.changePlacesType.call(this, 'health')}>
-            <Icon name='ambulance' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title='30' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
-            <Icon name='info-circle' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
+          { this.state.durations.map((duration, index) => {
+              return (
+                <ActionButton.Item
+                  size={ 44 }
+                  buttonColor={ isochronFillColor(index / this.state.durations.length, null, true) }
+                  onPress={() => this.polygonsFillColorUpdate.call(this, index)}
+                  key={ `duration${index}` }
+                  style={ (index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)) ? { borderWidth: StyleSheet.hairlineWidth * 2, borderColor: '#444' } : undefined }
+                >
+                  <Text style={styles.durationButtonText}>
+                    { (index === 0) ? (this.state.polygonsFillColor.indexOf(2) !== -1 ? 'all\noff' : 'all\non') : (duration / 60).toString() + '\nmin' }
+                  </Text>
+                </ActionButton.Item>
+              )
+            })
+          }
         </ActionButton>
 
         {/* Settings Button */}
@@ -466,9 +445,6 @@ class TravContainer extends React.Component {
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#ff6b6b' title='40' onPress={() => this.changePlacesType.call(this, 'health')}>
             <Icon name='ambulance' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title='30' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
-            <Icon name='info-circle' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
 
