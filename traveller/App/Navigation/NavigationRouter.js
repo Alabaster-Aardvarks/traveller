@@ -3,10 +3,8 @@ import { Scene, Router } from 'react-native-router-flux'
 import Styles from './Styles/NavigationContainerStyle'
 import NavigationDrawer from './NavigationDrawer'
 import NavItems from './NavItems'
-// import CustomNavBar from '../Components/CustomNavBar'
 
 // Screens Identified By The Router
-// import PresentationScreen from '../Containers/PresentationScreen'
 import LoginScreen from '../Containers/LoginScreen'
 import DeviceInfoScreen from '../Containers/DeviceInfoScreen'
 import TravContainer from '../Containers/TravContainer'

@@ -2,7 +2,6 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import { autoRehydrate } from 'redux-persist'
 import createLogger from 'redux-logger'
 import Config from '../Config/DebugSettings'
-import createSagaMiddleware from 'redux-saga'
 import R from 'ramda'
 import RehydrationServices from '../Services/RehydrationServices'
 import ReduxPersist from '../Config/ReduxPersist'
@@ -13,11 +12,6 @@ export default (rootReducer, rootSaga) => {
 
   const middleware = []
   const enhancers = []
-
-  /* ------------- Saga Middleware ------------- */
-
-  const sagaMiddleware = createSagaMiddleware()
-  middleware.push(sagaMiddleware)
 
   /* ------------- Logger Middleware ------------- */
 
@@ -52,9 +46,6 @@ export default (rootReducer, rootSaga) => {
   if (ReduxPersist.active) {
     RehydrationServices.updateReducers(store)
   }
-
-  // kick off root saga
-  sagaMiddleware.run(rootSaga)
 
   return store
 }
