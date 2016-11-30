@@ -51,7 +51,45 @@ const modeKeys = {
   car: 'driving',
   bike: 'cycling',
   walk: 'walking',
+  transit: 'transit'
 };
+
+const getDetailData = (req, res, placeID) =>{
+  let results = [];
+  let placeInfo = {};
+  return axios({
+    method: 'get',
+    url: `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeID}&key=${key}`
+  })
+  .then(response => {
+    placeInfo = {
+      name: response.data.result.name,
+      url: response.data.result.url,
+    };
+    log('getDistanceData response', response.data);
+    return res.status(200).json(placeInfo);
+  })
+  .catch(error => console.error(error));
+};
+////experimental code here
+const getDetailDataTwo = (placeID) =>{
+  let results = [];
+  let placeInfo = {};
+  return axios({
+    method: 'get',
+    url: `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeID}&key=${key}`
+  })
+  .then(response => {
+    placeInfo = {
+      name: response.data.result.name,
+      url: response.data.result.url,
+    };
+    log('getDistanceData response', response.data);
+    return placeInfo;
+  })
+  .catch(error => console.error(error));
+};
+////end of experiemental code
 //google distance matrix 
 const getDistanceData = (arrayOfPlaces, lat, long, mode) => {
   
@@ -82,7 +120,8 @@ const getGoogleData = (req, res, keyword) => {
   lat = req.query.lat || 37.7825177;
   long = req.query.long || -122.4106772;
   radius = req.query.radius || 50000;
-  mode = req.query.mode || 'transit'; 
+  mode = req.query.mode || 'transit';
+  date = req.query.date || 'now'; 
   //take results of nearby search and get their place ids
   let idList = [];
   let coordinates = [];     
@@ -116,6 +155,10 @@ const getGoogleData = (req, res, keyword) => {
         //to do: in case of api limits, we need to find another api to list the place names or poi's
       } else {
         data.destination_addresses.forEach(place => {
+          ///test code
+          getDetailDataTwo(shortList[counter])
+          ///
+          ///working code below
           place = place.split('').splice(0, place.indexOf(',')).join('');
           result.push({
             'name': place, 
@@ -143,5 +186,5 @@ const getGoogleData = (req, res, keyword) => {
 };
 
 module.exports = {
-  getData, getRadarData, getDistanceData, getGoogleData
+  getData, getRadarData, getDistanceData, getGoogleData, getDetailData
 };
