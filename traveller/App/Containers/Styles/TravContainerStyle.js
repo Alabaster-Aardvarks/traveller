@@ -19,7 +19,7 @@ export default StyleSheet.create({
     color: 'white',
   },
   actionModeButton: {
-    fontSize: 20,
+    fontSize: 25,
     color: 'white',
   },
   durationButtonText: {

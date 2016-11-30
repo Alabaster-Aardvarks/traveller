@@ -155,7 +155,6 @@ class TravContainer extends React.Component {
   }
 
   componentDidMount() {
-    //console.log('componentDidMount')
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
     updateLocationIsochrons(this, true)
   }
@@ -172,7 +171,6 @@ class TravContainer extends React.Component {
   }
 
   componentWillUnmount () {
-    //console.log('componentWillUnmount')
     setUpdateIsochronsStateFn(null)
     terminateIsochronWorker()
   }
@@ -199,7 +197,6 @@ class TravContainer extends React.Component {
     }
 
     if (debug) { console.tron.display({ name: 'getIsochronDurations', value: durations }) }
-    //console.log('getIsochronDurations', durations)
     return durations
   }
 
@@ -438,7 +435,7 @@ class TravContainer extends React.Component {
 
         {/* Search Menu */}
         { !this.state.uiElementsVisible && (<ActionButton
-          buttonColor='rgba(231,76,60,1)'
+          buttonColor='#E74C3C'
           degrees={ 0 }
           icon={<Icon name='search' style={styles.actionButton}></Icon>}
           spacing={ 10 }
@@ -475,7 +472,8 @@ class TravContainer extends React.Component {
                 return (
                   <ActionButton.Item
                     size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
-                    buttonColor={ index === 0 ? 'rgb(0, 102, 49)' : isochronFillColor(index / this.state.durations.length, null, true) }
+                    buttonColor={ index === 0 ? '#006631' : isochronFillColor(index / this.state.durations.length, null, true) }
+                    btnOutRange='#004B24'
                     onPress={() => this.polygonsFillColorUpdate.call(this, index)}
                     key={ `duration${index}` }
                     style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: '#fff' } : undefined }
@@ -506,7 +504,8 @@ class TravContainer extends React.Component {
         {/* Transport Mode Button */}
         { !this.state.uiElementsVisible && (<ActionButton
           buttonColor='#2D62A0'
-          icon={<Ionicons name={ transportIcon } style={ styles.actionModeButton } />}
+          btnOutRange='#214875'
+          icon={<Ionicons name={ transportIcon } style={ styles.actionButton } />}
           spacing={ 10 }
           degrees={ 0 }
           position='right'
@@ -515,7 +514,9 @@ class TravContainer extends React.Component {
           outRangeScale={ 1.2 }
         >
           {/* FIXME: rewrite this as a loop */}
-          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
+          <ActionButton.Item buttonColor='#2D62A0'
+            size={ 44 }
+            onPress={() => {
             setTransportMode('walk')
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
@@ -523,7 +524,9 @@ class TravContainer extends React.Component {
           }}>
             <Ionicons name='md-walk' style={styles.actionModeButton}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
+          <ActionButton.Item buttonColor='#2D62A0'
+            size={ 44 }
+            onPress={() => {
             setTransportMode('bike')
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
@@ -531,7 +534,9 @@ class TravContainer extends React.Component {
           }}>
             <Ionicons name='md-bicycle' style={styles.actionModeButton} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
+          <ActionButton.Item buttonColor='#2D62A0'
+            size={ 44 }
+            onPress={() => {
             setTransportMode('car')
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
@@ -539,7 +544,9 @@ class TravContainer extends React.Component {
           }}>
             <Ionicons name='md-car' style={styles.actionModeButton}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
+          <ActionButton.Item buttonColor='#2D62A0'
+            size={ 44 }
+            onPress={() => {
             setTransportMode('transit')
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
