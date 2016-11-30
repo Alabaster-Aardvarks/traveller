@@ -13,7 +13,6 @@ const error = debug('placesRouter:error');
 //actual working routes
 
 placesRouter.get('/transit', (req, res) => {
-  console.log(req.query);
   placesController.getGoogleData(req, res, 'transit_station');
 });
 
