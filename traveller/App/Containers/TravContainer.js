@@ -12,7 +12,7 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
-import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
+import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker, doneWithSavedPolygonsFeature,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds, placesInPolygonsUpdate } from './places'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
@@ -38,7 +38,6 @@ const DOWNSAMPLING_COORDINATES = { 'navitia': 5, 'here': 0, 'graphhopper': 5, 'r
 const FROM_TO_MODE = 'from' // [from,to]
 const TRANSPORT_MODE = 'car' // [car,bike,walk,transit]
 const TRAFFIC_MODE = 'enabled' // [enabled,disabled] HERE API only, enable always
-const ISOCHRON_PROVIDER = 'here' // [navitia,here,route360,graphhopper]
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -57,6 +56,15 @@ let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
 
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
 
+const getIsochronProvider = { // [navitia,here,route360,graphhopper]
+  'walk'    : 'here',
+  'car'     : 'here',
+  'bike'    : 'navitia',
+  'transit' : 'navitia',
+}
+
+// FIXME: remove support for context not defined and move inside component
+// FIXME: if newPosition is provided, we should not get the new current location
 const updateLocationIsochrons = (context, animateToRegion, newPosition, noUpdate) => {
   // get current location
   navigator.geolocation.getCurrentPosition(position => {
@@ -71,26 +79,20 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition, noUpdate
 
     const durations = context ? context.getIsochronDurations(context.props.duration) : DURATIONS
 
-    // Isochron Parameters
-    let params = {
-      provider: ISOCHRON_PROVIDER,
+    // Isochrone parameters
+    let transportMode = context ? context.props.transportMode : TRANSPORT_MODE
+    let isochronProvider = getIsochronProvider[transportMode]
+    const params = {
+      provider: isochronProvider,
       latitude: roundCoordinate(locations[0].latitude),
       longitude: roundCoordinate(locations[0].longitude),
       durations: durations,
       dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
-      downSamplingCoordinates: context ? context.state.downSamplingCoordinates[ISOCHRON_PROVIDER] : DOWNSAMPLING_COORDINATES[ISOCHRON_PROVIDER],
+      downSamplingCoordinates: context ? context.state.downSamplingCoordinates[isochronProvider] : DOWNSAMPLING_COORDINATES[isochronProvider],
       fromTo: context ? context.props.travelTimeName : FROM_TO_MODE,
-      transportMode: context ? context.props.transportMode : TRANSPORT_MODE,
+      transportMode: transportMode,
       trafficMode: TRAFFIC_MODE,
-      skip: skipIsochrons
-    }
-
-    if (!noUpdate) {
-      Object.keys(placesTypes).map(type => {
-        placesTypes[type] && getPlaces(type, currentPosition, params.transportMode)
-        .then(() => placesInPolygonsUpdate(type))
-        .catch(err => console.error(err))
-      })
+      skip: skipIsochrons,
     }
 
     if (!context) {
@@ -120,9 +122,6 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition, noUpdate
   error => console.error(error),
   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
 )}
-
-// start loading isochron as soon as we have the current location
-updateLocationIsochrons()
 
 class TravContainer extends React.Component {
   constructor (props: Object) {
@@ -209,6 +208,31 @@ class TravContainer extends React.Component {
     updateIsochrons({ params: params.isochrons })
   }
 
+  updatePlaces () {
+    const { transportMode } = this.props
+    const locations = this.state.locations
+    const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+
+    Promise.all(
+      Object.keys(placesTypes).map(type => {
+        if (!placesTypes[type]) {
+          return new Promise((resolve, reject) => resolve(`getPlaces ${type} disabled`))
+        } else {
+          return getPlaces(type, position, transportMode)
+          .then(() => placesInPolygonsUpdate(type))
+          .catch(err => console.error(err)) // we should never get here
+        }
+      })
+    )
+    .then(messages => {
+      doneWithSavedPolygonsFeature()
+      messages.map(message => {
+        message.match(/error/i) && console.tron.error(message)
+      })
+    })
+    .catch(err => { doneWithSavedPolygonsFeature(); console.error(err) }) // we should never get here
+  }
+
   updatePolygonsState (state) {
     this.setState({ polygonsState: state })
     this.setState({ networkActivityIndicatorVisible: (state === ISOCHRON_LOADING) ? true : false })
@@ -216,6 +240,7 @@ class TravContainer extends React.Component {
       this.setState({ spinnerVisible: false })
       alert('Could not generate isochrons for this location.')
     } else if (state === ISOCHRON_LOADED) {
+      this.updatePlaces() // update places
       // delay the removal of the spinner overlay to give time for the isochrons to appear
       const context = this
       setTimeout(() => { context.setState({ spinnerVisible: false }) }, 150)
@@ -249,6 +274,9 @@ class TravContainer extends React.Component {
       location.title = `${place.name} - ${place.time}`
       location.latitude = place.location.lat
       location.longitude = place.location.lng
+      if (place.polygonIndex === undefined) {
+        return undefined
+      }
       if (this.state.polygonsFillColor.indexOf(2) !== -1) {
         if (place.polygonIndex !== undefined && this.state.polygonsFillColor[place.polygonIndex] !== 2) { return undefined }
       }
@@ -369,7 +397,9 @@ class TravContainer extends React.Component {
             : undefined
           }
           { Object.keys(this.state.placesTypes).map(type => {
-              return (!this.state.placesTypes[type] || !savedPlaces[type] || savedPlaces[type].length === 0) ? undefined : savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type))
+              return (!this.state.placesTypes[type] || !savedPlaces[type] || savedPlaces[type].length === 0) ?
+                undefined :
+                savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type))
             })
           }
           { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {

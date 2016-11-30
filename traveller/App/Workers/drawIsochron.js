@@ -17,7 +17,7 @@ export const drawIsochron = (self, debug, isochron, index, downSamplingCoordinat
       let keep = 0;
       for (let c = 0; c < coordinates.length; c++) {
         if (keep === 0) { p.push({ longitude: coordinates[c][0], latitude: coordinates[c][1] }) }
-        if (downSamplingCoordinates > 1) {
+        if (downSamplingCoordinates > 1 && coordinates.length > 20) {
           keep = ++keep % (downSamplingCoordinates - 1)
         }
       }
@@ -34,5 +34,5 @@ export const drawIsochron = (self, debug, isochron, index, downSamplingCoordinat
   }
 
   self.postMessage(JSON.stringify({ id: 'update', index: index, polygons: polygons }))
-  
+
 }
