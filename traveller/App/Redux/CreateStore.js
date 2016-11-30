@@ -13,11 +13,6 @@ export default (rootReducer, rootSaga) => {
   const middleware = []
   const enhancers = []
 
-  /* ------------- Saga Middleware ------------- */
-
-  // const sagaMiddleware = createSagaMiddleware()
-  // middleware.push(sagaMiddleware)
-
   /* ------------- Logger Middleware ------------- */
 
   const SAGA_LOGGING_BLACKLIST = ['EFFECT_TRIGGERED', 'EFFECT_RESOLVED', 'EFFECT_REJECTED', 'persist/REHYDRATE']
