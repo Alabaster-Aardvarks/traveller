@@ -55,7 +55,7 @@ const loadIsochron = params => {
 
       // query for this isochron
       //   other possible options: maxpoints=100, quality=1 [1,2,3] 1 is default & best
-      const modeQuery = `mode=fastest;${transportMode === 'car' ? 'car' : 'pedestrian'};traffic:${trafficMode}`
+      const modeQuery = `mode=fastest;${transportMode === 'car' ? 'car' : (transportMode === 'bike' ? 'bicycle' : 'pedestrian')};traffic:${trafficMode}`
       const resolutionQuery = '' // `&resolution=1` // meters per pixel
       const startDestQuery = `&${fromTo === 'from' ? 'start' : 'destination'}=geo!${latitude},${longitude}`
       const timeQuery = `&${fromTo === 'from' ? 'departure' : 'arrival'}=${dateTime}`

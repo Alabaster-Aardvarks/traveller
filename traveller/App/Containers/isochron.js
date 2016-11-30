@@ -26,27 +26,39 @@ const initPolygon = () => {
   savedPolygonsFeature = []
   polygonsState = POLYGONS_NOT_LOADED
 }
-const savePolygon = (index, data) => {
+const savePolygon = (index, data, length) => {
   polygonsState = POLYGONS_LOADING
   savedPolygons[index] = data // update saved isochrons
 
-  let polygonFeature = []
+  let polygonArray = []
   data.map(d => {
     let polygon = d.polygon
     let holes = d.holes
 
+    let polygonWithHoles = []
     let p = []
     polygon.map(c => p.push([ c.longitude, c.latitude ]))
-    polygonFeature.push(p)
+    if (JSON.stringify(p[0]) != JSON.stringify(p[p.length-1])) { p.push(p[0]) } // close polygon if it's not
+    polygonWithHoles.push(p)
     holes.map(hole => {
       let h = []
       hole.map(c => h.push([ c.longitude, c.latitude ]))
-      polygonFeature.push(h)
+      if (JSON.stringify(h[0]) != JSON.stringify(h[h.length-1])) { h.push(h[0]) } // close polygon if it's not
+      polygonWithHoles.push(h)
     })
+    polygonArray.push(polygonWithHoles)
   })
-  savedPolygonsFeature[index] = { index: index, polygon: polygonFeature }
+  savedPolygonsFeature[index] = { index: index, polygonArray: polygonArray }
 
-  polygonsState = POLYGONS_LOADED
+  // we are done when ALL polygons have been updated, not just one
+  if (length === savedPolygonsFeature.reduce(a => a + 1, 0)) {
+    polygonsState = POLYGONS_LOADED
+  }
+}
+export const doneWithSavedPolygonsFeature = () => {
+  //console.log('doneWithSavedPolygonsFeature')
+  // set to null to enable garbage collection and reduce memory footprint
+  savedPolygonsFeature = null
 }
 
 export const setUpdateIsochronsStateFn = updateFn => {
@@ -95,7 +107,7 @@ export const updateIsochrons = args => {
     const message = JSON.parse(messageString)
     if (message.id === 'update') {
       if (debug) console.tron.display({ name: 'isochron update from worker', value: message.polygons.length })
-      savePolygon(message.index, message.polygons)
+      savePolygon(message.index, message.polygons, params.durations.length - 1)
     } else if (message.id === 'done') {
       isochronsState = ISOCHRON_LOADED
       updateIsochronsState && updateIsochronsState(isochronsState)
