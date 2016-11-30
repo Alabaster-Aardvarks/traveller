@@ -46,11 +46,18 @@ const getRadarData = (place, lat, long, radius) => {
   .catch(error => console.error(error));
 };
 
+//converting client mode of transportation query to google api mode terms
+const modeKeys = {
+  car: 'driving',
+  bike: 'cycling',
+  walk: 'walking',
+};
 //google distance matrix 
 const getDistanceData = (arrayOfPlaces, lat, long, mode) => {
+  
   lat = lat || 37.7825177;
   long = long || -122.4106772;
-  mode = mode || 'transit';
+  mode = modeKeys[mode] || 'transit';
   let destinationString = 'place_id:';
   for (let i = 0; i < arrayOfPlaces.length; i++) {
     destinationString += arrayOfPlaces[i];
@@ -59,6 +66,7 @@ const getDistanceData = (arrayOfPlaces, lat, long, mode) => {
     }
   }
   log('getDistanceData destinationString', destinationString);
+
   return axios({
     method: 'get',
     url: `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${lat},${long}&destinations=${destinationString}&key=${key}&mode=${mode}&departure_time=now`
@@ -75,7 +83,7 @@ const getGoogleData = (req, res, keyword) => {
   long = req.query.long || -122.4106772;
   radius = req.query.radius || 50000;
   mode = req.query.mode || 'transit'; 
-  //take results of nearby search and get their place ides
+  //take results of nearby search and get their place ids
   let idList = [];
   let coordinates = [];     
   //holder for response object
@@ -95,33 +103,32 @@ const getGoogleData = (req, res, keyword) => {
       idList.push(place.place_id);
       coordinates.push(place.geometry.location);
     });
-    //can only use 25 destinations at a time for Google distance matrix
-    let shortList = idList.splice(0, 99); 
+    //can go up to 100 per call for distance, but then we'll hit rate limits 
+    //currently i'm under the impression that we can do 200 quickly, which leads to 
+    //50 places per "button"/isochrone change
+    let shortList = idList.splice(0, 50); 
     log(shortList);
     getDistanceData(shortList, lat, long, mode)
     .then(data => {
       if (data.error_message) {
+        //this will trigger if we hit the rate limit TIME or DAILY limit
         console.error(`Not able to get distance data for ${keyword} [${data.error_message}]`);
-        res.sendStatus(500).send({error: `${data.error_message}`});
-        return;
-      }
-      if (!data.rows || !data.rows.length) {
-        console.error(`Not able to get distance data for ${keyword} (reached quota?).`);
-        res.sendStatus(500).send({error: 'reached API quota'});
-        return;
-      }
-      data.destination_addresses.forEach(place => {
-        place = place.split('').splice(0, place.indexOf(',')).join('');
-        result.push({
-          'name': place, 
-          'time': data.rows[0].elements[counter].duration.text,
-          'location': coordinates[counter],
-          'distance': data.rows[0].elements[counter].distance.text,
-          'metric distance': data.rows[0].elements[counter].distance.value 
+        //to do: in case of api limits, we need to find another api to list the place names or poi's
+      } else {
+        data.destination_addresses.forEach(place => {
+          place = place.split('').splice(0, place.indexOf(',')).join('');
+          result.push({
+            'name': place, 
+            'time': data.rows[0].elements[counter].duration.text,
+            'location': coordinates[counter],
+            'distance': data.rows[0].elements[counter].distance.text,
+            'metric distance': data.rows[0].elements[counter].distance.value 
+          });
+          counter++;
         });
-        counter++;
-      });
-      res.status(200).json(result);
+        // console.log(result);
+        res.status(200).json(result);
+      }
     })
     .catch(err => {
       console.error(`Not able to get distance data for ${keyword} [${err}]`);
