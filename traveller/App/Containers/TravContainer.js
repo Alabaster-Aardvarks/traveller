@@ -446,7 +446,7 @@ class TravContainer extends React.Component {
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
           }}>
-            <Icon name='paw' style={styles.actionButtonIcon}/>
+            <Icon name='street-view' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' onPress={() => {
             setTransportMode('bike')
