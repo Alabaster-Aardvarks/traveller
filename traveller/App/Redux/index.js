@@ -9,5 +9,5 @@ export default () => {
     map: require('./MapRedux').reducer,
   })
 
-  return configureStore(rootReducer, rootSaga)
+  return configureStore(rootReducer)
 }
