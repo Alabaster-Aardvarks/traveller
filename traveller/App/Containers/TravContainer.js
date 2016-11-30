@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions, StatusBar, LayoutAnimation } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation, VibrationIOS } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
@@ -15,6 +15,8 @@ import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds, placesInPolygonsUpdate } from './places'
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+// import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
 
 const debug = false // set to true to enable log messages for debug
 
@@ -42,6 +44,10 @@ const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+// Autocomplete Config
+const homePlace = {description: 'Home', geometry: { location: { lat: 37.753185, lng: -122.439587 } }};
+const workPlace = {description: 'Work', geometry: { location: { lat: 37.783697, lng: -122.408966 } }};
+
 let savedMapBrand = null
 let savedDuration = null
 let onRegionChangeCompleteCounter = 0
@@ -51,7 +57,7 @@ let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
 
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
 
-const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
+const updateLocationIsochrons = (context, animateToRegion, newPosition, noUpdate) => {
   // get current location
   navigator.geolocation.getCurrentPosition(position => {
     if (newPosition) { position = newPosition }
@@ -65,8 +71,8 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
 
     const durations = context ? context.getIsochronDurations(context.props.duration) : DURATIONS
 
-    // isochron parameters
-    const params = {
+    // Isochron Parameters
+    let params = {
       provider: ISOCHRON_PROVIDER,
       latitude: roundCoordinate(locations[0].latitude),
       longitude: roundCoordinate(locations[0].longitude),
@@ -79,14 +85,16 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       skip: skipIsochrons
     }
 
-    Object.keys(placesTypes).map(type => {
-      placesTypes[type] && getPlaces(type, currentPosition, params.transportMode)
-      .then(() => placesInPolygonsUpdate(type))
-      .catch(err => console.error(err))
-    })
+    if (!noUpdate) {
+      Object.keys(placesTypes).map(type => {
+        placesTypes[type] && getPlaces(type, currentPosition, params.transportMode)
+        .then(() => placesInPolygonsUpdate(type))
+        .catch(err => console.error(err))
+      })
+    }
 
     if (!context) {
-      updateIsochrons({ params: params })
+      !noUpdate && updateIsochrons({ params: params })
     } else {
       const initialPosition = JSON.stringify(position)
       const newRegion = {
@@ -95,15 +103,18 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       }
-      context.setState({ initialPosition })
-      context.setState({ locations })
-      context.setState({ region: newRegion })
-      context.setState({ durations: durations })
-      savedMapBrand = context.props.mapBrand
-      savedDuration = context.props.duration
+      if (!noUpdate) {
+        context.setState({ initialPosition })
+        context.setState({ locations })
+        context.setState({ region: newRegion })
+        context.setState({ durations: durations })
+        savedMapBrand = context.props.mapBrand
+      }
       animateToRegion && context.refs.map.animateToRegion(newRegion, 500)
-      context.updatePolygons.call(context, { isochrons: params })
-      context.polygonsFillColorUpdate()
+      if (!noUpdate) {
+        context.updatePolygons.call(context, { isochrons: params })
+        context.polygonsFillColorUpdate()
+      }
     }
   },
   error => console.error(error),
@@ -138,6 +149,9 @@ class TravContainer extends React.Component {
       spinnerVisible: true,
       placesTypes: {},
       searchBarVisible: false,
+      centerButtonVisible: false,
+      centerButtonMask: true,
+      uiElementsVisible: false,
     }
   }
 
@@ -263,10 +277,8 @@ class TravContainer extends React.Component {
   }
 
   onRegionChangeComplete (region) {
-    //console.log('onRegionChangeComplete', region)
     const { mapBrand } = this.props
     if (savedMapBrand && savedMapBrand !== mapBrand) {
-      //console.log('... re-center map on saved region')
       this.refs.map && this.refs.map.animateToRegion(this.state.region, 0)
       onRegionChangeCompleteCounter++
       if (onRegionChangeCompleteCounter > 1) {
@@ -274,8 +286,14 @@ class TravContainer extends React.Component {
         savedMapBrand = mapBrand
       }
     } else {
-      //console.log('... updating region')
-      this.setState({ region }) // Update region when map is finishing dragging
+      if (JSON.stringify(region) !== JSON.stringify(this.state.region)) {
+        this.setState({ region }) // Update region when map is finishing dragging
+        if (this.state.centerButtonMask) {
+          this.setState({ centerButtonMask: false })
+        } else {
+          this.setState({ centerButtonVisible: true })
+        }
+      }
     }
   }
 
@@ -310,6 +328,7 @@ class TravContainer extends React.Component {
     if (debug) console.tron.display({ name: 'onMapLongPress', value: coordinate })
     let newPosition = { coords: coordinate }
     updateLocationIsochrons(this, true, newPosition)
+    VibrationIOS.vibrate()
   }
 
   render () {
@@ -318,17 +337,18 @@ class TravContainer extends React.Component {
             transportIcon, setTransportMode, transportMode } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
-    
+
     return (
       <View style={styles.container}>
         <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
           provider={mapBrand === 'Google Maps' ? MapView.PROVIDER_GOOGLE : MapView.PROVIDER_DEFAULT}
-          showsTraffic={traffic}
-          style={styles.map}
-          initialRegion={this.state.region}
-          onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}
+          showsTraffic={ traffic }
+          style={ styles.map }
+          initialRegion={ this.state.region }
+          onRegionChangeComplete={ this.onRegionChangeComplete.bind(this) }
+          onPress={ () => this.setState({ uiElementsVisible: !this.state.uiElementsVisible }) }
           onLongPress={ e => this.onMapLongPress.call(this, e.nativeEvent) }
           showsUserLocation={this.state.showUserLocation}
           showsCompass={true}
@@ -372,12 +392,27 @@ class TravContainer extends React.Component {
           { this.state.locations.map((location, index) => this.renderMapMarkers.call(this, location, index)) }
         </MapView>
 
+        { this.state.sliderVisible && (
+            <Slider
+              minimumValue={ 0 }
+              maximumValue={ Math.max(1, this.state.durations.length - 1) }
+              step={ 1 }
+              style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }}
+              value={ this.state.sliderValue }
+              onValueChange={this.sliderValueChange.bind(this)}
+            />
+          )
+        }
+
+
+
         {/* Search Menu */}
-        <ActionButton
+        { !this.state.uiElementsVisible && (<ActionButton
           buttonColor='rgba(231,76,60,1)'
-          degrees={ 90 }
+          degrees={ 0 }
           icon={<Icon name='search' style={styles.actionButton}></Icon>}
           spacing={ 10 }
+          outRangeScale={ 1.2 }
         >
           <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => this.changePlacesType.call(this, 'bank')}>
             <Icon name='university' style={styles.actionButtonIcon}/>
@@ -388,56 +423,66 @@ class TravContainer extends React.Component {
           <ActionButton.Item buttonColor='#ff6b6b' title='Medical' onPress={() => this.changePlacesType.call(this, 'health')}>
             <Icon name='ambulance' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-        </ActionButton>
+          <ActionButton.Item buttonColor='#1abc9c' title='Slider' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
+            <Icon name='info-circle' style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+        </ActionButton>)
+        }
 
         {/* Duration Button */}
-        <ActionButton
-          buttonColor='rgba(0,101,85,1)'
-          degrees={ 0 }
-          icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
-          spacing={ 10 }
-          position='center'
-          verticalOrientation='down'
-          key='duration'
-        >
-          { this.state.durations.map((duration, index) => {
-              let buttonEnabled = index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)
-              return (
-                <ActionButton.Item
-                  size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
-                  buttonColor={ index === 0 ? 'rgb(0, 102, 49)' : isochronFillColor(index / this.state.durations.length, null, true) }
-                  onPress={() => this.polygonsFillColorUpdate.call(this, index)}
-                  key={ `duration${index}` }
-                  style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: '#fff' } : undefined }
-                >
-                  <Text style={styles.durationButtonText}>
-                    { (index === 0) ? (this.state.polygonsFillColor.indexOf(2) !== -1 ? 'all\noff' : 'all\non') : (duration / 60).toString() + '\nmin' }
-                  </Text>
-                </ActionButton.Item>
-              )
-            })
-          }
-        </ActionButton>
+        { !this.state.uiElementsVisible && (<ActionButton
+            buttonColor='rgba(0,101,85,1)'
+            degrees={ 0 }
+            icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
+            spacing={ 10 }
+            outRangeScale={ 1.2 }
+            position='center'
+            verticalOrientation='down'
+            key='duration'
+          >
+            { this.state.durations.map((duration, index) => {
+                let buttonEnabled = index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)
+                return (
+                  <ActionButton.Item
+                    size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
+                    buttonColor={ index === 0 ? 'rgb(0, 102, 49)' : isochronFillColor(index / this.state.durations.length, null, true) }
+                    onPress={() => this.polygonsFillColorUpdate.call(this, index)}
+                    key={ `duration${index}` }
+                    style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: '#fff' } : undefined }
+                  >
+                    <Text style={styles.durationButtonText}>
+                      { (index === 0) ? (this.state.polygonsFillColor.indexOf(2) !== -1 ? 'all\noff' : 'all\non') : (duration / 60).toString() + '\nmin' }
+                    </Text>
+                  </ActionButton.Item>
+                )
+              })
+            }
+          </ActionButton>)
+        }
 
         {/* Settings Button */}
-        <ActionButton
+        { !this.state.uiElementsVisible && (<ActionButton
           buttonColor='#58cbf4'
           icon={<Icon name='cog' style={styles.actionButton}></Icon>}
           spacing={ 10 }
+          degrees={ 0 }
           position='left'
           verticalOrientation='down'
           onPress={ NavigationActions.settings }
         >
-        </ActionButton>
+        </ActionButton>)
+        }
 
         {/* Transport Mode Button */}
-        <ActionButton
+        { !this.state.uiElementsVisible && (<ActionButton
           buttonColor='#2D62A0'
           icon={<Ionicons name={ transportIcon } style={ styles.actionModeButton } />}
           spacing={ 10 }
+          degrees={ 0 }
           position='right'
           verticalOrientation='down'
           autoInactive={ true }
+          outRangeScale={ 1.2 }
         >
           {/* FIXME: rewrite this as a loop */}
           <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
@@ -472,20 +517,80 @@ class TravContainer extends React.Component {
           }}>
             <Ionicons name='md-train' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-        </ActionButton>
+        </ActionButton>)
+        }
 
-        {/* Search Toggle */}
-        <ActionButton
-          buttonColor='#1abc9c'
-          icon={<Icon name='cog' style={styles.actionButton}></Icon>}
+        {/* Center Map Button */}
+        { this.state.centerButtonVisible && (<ActionButton
+          buttonColor='#58cbf4'
+          icon={<Icon name='crosshairs' style={styles.actionButton}></Icon>}
           spacing={ 10 }
-          position='left'
+          position='center'
+          offsetY={ 45 }
+          size={ 35 }
           verticalOrientation='up'
-          onPress={() => {this.setState({ searchBarVisible: !this.state.searchBarVisible })} }
+          // Center map on GPS
+          onPress={ () => {
+            updateLocationIsochrons(this, true, undefined, true)
+            this.setState({ centerButtonVisible: false, centerButtonMask: true })
+          } }
+          // Center map on current isochron
+          onLongPress={ () => {
+            // Get current isochron location
+            const locations = this.state.locations
+            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+            updateLocationIsochrons(this, true, position, true)
+            this.setState({ centerButtonVisible: false, centerButtonMask: true })
+          } }
         >
-        </ActionButton>
+        </ActionButton>) }
 
-        {/* Search Bar Will Go Here*/}
+        {/* Search Bar */}
+
+        {/* <GooglePlacesAutocomplete
+        placeholder='Search'
+        enablePoweredByContainer={ false }
+        minLength={ 2 } // minimum length of text to search
+        autoFocus={ false }
+        listViewDisplayed='auto'    // true/false/undefined
+        fetchDetails={ true }
+        // renderDescription={ (row) => row.terms[0].value } // display street only
+        onPress={ (data, details = null) => { // 'details' is provided when fetchDetails = true
+          console.tron.log(data);
+          console.tron.log(details);
+        } }
+        getDefaultValue={ () => {
+          return ''; // text input default value
+        } }
+        query={ {
+          // available options: https://developers.google.com/places/web-service/autocomplete
+          key: 'AIzaSyDZaeZPN4R3f82-Gxg7SE6BLxYcmHjvdGM',
+          language: 'en', // language of the results
+          types: '(cities)', // default: 'geocode'
+        } }
+        styles={ {
+          description: {
+            fontWeight: 'bold',
+          },
+          predefinedPlacesDescription: {
+            color: '#1faadb',
+          },
+        } }
+
+        currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+        currentLocationLabel="Current location"
+        nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+        GoogleReverseGeocodingQuery={{
+          // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+        }}
+        GooglePlacesSearchQuery={{
+          // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+          rankby: 'distance',
+          types: 'food',
+        }}
+        filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+        predefinedPlaces={[homePlace, workPlace]}
+      /> */}
 
         {/* Spinner */}
         { this.state.spinnerVisible && (
