@@ -106,7 +106,7 @@ const getGoogleData = (req, res, keyword) => {
     //can go up to 100 per call for distance, but then we'll hit rate limits 
     //currently i'm under the impression that we can do 200 quickly, which leads to 
     //50 places per "button"/isochrone change
-    let shortList = idList.splice(0, 50); 
+    let shortList = idList.splice(0, 24); 
     log(shortList);
     getDistanceData(shortList, lat, long, mode)
     .then(data => {
