@@ -54,8 +54,6 @@ let onRegionChangeCompleteCounter = 0
 // temporary position until we get the current location
 let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
 
-let skipIsochrons = false // set to true to disable loading isochrons [for debug]
-
 const getIsochronProvider = { // [navitia,here,route360,graphhopper]
   'walk'    : 'here',
   'car'     : 'here',
@@ -63,65 +61,14 @@ const getIsochronProvider = { // [navitia,here,route360,graphhopper]
   'transit' : 'navitia',
 }
 
-// FIXME: remove support for context not defined and move inside component
-// FIXME: if newPosition is provided, we should not get the new current location
-const updateLocationIsochrons = (context, animateToRegion, newPosition, noUpdate) => {
-  // get current location
-  navigator.geolocation.getCurrentPosition(position => {
-    if (newPosition) { position = newPosition }
-    currentPosition = { latitude: position.coords.latitude, longitude: position.coords.longitude }
-    if (debug) console.tron.display({ name: 'current position', value: currentPosition })
-    const locations = [ {
-      title: 'Starting Location',
-      latitude: currentPosition.latitude,
-      longitude: currentPosition.longitude,
-    } ]
+const getRadius = {
+  'walk'    : 15000,
+  'car'     : 50000,
+  'bike'    : 25000,
+  'transit' : 50000,
+}
 
-    const durations = context ? context.getIsochronDurations(context.props.duration) : DURATIONS
-
-    // Isochrone parameters
-    let transportMode = context ? context.props.transportMode : TRANSPORT_MODE
-    let isochronProvider = getIsochronProvider[transportMode]
-    const params = {
-      provider: isochronProvider,
-      latitude: roundCoordinate(locations[0].latitude),
-      longitude: roundCoordinate(locations[0].longitude),
-      durations: durations,
-      dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
-      downSamplingCoordinates: context ? context.state.downSamplingCoordinates[isochronProvider] : DOWNSAMPLING_COORDINATES[isochronProvider],
-      fromTo: context ? context.props.travelTimeName : FROM_TO_MODE,
-      transportMode: transportMode,
-      trafficMode: TRAFFIC_MODE,
-      skip: skipIsochrons,
-    }
-
-    if (!context) {
-      !noUpdate && updateIsochrons({ params: params })
-    } else {
-      const initialPosition = JSON.stringify(position)
-      const newRegion = {
-        latitude: currentPosition.latitude,
-        longitude: currentPosition.longitude,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      }
-      if (!noUpdate) {
-        context.setState({ initialPosition })
-        context.setState({ locations })
-        context.setState({ region: newRegion })
-        context.setState({ durations: durations })
-        savedMapBrand = context.props.mapBrand
-      }
-      animateToRegion && context.refs.map.animateToRegion(newRegion, 500)
-      if (!noUpdate) {
-        context.updatePolygons.call(context, { isochrons: params })
-        context.polygonsFillColorUpdate()
-      }
-    }
-  },
-  error => console.error(error),
-  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-)}
+let skipIsochrons = false // set to true to disable loading isochrons [for debug]
 
 class TravContainer extends React.Component {
   constructor (props: Object) {
@@ -156,7 +103,7 @@ class TravContainer extends React.Component {
 
   componentDidMount() {
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
-    updateLocationIsochrons(this, true)
+    this.updateLocationIsochrons(true)
   }
 
   componentDidUpdate() {
@@ -166,7 +113,7 @@ class TravContainer extends React.Component {
       const locations = this.state.locations
       const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
       // reload isochron when duration changes, no change of position, no animate to region
-      updateLocationIsochrons(this, false, position)
+      this.updateLocationIsochrons(false, position)
     }
   }
 
@@ -174,6 +121,62 @@ class TravContainer extends React.Component {
     setUpdateIsochronsStateFn(null)
     terminateIsochronWorker()
   }
+
+  updateLocationIsochrons (animateToRegion, newPosition, noUpdate) {
+    return new Promise((resolve, reject) => {
+      newPosition ? resolve(newPosition) : navigator.geolocation.getCurrentPosition(position => resolve(position))
+    })
+    .then(position => {
+      // update global var
+      currentPosition = { latitude: position.coords.latitude, longitude: position.coords.longitude }
+      if (debug) console.tron.display({ name: 'current position', value: currentPosition })
+
+      const locations = [ {
+        title: 'Center Location',
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
+      } ]
+      const newRegion = {
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      }
+      const durations = this.getIsochronDurations(this.props.duration)
+      if (!noUpdate) {
+        const initialPosition = JSON.stringify(position)
+        this.setState({ initialPosition })
+        this.setState({ locations })
+        this.setState({ region: newRegion })
+        this.setState({ durations })
+        savedMapBrand = this.props.mapBrand
+      }
+
+      animateToRegion && this.refs.map.animateToRegion(newRegion, 500)
+
+      if (!noUpdate) {
+        // Isochrone parameters
+        const { transportMode, travelTimeName } = this.props
+        const isochronProvider = getIsochronProvider[transportMode]
+        const params = {
+          provider: isochronProvider,
+          latitude: roundCoordinate(locations[0].latitude),
+          longitude: roundCoordinate(locations[0].longitude),
+          durations: durations,
+          dateTime: roundDateTime(this.state.dateTime),
+          downSamplingCoordinates: this.state.downSamplingCoordinates[isochronProvider],
+          fromTo: travelTimeName,
+          transportMode: transportMode,
+          trafficMode: TRAFFIC_MODE,
+          skip: skipIsochrons,
+        }
+        this.updatePolygons({ isochrons: params })
+        this.polygonsFillColorUpdate()
+      }
+    },
+    error => console.error(error),
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+  )}
 
   getIsochronDurations(duration) {
     //return [ 0, 600, 1200, 1800 ]
@@ -206,16 +209,16 @@ class TravContainer extends React.Component {
   }
 
   updatePlaces () {
-    const { transportMode } = this.props
-    const locations = this.state.locations
-    const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-
     Promise.all(
       Object.keys(placesTypes).map(type => {
         if (!placesTypes[type]) {
           return new Promise((resolve, reject) => resolve(`getPlaces ${type} disabled`))
         } else {
-          return getPlaces(type, position, transportMode)
+          const { transportMode } = this.props
+          const locations = this.state.locations
+          const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+          const params = { type: type, position: position, mode: transportMode, radius: getRadius[transportMode], date: roundDateTime(this.state.dateTime) }
+          return getPlaces(params)
           .then(() => placesInPolygonsUpdate(type))
           .catch(err => console.error(err)) // we should never get here
         }
@@ -223,9 +226,7 @@ class TravContainer extends React.Component {
     )
     .then(messages => {
       doneWithSavedPolygonsFeature()
-      messages.map(message => {
-        message.match(/error/i) && console.tron.error(message)
-      })
+      messages.map(message => { message.match(/error/i) && console.tron.error(message) })
     })
     .catch(err => { doneWithSavedPolygonsFeature(); console.error(err) }) // we should never get here
   }
@@ -352,7 +353,7 @@ class TravContainer extends React.Component {
   onMapLongPress ({ coordinate }) {
     if (debug) console.tron.display({ name: 'onMapLongPress', value: coordinate })
     let newPosition = { coords: coordinate }
-    updateLocationIsochrons(this, true, newPosition)
+    this.updateLocationIsochrons(true, newPosition)
     VibrationIOS.vibrate()
   }
 
@@ -520,7 +521,7 @@ class TravContainer extends React.Component {
             setTransportMode('walk')
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            updateLocationIsochrons(this, true, position)
+            this.updateLocationIsochrons(true, position)
           }}>
             <Ionicons name='md-walk' style={styles.actionModeButton}/>
           </ActionButton.Item>
@@ -530,7 +531,7 @@ class TravContainer extends React.Component {
             setTransportMode('bike')
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            updateLocationIsochrons(this, true, position)
+            this.updateLocationIsochrons(true, position)
           }}>
             <Ionicons name='md-bicycle' style={styles.actionModeButton} />
           </ActionButton.Item>
@@ -540,7 +541,7 @@ class TravContainer extends React.Component {
             setTransportMode('car')
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            updateLocationIsochrons(this, true, position)
+            this.updateLocationIsochrons(true, position)
           }}>
             <Ionicons name='md-car' style={styles.actionModeButton}/>
           </ActionButton.Item>
@@ -550,7 +551,7 @@ class TravContainer extends React.Component {
             setTransportMode('transit')
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            updateLocationIsochrons(this, true, position)
+            this.updateLocationIsochrons(true, position)
           }}>
             <Ionicons name='md-train' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
@@ -568,7 +569,7 @@ class TravContainer extends React.Component {
           verticalOrientation='up'
           // Center map on GPS
           onPress={ () => {
-            updateLocationIsochrons(this, true, undefined, true)
+            this.updateLocationIsochrons(true, undefined, true)
             this.setState({ centerButtonVisible: false, centerButtonMask: true })
           } }
           // Center map on current isochron
@@ -576,7 +577,7 @@ class TravContainer extends React.Component {
             // Get current isochron location
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            updateLocationIsochrons(this, true, position, true)
+            this.updateLocationIsochrons(true, position, true)
             this.setState({ centerButtonVisible: false, centerButtonMask: true })
           } }
         >
