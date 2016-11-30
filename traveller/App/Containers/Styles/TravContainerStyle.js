@@ -18,6 +18,10 @@ export default StyleSheet.create({
     fontSize: 17,
     color: 'white',
   },
+  actionModeButton: {
+    fontSize: 20,
+    color: 'white',
+  },
   durationButtonText: {
     textAlign: 'center',
     fontSize: 12,

@@ -6,6 +6,7 @@ import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
 import Spinner from 'react-native-spinkit'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import AlertMessage from '../Components/AlertMessage'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
@@ -13,6 +14,7 @@ import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
+import MapActions from '../Redux/MapRedux'
 // import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
 
 const debug = false // enable log messages for debug
@@ -72,14 +74,14 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       durations: durations,
       dateTime: context ? roundDateTime(context.state.dateTime) : DATETIME,
       downSamplingCoordinates: context ? context.state.downSamplingCoordinates[ISOCHRON_PROVIDER] : DOWNSAMPLING_COORDINATES[ISOCHRON_PROVIDER],
-      fromTo: context ? context.state.fromTo : FROM_TO_MODE,
-      transportMode: context ? context.state.transportMode : TRANSPORT_MODE,
+      fromTo: context ? context.props.travelTimeName : FROM_TO_MODE,
+      transportMode: context ? context.props.transportMode : TRANSPORT_MODE,
       trafficMode: TRAFFIC_MODE,
       skip: skipIsochrons
     }
 
     Object.keys(placesTypes).map(type => {
-      placesTypes[type] && getPlaces(type, currentPosition)
+      placesTypes[type] && getPlaces(type, currentPosition, params.transportMode)
     })
 
     if (!context) {
@@ -131,7 +133,6 @@ class TravContainer extends React.Component {
       durations: durations,
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
       fromTo: FROM_TO_MODE,
-      transportMode: TRANSPORT_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
       placesTypes: {},
@@ -316,7 +317,7 @@ class TravContainer extends React.Component {
 
   render () {
     //console.log('render')
-    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl } = this.props
+    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName, transportIcon, setTransportMode, transportMode } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
 
@@ -419,7 +420,7 @@ class TravContainer extends React.Component {
 
         {/* Settings Button */}
         <ActionButton
-          buttonColor='#1abc9c'
+          buttonColor='#58cbf4'
           icon={<Icon name='cog' style={styles.actionButton}></Icon>}
           spacing={ 10 }
           position='left'
@@ -430,21 +431,57 @@ class TravContainer extends React.Component {
 
         {/* Mode Button */}
         <ActionButton
-          buttonColor='rgba(30,80,190,1)'
-          icon={<Icon name='car' style={styles.actionButton}></Icon>}
+          buttonColor='#2D62A0'
+          icon={<Ionicons name={ transportIcon } style={ styles.actionModeButton } />}
           spacing={ 10 }
           position='right'
           verticalOrientation='down'
-          autoInactive={ false }
+          autoInactive={ true }
         >
-          <ActionButton.Item buttonColor='#9b59b6' title='60' onPress={() => this.changePlacesType.call(this, 'bank')}>
-            <Icon name='university' style={styles.actionButtonIcon}/>
+          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
+            setTransportMode('walk')
+            Object.keys(placesTypes).map(type => {
+              getPlaces(type, currentPosition, 'walking')
+            })
+            const locations = this.state.locations
+            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+            updateLocationIsochrons(this, true, position)
+          }}>
+            <Ionicons name='md-walk' style={styles.actionModeButton}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title='50' onPress={() => this.changePlacesType.call(this, 'transit')}>
-            <Icon name='bus' style={styles.actionButtonIcon} />
+          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
+            setTransportMode('bike')
+            Object.keys(placesTypes).map(type => {
+              getPlaces(type, currentPosition, 'bicycling')
+            })
+            const locations = this.state.locations
+            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+            updateLocationIsochrons(this, true, position)
+          }}>
+            <Ionicons name='md-bicycle' style={styles.actionModeButton} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' title='40' onPress={() => this.changePlacesType.call(this, 'health')}>
-            <Icon name='ambulance' style={styles.actionButtonIcon}/>
+          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
+            setTransportMode('car')
+            Object.keys(placesTypes).map(type => {
+              getPlaces(type, currentPosition, 'driving')
+            })
+            const locations = this.state.locations
+            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+            updateLocationIsochrons(this, true, position)
+          }}>
+            <Ionicons name='md-car' style={styles.actionModeButton}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
+            setTransportMode('transit')
+
+            Object.keys(placesTypes).map(type => {
+              getPlaces(type, currentPosition, 'transit')
+            })
+          const locations = this.state.locations
+          const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+          updateLocationIsochrons(this, true, position)
+          }}>
+            <Ionicons name='md-train' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
 
@@ -483,6 +520,10 @@ TravContainer.propTypes = {
   mapTileName: PropTypes.string,
   mapTileUrl: PropTypes.string,
   duration: PropTypes.number,
+  transportMode: PropTypes.string,
+  transportIcon: PropTypes.string,
+  setTransportMode: PropTypes.func,
+  travelTimeName: PropTypes.string,
 }
 
 const mapStateToProps = (state) => {
@@ -494,9 +535,14 @@ const mapStateToProps = (state) => {
     mapTileName: state.map.mapTileName,
     mapTileUrl: state.map.mapTileUrl,
     duration: state.map.duration,
+    transportMode: state.map.transportMode,
+    transportIcon: state.map.transportIcon,
+    travelTimeName: state.map.travelTimeName,
   }
 }
 
-const mapDispatchToProps = (dispatch) => { return {} }
+const mapDispatchToProps = (dispatch) => { return {
+  setTransportMode: (transportModeName) => dispatch(MapActions.setTransportMode(transportModeName))
+} }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TravContainer)
