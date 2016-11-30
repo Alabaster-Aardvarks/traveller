@@ -22,6 +22,13 @@ export default Creators
 
 /* ------------- Initial State ------------- */
 
+const transportIconList = {
+  'walk'    : 'md-walk',
+  'bike'    : 'md-bicycle',
+  'car'     : 'md-car',
+  'transit' : 'md-train',
+}
+
 export const INITIAL_STATE = Immutable({
   mapBrand: 'Google Maps',
   duration: 60,
@@ -34,7 +41,7 @@ export const INITIAL_STATE = Immutable({
   transportMode: 'transit',
   travelTime: false,
   travelTimeName: 'from',
-  transportIcon: 'subway'
+  transportIcon: transportIconList['transit']
 })
 
 /* ------------- Reducers ------------- */
@@ -85,14 +92,10 @@ export const setMapTile = (state : Object, action: Object) => {
   return state.merge({ mapTileName, mapTileUrl: mapTileObj[mapTileName] })
 }
 
-export const setTransportMode = (state : Object, action: Object) => {
-  const { transportMode } = action
-  const transportModeObj = {'walk': 'md-walk',
-                            'bike': 'md-bicycle',
-                            'car': 'md-car',
-                            'transit': 'md-train',
-                            }
-  return state.merge({ transportMode: transportMode.toLowerCase(), transportIcon: transportModeObj[transportMode] })
+export const setTransportMode = (state: Object, action: Object) => {
+  let { transportMode } = action
+  transportMode = transportMode.toLowerCase() // FIXME: is this necessary?
+  return state.merge({ transportMode, transportIcon: transportIconList[transportMode] })
 }
 
 export const toggleTravelTime = (state: Object) => {

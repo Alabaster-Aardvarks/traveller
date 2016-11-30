@@ -22,6 +22,7 @@
     "flow": "flow --show-all-errors; test $? -eq 0 -o $? -eq 2"
   },
   "dependencies": {
+    "@turf/turf": "^3.6.2",
     "Buffer": "0.0.0",
     "apisauce": "^0.5.0",
     "axios": "^0.15.2",
