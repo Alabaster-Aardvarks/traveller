@@ -431,14 +431,14 @@ class TravContainer extends React.Component {
 
         {/* Mode Button */}
         <ActionButton
-          buttonColor='rgba(30,80,190,1)'
+          buttonColor='#2D62A0'
           icon={<Ionicons name={ transportIcon } style={ styles.actionButtonIcon } />}
           spacing={ 10 }
           position='right'
           verticalOrientation='down'
           autoInactive={ true }
         >
-          <ActionButton.Item buttonColor='#9b59b6' onPress={() => {
+          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('walk')
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'walking')
@@ -449,7 +449,7 @@ class TravContainer extends React.Component {
           }}>
             <Ionicons name='md-walk' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' onPress={() => {
+          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('bike')
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'bicycling')
@@ -460,7 +460,7 @@ class TravContainer extends React.Component {
           }}>
             <Ionicons name='md-bicycle' style={styles.actionButtonIcon} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' onPress={() => {
+          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('car')
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'driving')
@@ -471,7 +471,7 @@ class TravContainer extends React.Component {
           }}>
             <Ionicons name='md-car' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' onPress={() => {
+          <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('transit')
 
             Object.keys(placesTypes).map(type => {
