@@ -6,6 +6,7 @@ import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
 import Spinner from 'react-native-spinkit'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import AlertMessage from '../Components/AlertMessage'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
@@ -431,7 +432,7 @@ class TravContainer extends React.Component {
         {/* Mode Button */}
         <ActionButton
           buttonColor='rgba(30,80,190,1)'
-          icon={<Icon name={ transportIcon } style={ styles.actionButton } />}
+          icon={<Ionicons name={ transportIcon } style={ styles.actionButtonIcon } />}
           spacing={ 10 }
           position='right'
           verticalOrientation='down'
@@ -446,7 +447,7 @@ class TravContainer extends React.Component {
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
           }}>
-            <Icon name='street-view' style={styles.actionButtonIcon}/>
+            <Ionicons name='md-walk' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' onPress={() => {
             setTransportMode('bike')
@@ -457,7 +458,7 @@ class TravContainer extends React.Component {
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
           }}>
-            <Icon name='bicycle' style={styles.actionButtonIcon} />
+            <Ionicons name='md-bicycle' style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#ff6b6b' onPress={() => {
             setTransportMode('car')
@@ -468,7 +469,7 @@ class TravContainer extends React.Component {
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
           }}>
-            <Icon name='car' style={styles.actionButtonIcon}/>
+            <Ionicons name='md-car' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#1abc9c' onPress={() => {
             setTransportMode('transit')
@@ -480,7 +481,7 @@ class TravContainer extends React.Component {
           const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
           updateLocationIsochrons(this, true, position)
           }}>
-            <Icon name='subway' style={styles.actionButtonIcon}/>
+            <Ionicons name='md-train' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
 

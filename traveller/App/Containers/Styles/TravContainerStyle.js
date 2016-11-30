@@ -15,7 +15,7 @@ export default StyleSheet.create({
     color: 'white',
   },
   actionButtonIcon: {
-    fontSize: 17,
+    fontSize: 20,
     color: 'white',
   },
   durationButtonText: {
