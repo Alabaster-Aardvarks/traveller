@@ -36,6 +36,10 @@ placesRouter.get('/cafe', (req, res) => {
   placesController.getGoogleData(req, res, 'cafe');
 });
 
+placesRouter.get('/test', (req, res)=>{
+  placesController.getDetailData(req, res, 'ChIJlTWiCPl9hYARetG4b9R6-wE');
+});
+
 // 404 all other routes
 placesRouter.use('*', (req, res) => res.status().send({error: 'places/endpoint not found'}));
 
