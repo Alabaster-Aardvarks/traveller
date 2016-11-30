@@ -419,7 +419,7 @@ class TravContainer extends React.Component {
 
         {/* Settings Button */}
         <ActionButton
-          buttonColor='#1abc9c'
+          buttonColor='#58cbf4'
           icon={<Icon name='cog' style={styles.actionButton}></Icon>}
           spacing={ 10 }
           position='left'
@@ -442,6 +442,9 @@ class TravContainer extends React.Component {
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'walking')
             })
+            const locations = this.state.locations
+            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+            updateLocationIsochrons(this, true, position)
           }}>
             <Icon name='paw' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
@@ -450,6 +453,9 @@ class TravContainer extends React.Component {
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'bicycling')
             })
+            const locations = this.state.locations
+            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+            updateLocationIsochrons(this, true, position)
           }}>
             <Icon name='bicycle' style={styles.actionButtonIcon} />
           </ActionButton.Item>
@@ -458,6 +464,9 @@ class TravContainer extends React.Component {
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'driving')
             })
+            const locations = this.state.locations
+            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+            updateLocationIsochrons(this, true, position)
           }}>
             <Icon name='car' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
@@ -467,8 +476,9 @@ class TravContainer extends React.Component {
             Object.keys(placesTypes).map(type => {
               getPlaces(type, currentPosition, 'transit')
             })
-
-            // updateIsochrons({ params: params })
+          const locations = this.state.locations
+          const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+          updateLocationIsochrons(this, true, position)
           }}>
             <Icon name='subway' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
