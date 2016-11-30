@@ -150,6 +150,7 @@ class TravContainer extends React.Component {
       placesTypes: {},
       searchBarVisible: false,
       centerButtonVisible: false,
+      centerButtonMask: true,
       uiElementsVisible: false,
     }
   }
@@ -287,6 +288,11 @@ class TravContainer extends React.Component {
     } else {
       if (JSON.stringify(region) !== JSON.stringify(this.state.region)) {
         this.setState({ region }) // Update region when map is finishing dragging
+        if (this.state.centerButtonMask) {
+          this.setState({ centerButtonMask: false })
+        } else {
+          this.setState({ centerButtonVisible: true })
+        }
       }
     }
   }
@@ -456,7 +462,7 @@ class TravContainer extends React.Component {
 
         {/* Settings Button */}
         { !this.state.uiElementsVisible && (<ActionButton
-          buttonColor='#1abc9c'
+          buttonColor='#58cbf4'
           icon={<Icon name='cog' style={styles.actionButton}></Icon>}
           spacing={ 10 }
           degrees={ 0 }
@@ -526,7 +532,7 @@ class TravContainer extends React.Component {
           // Center map on GPS
           onPress={ () => {
             updateLocationIsochrons(this, true, undefined, true)
-            this.setState({ centerButtonVisible: false })
+            this.setState({ centerButtonVisible: false, centerButtonMask: true })
           } }
           // Center map on current isochron
           onLongPress={ () => {
@@ -534,7 +540,7 @@ class TravContainer extends React.Component {
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position, true)
-            this.setState({ centerButtonVisible: false })
+            this.setState({ centerButtonVisible: false, centerButtonMask: true })
           } }
         >
         </ActionButton>) }
