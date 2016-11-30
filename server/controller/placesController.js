@@ -155,10 +155,6 @@ const getGoogleData = (req, res, keyword) => {
         //to do: in case of api limits, we need to find another api to list the place names or poi's
       } else {
         data.destination_addresses.forEach(place => {
-          ///test code
-          getDetailDataTwo(shortList[counter])
-          ///
-          ///working code below
           place = place.split('').splice(0, place.indexOf(',')).join('');
           result.push({
             'name': place, 
