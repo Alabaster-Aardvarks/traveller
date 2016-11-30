@@ -432,7 +432,7 @@ class TravContainer extends React.Component {
         {/* Mode Button */}
         <ActionButton
           buttonColor='#2D62A0'
-          icon={<Ionicons name={ transportIcon } style={ styles.actionButtonIcon } />}
+          icon={<Ionicons name={ transportIcon } style={ styles.actionModeButton } />}
           spacing={ 10 }
           position='right'
           verticalOrientation='down'
@@ -447,7 +447,7 @@ class TravContainer extends React.Component {
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
           }}>
-            <Ionicons name='md-walk' style={styles.actionButtonIcon}/>
+            <Ionicons name='md-walk' style={styles.actionModeButton}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('bike')
@@ -458,7 +458,7 @@ class TravContainer extends React.Component {
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
           }}>
-            <Ionicons name='md-bicycle' style={styles.actionButtonIcon} />
+            <Ionicons name='md-bicycle' style={styles.actionModeButton} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('car')
@@ -469,7 +469,7 @@ class TravContainer extends React.Component {
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
           }}>
-            <Ionicons name='md-car' style={styles.actionButtonIcon}/>
+            <Ionicons name='md-car' style={styles.actionModeButton}/>
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('transit')
