@@ -127,6 +127,7 @@ const getGoogleData = (req, res, keyword) => {
           counter++;
         });
         // console.log(result);
+        //there is a potential of an empty object being sent in case of breaking the rate limit!
         res.status(200).json(result);
       }
     })
