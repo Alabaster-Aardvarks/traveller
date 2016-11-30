@@ -15,6 +15,10 @@ export default StyleSheet.create({
     color: 'white',
   },
   actionButtonIcon: {
+    fontSize: 17,
+    color: 'white',
+  },
+  actionModeButton: {
     fontSize: 20,
     color: 'white',
   },
