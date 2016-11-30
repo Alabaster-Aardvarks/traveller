@@ -87,7 +87,7 @@ export const setMapTile = (state : Object, action: Object) => {
 
 export const setTransportMode = (state : Object, action: Object) => {
   const { transportMode } = action
-  const transportModeObj = {'walk': 'paw',
+  const transportModeObj = {'walk': 'street-view',
                             'bike': 'bicycle',
                             'car': 'car',
                             'transit': 'subway',
