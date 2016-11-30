@@ -2,9 +2,9 @@ const Redis = require('ioredis');
 const redis = new Redis({
   port: 6379,          // Redis port
   //deployment host
-  host: 'redis-cache', 
+  // host: 'redis-cache', 
   // development host
-  // host: '127.0.0.1',
+  host: '127.0.0.1',
   db: 0
 });
 redis.config('set', 'maxmemory-policy', 'allkeys-lru');
