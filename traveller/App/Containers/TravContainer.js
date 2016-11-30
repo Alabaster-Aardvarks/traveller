@@ -10,14 +10,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import AlertMessage from '../Components/AlertMessage'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
+import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
-import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds } from './places'
-import MapActions from '../Redux/MapRedux'
-// import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
+import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds, placesInPolygonsUpdate } from './places'
 
-const debug = false // enable log messages for debug
+const debug = false // set to true to enable log messages for debug
 
 const COORDINATE_PRECISION = 0.001 // degrees
 const DATETIME_PRECISION = 60 // seconds
@@ -82,6 +81,8 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
 
     Object.keys(placesTypes).map(type => {
       placesTypes[type] && getPlaces(type, currentPosition, params.transportMode)
+      .then(() => placesInPolygonsUpdate(type))
+      .catch(err => console.error(err))
     })
 
     if (!context) {
@@ -105,7 +106,7 @@ const updateLocationIsochrons = (context, animateToRegion, newPosition) => {
       context.polygonsFillColorUpdate()
     }
   },
-  error => console.tron.error(error),
+  error => console.error(error),
   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
 )}
 
@@ -152,7 +153,6 @@ class TravContainer extends React.Component {
       savedDuration = duration
       const locations = this.state.locations
       const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-      const durations = this.getIsochronDurations(duration)
       // reload isochron when duration changes, no change of position, no animate to region
       updateLocationIsochrons(this, false, position)
     }
@@ -235,9 +235,13 @@ class TravContainer extends React.Component {
       location.title = `${place.name} - ${place.time}`
       location.latitude = place.location.lat
       location.longitude = place.location.lng
-      pinColor = type === 'bank'    ? 'rgba(160, 57, 175, 0.9)' :
-                 type === 'transit' ? 'rgba(6, 142, 219, 0.9)'  :
-                 type === 'health'  ? 'rgba(255, 71, 87, 0.9)'  : 'rgba(100, 100, 100, 0.9)'
+      if (this.state.polygonsFillColor.indexOf(2) !== -1) {
+        if (place.polygonIndex !== undefined && this.state.polygonsFillColor[place.polygonIndex] !== 2) { return undefined }
+      }
+      let a = 0.9
+      pinColor = type === 'bank'    ? `rgba(160, 57, 175, ${a})` :
+                 type === 'transit' ? `rgba(6, 142, 219, ${a})`  :
+                 type === 'health'  ? `rgba(255, 71, 87, ${a})`  : `rgba(100, 100, 100, ${a})`
     }
 
     return (
@@ -253,7 +257,7 @@ class TravContainer extends React.Component {
           this.refs.map.animateToRegion(newRegion, 500)
         }}
       >
-      <MapCallout location={location} onPress={this.calloutPress}/>
+        <MapCallout location={location} onPress={this.calloutPress}/>
       </MapView.Marker>
     )
   }
@@ -369,6 +373,8 @@ class TravContainer extends React.Component {
               })
             })
           }
+
+          {/* Isochrone Center Marker */}
           { this.state.locations.map((location, index) => this.renderMapMarkers.call(this, location, index)) }
         </MapView>
 
@@ -401,13 +407,14 @@ class TravContainer extends React.Component {
           key='duration'
         >
           { this.state.durations.map((duration, index) => {
+              let buttonEnabled = index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)
               return (
                 <ActionButton.Item
-                  size={ 44 }
-                  buttonColor={ isochronFillColor(index / this.state.durations.length, null, true) }
+                  size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
+                  buttonColor={ index === 0 ? 'rgb(0, 102, 49)' : isochronFillColor(index / this.state.durations.length, null, true) }
                   onPress={() => this.polygonsFillColorUpdate.call(this, index)}
                   key={ `duration${index}` }
-                  style={ (index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)) ? { borderWidth: StyleSheet.hairlineWidth * 2, borderColor: '#444' } : undefined }
+                  style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: '#fff' } : undefined }
                 >
                   <Text style={styles.durationButtonText}>
                     { (index === 0) ? (this.state.polygonsFillColor.indexOf(2) !== -1 ? 'all\noff' : 'all\non') : (duration / 60).toString() + '\nmin' }

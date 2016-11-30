@@ -1,28 +1,52 @@
 import { Worker } from 'react-native-workers'
 import Color from 'color'
 
-const debug = false // enable log messages for debug
+const debug = false // set to true to enable log messages for debug
 
 export const ISOCHRON_NOT_LOADED = 'ISOCHRON_NOT_LOADED'
 export const ISOCHRON_LOADING = 'ISOCHRON_LOADING'
 export const ISOCHRON_LOADED = 'ISOCHRON_LOADED'
 export const ISOCHRON_ERROR = 'ISOCHRON_ERROR'
 
-let isochronsState = ISOCHRON_NOT_LOADED
+export const POLYGONS_NOT_LOADED = 'POLYGONS_NOT_LOADED'
+export const POLYGONS_LOADING = 'POLYGONS_LOADING'
+export const POLYGONS_LOADED = 'POLYGONS_LOADED'
+
+export let isochronsState = ISOCHRON_NOT_LOADED
 let savedArgString = ''
 let updateIsochronsState = null
 let worker = null
 
+export let polygonsState = POLYGONS_NOT_LOADED
 export let savedPolygons = []
+export let savedPolygonsFeature = []
 
 const initPolygon = () => {
   savedPolygons = []
+  savedPolygonsFeature = []
+  polygonsState = POLYGONS_NOT_LOADED
 }
 const savePolygon = (index, data) => {
+  polygonsState = POLYGONS_LOADING
   savedPolygons[index] = data // update saved isochrons
-}
-const getPolygon = index => {
-  return index ? savedPolygons[index] : savedPolygons
+
+  let polygonFeature = []
+  data.map(d => {
+    let polygon = d.polygon
+    let holes = d.holes
+
+    let p = []
+    polygon.map(c => p.push([ c.longitude, c.latitude ]))
+    polygonFeature.push(p)
+    holes.map(hole => {
+      let h = []
+      hole.map(c => h.push([ c.longitude, c.latitude ]))
+      polygonFeature.push(h)
+    })
+  })
+  savedPolygonsFeature[index] = { index: index, polygon: polygonFeature }
+
+  polygonsState = POLYGONS_LOADED
 }
 
 export const setUpdateIsochronsStateFn = updateFn => {

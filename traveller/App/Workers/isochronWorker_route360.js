@@ -5,7 +5,7 @@ import Secrets from 'react-native-config'
 import { drawIsochron } from './drawIsochron'
 import r360 from './route360/r360-core-src'
 
-const debug = false // enable log messages for debug
+const debug = false // set to true to enable log messages for debug
 // NOTE: fetching isochrons one by one results in much bigger json data from route360, too big
 const useBoundaryDuration = true  // if true, will fetch all isochrons at once, otherwise one by one
 

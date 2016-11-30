@@ -4,7 +4,7 @@ import { self } from 'react-native-workers'
 import Secrets from 'react-native-config'
 import { drawIsochron } from './drawIsochron'
 
-const debug = false // enable log messages for debug
+const debug = false // set to true to enable log messages for debug
 const useBoundaryDuration = true // if true, will fetch all isochrons at once, otherwise one by one
 
 const provider = 'HERE'
