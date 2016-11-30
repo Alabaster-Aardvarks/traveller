@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 // /api should be the home for all of our API endpoints
 app.use('/places', placesRouter);
 app.use('/navitia', navitiaRouter);
-//404 all other routes
+// 404 all other routes
 app.use('*', (req, res) => {
   res.status(404).send({error: 'endpoint not found'});
 });
