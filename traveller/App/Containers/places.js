@@ -14,9 +14,6 @@ const api = create({ baseURL: serverUrl })
 export let savedPlaces = {}
 export let placesTypes = { 'bank': true, 'health': true, 'transit': true  } // FIXME
 
-// FIXME? do we need this for google places?
-api.setHeaders({ 'Authorization': 'Basic ' + encode(key) })
-
 export const getPlaces = (type, position, mode) => {
 
   if (debug) console.tron.display({ name: `getPlaces fetching [${type}, ${mode}]`, value: position })
