@@ -2,7 +2,7 @@ import { self } from 'react-native-workers'
 import turfHelpers from '@turf/helpers'
 import turfInside from '@turf/inside'
 
-const debug = true // set to true to enable log messages for debug
+const debug = false // set to true to enable log messages for debug
 
 let savedPolygonsFeature = []
 
@@ -11,9 +11,10 @@ self.onmessage = messageString => {
   const message = JSON.parse(messageString)
 
   if (message.id === 'start') {
-    //console.log(`Worker received start`, message.polygonsFeature.length)
+    if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'start', log: message.polygonsFeature.length })) }
+
     for (let index = 0; index < message.polygonsFeature.length; index++) {
-      savedPolygonsFeature[index] = turfHelpers.polygon(message.polygonsFeature[index].polygon)
+      savedPolygonsFeature[index] = turfHelpers.multiPolygon(message.polygonsFeature[index].polygonArray)
     }
     placesInPolygons(message.places)
   } else {
@@ -24,13 +25,13 @@ self.onmessage = messageString => {
 const placesInPolygons = places => {
   if (!places) { return }
 
-   let newPlaces = places.map(place => {
+   let newPlaces = places.map((place, idx) => {
     let point = turfHelpers.point([ place.location.lng, place.location.lat ])
-    //console.log('point', point)
+    //if (idx === 0) { console.log('point', point) }
 
     for (let index = 0; index < savedPolygonsFeature.length; index++) {
       let polygonFeature = savedPolygonsFeature[index]
-      //console.log(polygonFeature)
+      //if (index === 0) { console.log('polygonFeature', polygonFeature) }
       if (turfInside(point, polygonFeature)) {
         place.polygonIndex = index
         break
@@ -40,6 +41,7 @@ const placesInPolygons = places => {
     return place
   })
 
+  if (debug) { self.postMessage(JSON.stringify({ id: 'log', name: 'update', log: newPlaces.length })) }
   self.postMessage(JSON.stringify({ id: 'update', places: newPlaces }))
   self.postMessage(JSON.stringify({ id: 'done' }))
 }
