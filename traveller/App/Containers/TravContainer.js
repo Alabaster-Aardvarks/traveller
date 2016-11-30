@@ -312,19 +312,13 @@ class TravContainer extends React.Component {
     updateLocationIsochrons(this, true, newPosition)
   }
 
-  // mapTileToMapTileUrl (mapTile) {
-  //   const mapTileObj = {'Black & White': 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
-  //                       'Basic': 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png'
-  //                      }
-  //         return mapTileObj[mapTile]
-  // }
-
   render () {
     //console.log('render')
-    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName, transportIcon, setTransportMode, transportMode } = this.props
+    const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName,
+            transportIcon, setTransportMode, transportMode } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
-
+    
     return (
       <View style={styles.container}>
         <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
@@ -436,7 +430,7 @@ class TravContainer extends React.Component {
         >
         </ActionButton>
 
-        {/* Mode Button */}
+        {/* Transport Mode Button */}
         <ActionButton
           buttonColor='#2D62A0'
           icon={<Ionicons name={ transportIcon } style={ styles.actionModeButton } />}
@@ -445,11 +439,9 @@ class TravContainer extends React.Component {
           verticalOrientation='down'
           autoInactive={ true }
         >
+          {/* FIXME: rewrite this as a loop */}
           <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('walk')
-            Object.keys(placesTypes).map(type => {
-              getPlaces(type, currentPosition, 'walking')
-            })
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
@@ -458,9 +450,6 @@ class TravContainer extends React.Component {
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('bike')
-            Object.keys(placesTypes).map(type => {
-              getPlaces(type, currentPosition, 'bicycling')
-            })
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
@@ -469,9 +458,6 @@ class TravContainer extends React.Component {
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('car')
-            Object.keys(placesTypes).map(type => {
-              getPlaces(type, currentPosition, 'driving')
-            })
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position)
@@ -480,13 +466,9 @@ class TravContainer extends React.Component {
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#2D62A0' onPress={() => {
             setTransportMode('transit')
-
-            Object.keys(placesTypes).map(type => {
-              getPlaces(type, currentPosition, 'transit')
-            })
-          const locations = this.state.locations
-          const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-          updateLocationIsochrons(this, true, position)
+            const locations = this.state.locations
+            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+            updateLocationIsochrons(this, true, position)
           }}>
             <Ionicons name='md-train' style={styles.actionButtonIcon}/>
           </ActionButton.Item>
