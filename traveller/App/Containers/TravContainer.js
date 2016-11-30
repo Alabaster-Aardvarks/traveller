@@ -287,7 +287,6 @@ class TravContainer extends React.Component {
     } else {
       if (JSON.stringify(region) !== JSON.stringify(this.state.region)) {
         this.setState({ region }) // Update region when map is finishing dragging
-        // this.setState({ uiElementsVisible: true })
       }
     }
   }
@@ -345,7 +344,6 @@ class TravContainer extends React.Component {
           onRegionChangeComplete={ this.onRegionChangeComplete.bind(this) }
           onPress={ () => this.setState({ uiElementsVisible: !this.state.uiElementsVisible }) }
           onLongPress={ e => this.onMapLongPress.call(this, e.nativeEvent) }
-          // onPanDrag={ () => this.setState({ uiElementsVisible: false }) }
           showsUserLocation={this.state.showUserLocation}
           showsCompass={true}
           showsScale={true}
@@ -536,7 +534,6 @@ class TravContainer extends React.Component {
             const locations = this.state.locations
             const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
             updateLocationIsochrons(this, true, position, true)
-            VibrationIOS.vibrate()
             this.setState({ centerButtonVisible: false })
           } }
         >
