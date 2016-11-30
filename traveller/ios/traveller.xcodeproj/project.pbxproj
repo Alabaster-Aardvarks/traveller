@@ -1469,7 +1469,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.hr49.traveller;
+				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.traveller;
 				PRODUCT_NAME = traveller;
 				PROVISIONING_PROFILE = "1542f5b8-fad3-4f60-84c9-d9481ea20ea5";
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: org.alabasteraardvarks.traveller";
@@ -1513,7 +1513,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.hr49.traveller;
+				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.traveller;
 				PRODUCT_NAME = traveller;
 				PROVISIONING_PROFILE = "1542f5b8-fad3-4f60-84c9-d9481ea20ea5";
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: org.alabasteraardvarks.traveller";
