@@ -10,37 +10,8 @@ const log = debug('placesRouter:log');
 const info = debug('placesRouter:info');
 const error = debug('placesRouter:error');
 
-//actual working routes
-
-placesRouter.get('/transit', (req, res) => {
-  placesController.getGoogleData(req, res, 'transit_station');
+placesRouter.get('/:places', (req, res) => {
+  placesController.getGoogleData(req, res, `${req.params.places}`);
 });
-
-placesRouter.get('/bank', (req, res) => {
-  placesController.getGoogleData(req, res, 'bank');
-});
-
-placesRouter.get('/park', (req, res) => {
-  placesController.getGoogleData(req, res, 'park');
-});
-
-placesRouter.get('/health', (req, res) => {
-  placesController.getGoogleData(req, res, 'health');
-});
-
-placesRouter.get('/police', (req, res) => {
-  placesController.getGoogleData(req, res, 'police');
-});
-
-placesRouter.get('/cafe', (req, res) => {
-  placesController.getGoogleData(req, res, 'cafe');
-});
-
-placesRouter.get('/test', (req, res)=>{
-  placesController.getDetailData(req, res, 'ChIJlTWiCPl9hYARetG4b9R6-wE');
-});
-
-// 404 all other routes
-placesRouter.use('*', (req, res) => res.status().send({error: 'places/endpoint not found'}));
 
 module.exports = placesRouter;
