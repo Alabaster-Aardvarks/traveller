@@ -470,6 +470,16 @@ class TravContainer extends React.Component {
                   </ActionButton.Item>
                 )
               }
+              <ActionButton.Item
+                buttonColor='#1abc9c'
+                title='Refresh Map'
+                onPress={ () => {
+                  const locations = this.state.locations
+                  const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+                  updateLocationIsochrons(this, true, position)
+                } }>
+                <Icon name='refresh' style={styles.actionButtonIcon}/>
+              </ActionButton.Item>
             </ActionButton>
           )
         }

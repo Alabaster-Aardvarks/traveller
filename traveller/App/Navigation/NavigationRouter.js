@@ -23,7 +23,6 @@ class NavigationRouter extends Component {
       <Router>
         <Scene key='drawer' component={NavigationDrawer} open={false}>
           <Scene key='drawerChildrenWrapper' navigationBarStyle={Styles.navBar} titleStyle={Styles.title} leftButtonIconStyle={Styles.leftButton} rightButtonTextStyle={Styles.rightButton}>
-            {/* <Scene initial key='presentationScreen' component={TravContainer} title='Traveller' renderLeftButton={NavItems.hamburgerButton} /> */}
             <Scene initial key='travContainer' component={TravContainer} hideNavBar />
             <Scene key='deviceInfo' component={DeviceInfoScreen} title='Device Info' />
             <Scene key='settings' component={SettingsScreen} title='Settings' hideNavBar={ false } direction='vertical' backTitle='Done' hideBackImage={ true } backButtonTextStyle={{color: 'white'}} />
