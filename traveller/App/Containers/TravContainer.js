@@ -12,8 +12,9 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
-import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker, doneWithSavedPolygonsFeature,
-         isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
+import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, savedPolygonsFeature,
+         terminateIsochronWorker, doneWithSavedPolygonsFeature, isochronFillColor,
+         ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
 import { getPlaces, savedPlaces, convertDayHourMinToSeconds, placesInPolygonsUpdate } from './places'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 // import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
@@ -105,17 +106,16 @@ class TravContainer extends React.Component {
 
   componentDidMount() {
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
-    this.updateLocationIsochrons(true)
+    // load isochrones, animate to region,  isochrones reload, update date to now
+    this.updateLocationIsochrons(true, undefined, true, true)
   }
 
   componentDidUpdate() {
     const { duration } = this.props
     if (savedDuration && duration !== savedDuration) {
       savedDuration = duration
-      const locations = this.state.locations
-      const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-      // reload isochron when duration changes, no change of position, no animate to region
-      this.updateLocationIsochrons(false, position)
+      // reload isochrones when duration changes, no animate to region, no position change, isochrones reload, update date to now
+      this.updateLocationIsochrons(false, 'current', true, true)
     }
   }
 
@@ -124,7 +124,17 @@ class TravContainer extends React.Component {
     terminateIsochronWorker()
   }
 
-  updateLocationIsochrons (animateToRegion, newPosition, noUpdate) {
+  updateLocationIsochrons (animateToRegion, newPosition, isochronsUpdate, dateUpdate) {
+    let dateTime = this.state.dateTime
+    if (dateUpdate) {
+      dateTime = roundDateTime('now')
+      this.setState({ dateTime })
+    }
+    if (newPosition === 'current') {
+      const { locations } = this.state
+      newPosition = { coords: { latitude: locations[0].latitude, longitude: locations[0].longitude } }
+    }
+
     return new Promise((resolve, reject) => {
       newPosition ? resolve(newPosition) : navigator.geolocation.getCurrentPosition(position => resolve(position))
     })
@@ -147,7 +157,7 @@ class TravContainer extends React.Component {
       const { duration } = this.props
       const durations = this.getIsochronDurations(duration)
       savedDuration = duration
-      if (!noUpdate) {
+      if (isochronsUpdate) {
         const initialPosition = JSON.stringify(position)
         this.setState({ initialPosition })
         this.setState({ locations })
@@ -158,7 +168,7 @@ class TravContainer extends React.Component {
 
       animateToRegion && this.refs.map.animateToRegion(newRegion, 500)
 
-      if (!noUpdate) {
+      if (isochronsUpdate) {
         // Isochrone parameters
         const { transportMode, travelTimeName } = this.props
         const isochronProvider = transportModeInfo[transportMode].provider
@@ -167,7 +177,7 @@ class TravContainer extends React.Component {
           latitude: roundCoordinate(locations[0].latitude),
           longitude: roundCoordinate(locations[0].longitude),
           durations: durations,
-          dateTime: roundDateTime(this.state.dateTime),
+          dateTime: dateTime,
           downSamplingCoordinates: this.state.downSamplingCoordinates[isochronProvider],
           fromTo: travelTimeName,
           transportMode: transportMode,
@@ -213,6 +223,7 @@ class TravContainer extends React.Component {
   }
 
   updatePlaces () {
+    if (!savedPolygonsFeature) { return } // do not update places if we don't have a new set of polygons
     const { placesInfo } = this.state
     Promise.all(
       Object.keys(placesInfo).map(type => {
@@ -366,7 +377,8 @@ class TravContainer extends React.Component {
   onMapLongPress ({ coordinate }) {
     if (debug) console.tron.display({ name: 'onMapLongPress', value: coordinate })
     let newPosition = { coords: coordinate }
-    this.updateLocationIsochrons(true, newPosition)
+    // animate to region, position update, isochrones reload, update date to now
+    this.updateLocationIsochrons(true, newPosition, true, true)
     VibrationIOS.vibrate()
   }
 
@@ -453,22 +465,39 @@ class TravContainer extends React.Component {
         {/* Search Menu */}
         { !this.state.uiElementsVisible && (
             <ActionButton
+              key='search'
               buttonColor='#E74C3C'
               degrees={ 0 }
               icon={<Icon name='search' style={styles.actionButton}></Icon>}
               spacing={ 10 }
               outRangeScale={ 1.2 }
             >
-              { Object.keys(placesInfo).map(type =>
-                  <ActionButton.Item
-                    key={`search-${type}`}
-                    buttonColor={ placesInfo[type].buttonColor }
-                    title={ placesInfo[type].buttonTitle }
-                    onPress={ () => this.changePlacesInfo.call(this, type) }
-                  >
-                    <Icon name={ placesInfo[type].icon } style={styles.actionButtonIcon}/>
-                  </ActionButton.Item>
-                )
+              { Object.keys(placesInfo).concat([ 'refresh' ]).map(type => {
+                  if (type === 'refresh') {
+                    // animate to region, no position change, isochrones reload, update date to now
+                    return (
+                      <ActionButton.Item
+                        key='search-refresh'
+                        buttonColor='#1abc9c'
+                        title={ `Refresh Map (${this.state.dateTime})` }
+                        onPress={ () => this.updateLocationIsochrons(true, 'current', true, true) }
+                      >
+                        <Icon name='refresh' style={styles.actionButtonIcon}/>
+                      </ActionButton.Item>
+                    )
+                  } else {
+                    return (
+                      <ActionButton.Item
+                        key={`search-${type}`}
+                        buttonColor={ placesInfo[type].buttonColor }
+                        title={ placesInfo[type].buttonTitle }
+                        onPress={ () => this.changePlacesInfo.call(this, type) }
+                      >
+                        <Icon name={ placesInfo[type].icon } style={styles.actionButtonIcon}/>
+                      </ActionButton.Item>
+                    )
+                  }
+                })
               }
             </ActionButton>
           )
@@ -544,10 +573,9 @@ class TravContainer extends React.Component {
                     buttonColor='#2D62A0'
                     size={ 44 }
                     onPress={ () => {
-                      const { locations } = this.state
-                      const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
                       setTransportMode(transportMode)
-                      this.updateLocationIsochrons(true, position)
+                      /* no animate to region, no position change, isochrones reload, update date to now */
+                      this.updateLocationIsochrons(false, 'current', true, true)
                     } }
                   >
                     <Ionicons name={ transportModeInfo[transportMode].icon } style={styles.actionModeButton}/>
@@ -570,14 +598,12 @@ class TravContainer extends React.Component {
               size={ 35 }
               verticalOrientation='up'
               onPress={ () => { // center map on GPS location
-                this.updateLocationIsochrons(true, undefined, true)
+                this.updateLocationIsochrons(true, 'current', false, false)
                 this.setState({ centerButtonVisible: false, centerButtonMask: true })
               } }
               onLongPress={ () => { // center map on isochrone center
-                // Get current isochron location
-                const locations = this.state.locations
-                const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-                this.updateLocationIsochrons(true, position, true)
+                // Get current isochron center location
+                this.updateLocationIsochrons(true, 'current', false, false)
                 this.setState({ centerButtonVisible: false, centerButtonMask: true })
               } }
             >
