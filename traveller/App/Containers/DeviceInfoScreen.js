@@ -124,7 +124,7 @@ export default class DeviceInfoScreen extends React.Component {
   render () {
     return (
       <View style={styles.mainContainer}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
+        <Image source={Images.bg} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
           <View style={styles.section}>
             <Text style={styles.sectionText} >

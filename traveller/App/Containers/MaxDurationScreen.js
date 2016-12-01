@@ -18,7 +18,7 @@ class MaxDurationScreen extends React.Component {
 
     return (
       <View style={styles.mainContainer}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
+        <Image source={Images.bg} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
               <Picker
                 selectedValue={duration}
