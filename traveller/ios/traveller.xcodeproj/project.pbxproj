@@ -23,6 +23,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		1CD8E4701E8A4F8DA124EEE4 /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BCE75AAC784A4327AD30BF9E /* libRNBlur.a */; };
 		26640C540AA44D01A56E9521 /* Courier New.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0455BC766F6943F390BA3D75 /* Courier New.ttf */; };
 		2C669524864243C7AA560DFE /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F8E13CF1DDF4303A48F552F /* Entypo.ttf */; };
 		2CA7D23BF90D43D78BC950F4 /* Georgia.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 582D488A94CA414CB943037F /* Georgia.ttf */; };
@@ -184,6 +185,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
+		};
+		36EFBE731DF0B50A000C6244 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DFB4174031544DFC8D575205 /* RNBlur.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A68BD7BC1BC31318005F02DF;
+			remoteInfo = RNBlur;
 		};
 		78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -359,6 +367,7 @@
 		96E8608A93F47979999FBC66 /* Pods-travellerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-travellerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-travellerTests/Pods-travellerTests.release.xcconfig"; sourceTree = "<group>"; };
 		B4C38BA6141943C78FAC7A02 /* libRNSpinkit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSpinkit.a; sourceTree = "<group>"; };
 		BAB81954B26D444A8A4A863B /* Microsoft Sans Serif.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Microsoft Sans Serif.ttf"; path = "../node_modules/native-base/Fonts/Microsoft Sans Serif.ttf"; sourceTree = "<group>"; };
+		BCE75AAC784A4327AD30BF9E /* libRNBlur.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNBlur.a; sourceTree = "<group>"; };
 		CA8103A91DDA4A380059F2AD /* AIRGMSMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGMSMarker.h; sourceTree = "<group>"; };
 		CA8103AA1DDA4A380059F2AD /* AIRGMSMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIRGMSMarker.m; sourceTree = "<group>"; };
 		CA8103AB1DDA4A380059F2AD /* AIRGoogleMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGoogleMap.h; sourceTree = "<group>"; };
@@ -432,6 +441,7 @@
 		CB9C60860E8F467F922742EB /* libWorkers.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libWorkers.a; sourceTree = "<group>"; };
 		CED27B45606B4DCFB7B88FF7 /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
 		D93ED48AD4D0AF41F9338500 /* Pods_traveller.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_traveller.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DFB4174031544DFC8D575205 /* RNBlur.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBlur.xcodeproj; path = "../node_modules/react-native-blur/ios/RNBlur.xcodeproj"; sourceTree = "<group>"; };
 		DFEB690EE5C446F78B4DDE25 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		E05A75B89A0E5F190A0589D9 /* Pods-traveller.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-traveller.debug.xcconfig"; path = "Pods/Target Support Files/Pods-traveller/Pods-traveller.debug.xcconfig"; sourceTree = "<group>"; };
 		E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSpinkit.xcodeproj; path = "../node_modules/react-native-spinkit/ios/RNSpinkit.xcodeproj"; sourceTree = "<group>"; };
@@ -470,7 +480,11 @@
 				525D325FD1624FF58EC2F13D /* libRNVectorIcons.a in Frameworks */,
 				A35099DA714446759FFC0A47 /* libRNSpinkit.a in Frameworks */,
 				92A0A8381A804DBE8B5BF12E /* libWorkers.a in Frameworks */,
+<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
 				34507BC723A34A4EAF1C2602 /* libRNBlur.a in Frameworks */,
+=======
+				1CD8E4701E8A4F8DA124EEE4 /* libRNBlur.a in Frameworks */,
+>>>>>>> Add sizes of map pins
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -615,6 +629,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		36EFBE5E1DF0B50A000C6244 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				36EFBE741DF0B50A000C6244 /* libRNBlur.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		46A1C961C0988B7C820830C2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -652,7 +674,11 @@
 				85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */,
 				E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */,
 				0BD16B5FBF3548B9B8BA3F39 /* Workers.xcodeproj */,
+<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
 				4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */,
+=======
+				DFB4174031544DFC8D575205 /* RNBlur.xcodeproj */,
+>>>>>>> Add sizes of map pins
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -962,8 +988,13 @@
 					ProjectRef = 91C6B186D0CD45F4BE96BCAA /* ReactNativeConfig.xcodeproj */;
 				},
 				{
+<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
 					ProductGroup = E76E02BC1DF0B5360010663D /* Products */;
 					ProjectRef = 4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */;
+=======
+					ProductGroup = 36EFBE5E1DF0B50A000C6244 /* Products */;
+					ProjectRef = DFB4174031544DFC8D575205 /* RNBlur.xcodeproj */;
+>>>>>>> Add sizes of map pins
 				},
 				{
 					ProductGroup = CAAB21071DD6FEBA008F7E60 /* Products */;
@@ -1049,6 +1080,13 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		36EFBE741DF0B50A000C6244 /* libRNBlur.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNBlur.a;
+			remoteRef = 36EFBE731DF0B50A000C6244 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
@@ -1442,6 +1480,10 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
+=======
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+>>>>>>> Add sizes of map pins
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1461,6 +1503,10 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
+=======
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+>>>>>>> Add sizes of map pins
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1508,7 +1554,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.hr49.traveller;
+				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.traveller;
 				PRODUCT_NAME = traveller;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1557,7 +1603,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.hr49.traveller;
+				PRODUCT_BUNDLE_IDENTIFIER = org.alabasteraardvarks.traveller;
 				PRODUCT_NAME = traveller;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
