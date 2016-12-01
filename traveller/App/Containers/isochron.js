@@ -12,11 +12,11 @@ export const POLYGONS_NOT_LOADED = 'POLYGONS_NOT_LOADED'
 export const POLYGONS_LOADING = 'POLYGONS_LOADING'
 export const POLYGONS_LOADED = 'POLYGONS_LOADED'
 
-export let isochronsState = ISOCHRON_NOT_LOADED
+let worker = null
 let savedArgString = ''
 let updateIsochronsState = null
-let worker = null
 
+export let isochronsState = ISOCHRON_NOT_LOADED
 export let polygonsState = POLYGONS_NOT_LOADED
 export let savedPolygons = []
 export let savedPolygonsFeature = []
@@ -130,6 +130,30 @@ export const updateIsochrons = args => {
   }
 
   worker.postMessage(JSON.stringify({ id: 'start', params: params }))
+}
+
+export const getIsochronDurations = duration => {
+  //return [ 0, 600, 1200, 1800 ]
+  let durations = []
+
+  // divide duration into 4 to 6 intervals (interval is a multiple of 5min)
+  let interval
+  for (let i = 5; i < duration; i += 5) {
+    if (duration % i === 0 && (duration / i <= 6) && (duration / i >= 4)) {
+      interval = i
+      break
+    }
+  }
+  if (!interval) {
+    durations = [ 0, duration * 60 ]
+  } else {
+    for (let i = 0; i <= duration; i += interval) {
+      durations.push(i * 60)
+    }
+  }
+
+  if (debug) { console.tron.display({ name: 'getIsochronDurations', value: durations }) }
+  return durations
 }
 
 export const isochronFillColor = (ratio, opacityFactor, buttonMode) => {
