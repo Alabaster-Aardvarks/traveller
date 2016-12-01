@@ -20,6 +20,7 @@ import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
 import { loadPlaces, savedPlaces, convertDayHourMinToSeconds, setUpdatePlacesStateFn,
          PLACES_NOT_LOADED, PLACES_LOADING, PLACES_LOADED, PLACES_INDEXED } from './places'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+import { Overlay } from 'react-native-overlay'
 
 const debug = false // set to true to enable log messages for debug
 
@@ -383,6 +384,7 @@ class TravContainer extends React.Component {
 
     return (
       <View style={styles.container}>
+
         <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
@@ -694,6 +696,11 @@ class TravContainer extends React.Component {
             </View>
           )
         }
+
+        {/* Tutorial Overlay */}
+        {/* <View style={styles.tutorialContainer} key={3}>
+          <Text>Sample Text</Text>
+        </View> */}
 
       </View>
     )
