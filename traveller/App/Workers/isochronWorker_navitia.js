@@ -16,7 +16,7 @@ const useDirect = serverUrl.match(/api\.navitia\.io/) ? true : false
 
 // set API headers
 const api = create({ baseURL: serverUrl })
-api.setHeaders({ 'Authorization': 'Basic ' + encode(token) })
+api.setHeaders({ 'Authorization': 'Basic ' + encode(token) }) // FIXME: remove from query when using node server
 
 // get message from application
 self.onmessage = messageString => {

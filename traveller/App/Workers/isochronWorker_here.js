@@ -60,7 +60,7 @@ const loadIsochron = params => {
       const startDestQuery = `&${fromTo === 'from' ? 'start' : 'destination'}=geo!${latitude},${longitude}`
       const timeQuery = `&${fromTo === 'from' ? 'departure' : 'arrival'}=${dateTime}`
       const singleComponentQuery = `&singlecomponent=true`
-      const appIdCodeQuery = `&app_id=${appId}&app_code=${appCode}`
+      const appIdCodeQuery = `&app_id=${appId}&app_code=${appCode}` // FIXME: remove from query when using node server
       const isochronEndpointUrl = `/calculateisoline.json?${modeQuery}${startDestQuery}${timeQuery}&rangetype=time${resolutionQuery}${durationQuery}${singleComponentQuery}${appIdCodeQuery}`
       const url = useDirect ? isochronEndpointUrl : serverEndpointUrl
       const query = useDirect ? null : { url: `${directUrl}${isochronEndpointUrl}` }

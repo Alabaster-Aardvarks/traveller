@@ -12,15 +12,14 @@ const serverUrl = process.env.PLACES_SERVER_URL || Secrets.PLACES_SERVER_URL
 const api = create({ baseURL: serverUrl })
 
 export let savedPlaces = {}
-export let placesTypes = { 'bank': true, 'health': true, 'transit': true  } // FIXME
 
 export const getPlaces = params => {
-  const { type, position, mode, radius, date } = params
+  const { type, position, mode, radius, date, size } = params
   return new Promise((resolve, reject) => {
     if (debug) console.tron.display({ name: `getPlaces fetching [${type}], transport mode: ${mode}`, value: position })
     terminatePlacesInPolygonsWorker(type) // terminate worker if running
 
-    api.get(`/places/${type}`, { lat: position.latitude, long: position.longitude, mode, radius, date })
+    api.get(`/places/${type}`, { lat: position.latitude, long: position.longitude, mode, radius, date, size })
     .then(resp => {
       if (!resp.ok) {
         const err = `Unable to fetch ${type} places from server [${resp.problem}]`
