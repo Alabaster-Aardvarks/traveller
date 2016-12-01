@@ -15,6 +15,7 @@ import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
 import Images from '../Themes/Images'
+import Colors from '../Themes/Colors'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
          terminateIsochronWorker, isochronFillColor, getIsochronDurations,
          ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR, ISOCHRON_ABORT } from './isochron'
@@ -74,9 +75,9 @@ const transportModeInfo = {
 
 const placesInfo = {
   // size: how many places are requested (fewer or equal to 200)
-  'bank'    : { enabled: true, visible: false, size: 25, buttonColor: '#9b59b6', buttonTitle: 'Banks',   icon: 'university' },
-  'transit' : { enabled: true, visible: false, size: 25, buttonColor: '#3498db', buttonTitle: 'Transit', icon: 'bus'        },
-  'health'  : { enabled: true, visible: false, size: 25, buttonColor: '#ff6b6b', buttonTitle: 'Medical', icon: 'ambulance'  },
+  'bank'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.yellowLight, buttonTitle: 'Banks',   icon: 'university' },
+  'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.orangeLight, buttonTitle: 'Transit', icon: 'bus'        },
+  'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.redLight, buttonTitle: 'Medical', icon: 'ambulance'  },
 }
 
 const getPosition = l => {
@@ -462,7 +463,7 @@ class TravContainer extends React.Component {
         { !this.state.uiElementsVisible && (
             <ActionButton
               key='search'
-              buttonColor='#E74C3C'
+              buttonColor={ Colors.watermelonLight }
               degrees={ 0 }
               icon={<Icon name='search' style={styles.actionButton}></Icon>}
               spacing={ 10 }
@@ -536,7 +537,7 @@ class TravContainer extends React.Component {
         {/* Duration Button */}
         { !this.state.uiElementsVisible && (
             <ActionButton
-              buttonColor='rgba(0,101,85,1)'
+              buttonColor={ Colors.forestGreenLight }
               degrees={ 0 }
               icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
               spacing={ 10 }
