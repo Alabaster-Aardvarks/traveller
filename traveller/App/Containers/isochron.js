@@ -72,6 +72,8 @@ export const terminateIsochronWorker = () => {
   }
 }
 
+// FIXME: add time-out if isochrons are not loaded after N seconds
+
 export const updateIsochrons = args => {
   const params = args.params
   const argString = JSON.stringify(params)

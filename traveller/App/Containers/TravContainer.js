@@ -14,7 +14,7 @@ import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, terminateIsochronWorker, doneWithSavedPolygonsFeature,
          isochronFillColor, ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
-import { getPlaces, savedPlaces, placesTypes, convertDayHourMinToSeconds, placesInPolygonsUpdate } from './places'
+import { getPlaces, savedPlaces, convertDayHourMinToSeconds, placesInPolygonsUpdate } from './places'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 // import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
 
@@ -54,18 +54,20 @@ let onRegionChangeCompleteCounter = 0
 // temporary position until we get the current location
 let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
 
-const getIsochronProvider = { // [navitia,here,route360,graphhopper]
-  'walk'    : 'here',
-  'car'     : 'here',
-  'bike'    : 'navitia',
-  'transit' : 'navitia',
+const transportModeInfo = {
+  // isochrone provider: [navitia,here,route360,graphhopper]
+  // radius in meters
+  'walk'    : { provider: 'here',    radius: 15000, icon: 'md-walk'    },
+  'car'     : { provider: 'here',    radius: 50000, icon: 'md-car'     },
+  'bike'    : { provider: 'navitia', radius: 25000, icon: 'md-bicycle' },
+  'transit' : { provider: 'navitia', radius: 50000, icon: 'md-train'   },
 }
 
-const getRadius = {
-  'walk'    : 15000,
-  'car'     : 50000,
-  'bike'    : 25000,
-  'transit' : 50000,
+const placesInfo = {
+  // size: how many places are requested (fewer or equal to 200)
+  'bank'    : { enabled: true, visible: false, size: 25, buttonColor: '#9b59b6', buttonTitle: 'Banks',   icon: 'university' },
+  'transit' : { enabled: true, visible: false, size: 25, buttonColor: '#3498db', buttonTitle: 'Transit', icon: 'bus'        },
+  'health'  : { enabled: true, visible: false, size: 25, buttonColor: '#ff6b6b', buttonTitle: 'Medical', icon: 'ambulance'  },
 }
 
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
@@ -93,7 +95,7 @@ class TravContainer extends React.Component {
       fromTo: FROM_TO_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
-      placesTypes: {},
+      placesInfo: placesInfo,
       searchBarVisible: false,
       centerButtonVisible: false,
       centerButtonMask: true,
@@ -142,7 +144,9 @@ class TravContainer extends React.Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       }
-      const durations = this.getIsochronDurations(this.props.duration)
+      const { duration } = this.props
+      const durations = this.getIsochronDurations(duration)
+      savedDuration = duration
       if (!noUpdate) {
         const initialPosition = JSON.stringify(position)
         this.setState({ initialPosition })
@@ -157,7 +161,7 @@ class TravContainer extends React.Component {
       if (!noUpdate) {
         // Isochrone parameters
         const { transportMode, travelTimeName } = this.props
-        const isochronProvider = getIsochronProvider[transportMode]
+        const isochronProvider = transportModeInfo[transportMode].provider
         const params = {
           provider: isochronProvider,
           latitude: roundCoordinate(locations[0].latitude),
@@ -209,15 +213,23 @@ class TravContainer extends React.Component {
   }
 
   updatePlaces () {
+    const { placesInfo } = this.state
     Promise.all(
-      Object.keys(placesTypes).map(type => {
-        if (!placesTypes[type]) {
+      Object.keys(placesInfo).map(type => {
+        if (!placesInfo[type].enabled) {
           return new Promise((resolve, reject) => resolve(`getPlaces ${type} disabled`))
         } else {
           const { transportMode } = this.props
           const locations = this.state.locations
           const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-          const params = { type: type, position: position, mode: transportMode, radius: getRadius[transportMode], date: roundDateTime(this.state.dateTime) }
+          const params = {
+            type,
+            position,
+            mode: transportMode,
+            radius: transportModeInfo[transportMode].radius,
+            date: roundDateTime(this.state.dateTime),
+            size: placesInfo[type].size,
+          }
           return getPlaces(params)
           .then(() => placesInPolygonsUpdate(type))
           .catch(err => console.error(err)) // we should never get here
@@ -279,6 +291,7 @@ class TravContainer extends React.Component {
         if (place.polygonIndex !== undefined && this.state.polygonsFillColor[place.polygonIndex] !== 2) { return undefined }
       }
       let a = 0.9
+      // FIXME: put colors in a table
       pinColor = type === 'bank'    ? `rgba(160, 57, 175, ${a})` :
                  type === 'transit' ? `rgba(6, 142, 219, ${a})`  :
                  type === 'health'  ? `rgba(255, 71, 87, ${a})`  : `rgba(100, 100, 100, ${a})`
@@ -344,10 +357,10 @@ class TravContainer extends React.Component {
     this.setState({ polygonsFillColor: polygonsFillColor })
   }
 
-  changePlacesType (type) {
-    let placesTypes = this.state.placesTypes
-    placesTypes[type] = placesTypes[type] ? false : true
-    this.setState({ placesTypes: placesTypes })
+  changePlacesInfo (type) {
+    let { placesInfo } = this.state
+    placesInfo[type].visible = placesInfo[type].visible ? false : true
+    this.setState({ placesInfo })
   }
 
   onMapLongPress ({ coordinate }) {
@@ -363,6 +376,7 @@ class TravContainer extends React.Component {
             transportIcon, setTransportMode, transportMode } = this.props
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
+    const { placesInfo } = this.state
 
     return (
       <View style={styles.container}>
@@ -394,12 +408,16 @@ class TravContainer extends React.Component {
             />
             : undefined
           }
-          { Object.keys(this.state.placesTypes).map(type => {
-              return (!this.state.placesTypes[type] || !savedPlaces[type] || savedPlaces[type].length === 0) ?
+
+          {/* Places Markers */}
+          { Object.keys(placesInfo).map(type => {
+              return (!placesInfo[type].visible || !savedPlaces[type] || savedPlaces[type].length === 0) ?
                 undefined :
                 savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type))
             })
           }
+
+          {/* Isochrones */}
           { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
               return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
                 return (
@@ -432,156 +450,140 @@ class TravContainer extends React.Component {
           )
         }
 
-
-
         {/* Search Menu */}
-        { !this.state.uiElementsVisible && (<ActionButton
-          buttonColor='#E74C3C'
-          degrees={ 0 }
-          icon={<Icon name='search' style={styles.actionButton}></Icon>}
-          spacing={ 10 }
-          outRangeScale={ 1.2 }
-        >
-          <ActionButton.Item buttonColor='#9b59b6' title='Banks' onPress={() => this.changePlacesType.call(this, 'bank')}>
-            <Icon name='university' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title='Transit' onPress={() => this.changePlacesType.call(this, 'transit')}>
-            <Icon name='bus' style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#ff6b6b' title='Medical' onPress={() => this.changePlacesType.call(this, 'health')}>
-            <Icon name='ambulance' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title='Slider' onPress={() => {this.setState({ sliderVisible: !this.state.sliderVisible })}}>
-            <Icon name='info-circle' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-        </ActionButton>)
+        { !this.state.uiElementsVisible && (
+            <ActionButton
+              buttonColor='#E74C3C'
+              degrees={ 0 }
+              icon={<Icon name='search' style={styles.actionButton}></Icon>}
+              spacing={ 10 }
+              outRangeScale={ 1.2 }
+            >
+              { Object.keys(placesInfo).map(type =>
+                  <ActionButton.Item
+                    key={`search-${type}`}
+                    buttonColor={ placesInfo[type].buttonColor }
+                    title={ placesInfo[type].buttonTitle }
+                    onPress={ () => this.changePlacesInfo.call(this, type) }
+                  >
+                    <Icon name={ placesInfo[type].icon } style={styles.actionButtonIcon}/>
+                  </ActionButton.Item>
+                )
+              }
+            </ActionButton>
+          )
         }
 
         {/* Duration Button */}
-        { !this.state.uiElementsVisible && (<ActionButton
-            buttonColor='rgba(0,101,85,1)'
-            degrees={ 0 }
-            icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
-            spacing={ 10 }
-            outRangeScale={ 1.2 }
-            position='center'
-            verticalOrientation='down'
-            key='duration'
-          >
-            { this.state.durations.map((duration, index) => {
-                let buttonEnabled = index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)
-                return (
-                  <ActionButton.Item
-                    size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
-                    buttonColor={ index === 0 ? '#006631' : isochronFillColor(index / this.state.durations.length, null, true) }
-                    btnOutRange='#004B24'
-                    onPress={() => this.polygonsFillColorUpdate.call(this, index)}
-                    key={ `duration${index}` }
-                    style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: '#fff' } : undefined }
-                  >
-                    <Text style={styles.durationButtonText}>
-                      { (index === 0) ? (this.state.polygonsFillColor.indexOf(2) !== -1 ? 'all\noff' : 'all\non') : (duration / 60).toString() + '\nmin' }
-                    </Text>
-                  </ActionButton.Item>
-                )
-              })
-            }
-          </ActionButton>)
+        { !this.state.uiElementsVisible && (
+            <ActionButton
+              buttonColor='rgba(0,101,85,1)'
+              degrees={ 0 }
+              icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
+              spacing={ 10 }
+              outRangeScale={ 1.2 }
+              position='center'
+              verticalOrientation='down'
+              key='duration'
+            >
+              { this.state.durations.map((duration, index) => {
+                  let buttonEnabled = index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)
+                  return (
+                    <ActionButton.Item
+                      size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
+                      buttonColor={ index === 0 ? '#006631' : isochronFillColor(index / this.state.durations.length, null, true) }
+                      btnOutRange='#004B24'
+                      onPress={() => this.polygonsFillColorUpdate.call(this, index)}
+                      key={ `duration-${index}` }
+                      style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: '#fff' } : undefined }
+                    >
+                      <Text style={styles.durationButtonText}>
+                        { (index === 0) ? (this.state.polygonsFillColor.indexOf(2) !== -1 ? 'all\noff' : 'all\non') : (duration / 60).toString() + '\nmin' }
+                      </Text>
+                    </ActionButton.Item>
+                  )
+                })
+              }
+            </ActionButton>
+          )
         }
 
         {/* Settings Button */}
-        { !this.state.uiElementsVisible && (<ActionButton
-          buttonColor='#58cbf4'
-          icon={<Icon name='cog' style={styles.actionButton}></Icon>}
-          spacing={ 10 }
-          degrees={ 0 }
-          position='left'
-          verticalOrientation='down'
-          onPress={ NavigationActions.settings }
-        >
-        </ActionButton>)
+        { !this.state.uiElementsVisible && (
+            <ActionButton
+              key='settings'
+              buttonColor='#58cbf4'
+              icon={<Icon name='cog' style={styles.actionButton}></Icon>}
+              spacing={ 10 }
+              degrees={ 0 }
+              position='left'
+              verticalOrientation='down'
+              onPress={ NavigationActions.settings }
+            >
+            </ActionButton>
+          )
         }
 
         {/* Transport Mode Button */}
-        { !this.state.uiElementsVisible && (<ActionButton
-          buttonColor='#2D62A0'
-          btnOutRange='#214875'
-          icon={<Ionicons name={ transportIcon } style={ styles.actionButton } />}
-          spacing={ 10 }
-          degrees={ 0 }
-          position='right'
-          verticalOrientation='down'
-          autoInactive={ true }
-          outRangeScale={ 1.2 }
-        >
-          {/* FIXME: rewrite this as a loop */}
-          <ActionButton.Item buttonColor='#2D62A0'
-            size={ 44 }
-            onPress={() => {
-            setTransportMode('walk')
-            const locations = this.state.locations
-            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            this.updateLocationIsochrons(true, position)
-          }}>
-            <Ionicons name='md-walk' style={styles.actionModeButton}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#2D62A0'
-            size={ 44 }
-            onPress={() => {
-            setTransportMode('bike')
-            const locations = this.state.locations
-            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            this.updateLocationIsochrons(true, position)
-          }}>
-            <Ionicons name='md-bicycle' style={styles.actionModeButton} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#2D62A0'
-            size={ 44 }
-            onPress={() => {
-            setTransportMode('car')
-            const locations = this.state.locations
-            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            this.updateLocationIsochrons(true, position)
-          }}>
-            <Ionicons name='md-car' style={styles.actionModeButton}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#2D62A0'
-            size={ 44 }
-            onPress={() => {
-            setTransportMode('transit')
-            const locations = this.state.locations
-            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            this.updateLocationIsochrons(true, position)
-          }}>
-            <Ionicons name='md-train' style={styles.actionButtonIcon}/>
-          </ActionButton.Item>
-        </ActionButton>)
+        { !this.state.uiElementsVisible && (
+            <ActionButton
+              key='transport-mode'
+              buttonColor='#2D62A0'
+              btnOutRange='#214875'
+              icon={<Ionicons name={ transportIcon } style={ styles.actionButton } />}
+              spacing={ 10 }
+              degrees={ 0 }
+              position='right'
+              verticalOrientation='down'
+              autoInactive={ true }
+              outRangeScale={ 1.2 }
+            >
+              { Object.keys(transportModeInfo).map(transportMode =>
+                  <ActionButton.Item
+                    key={`transport-mode-${transportMode}`}
+                    buttonColor='#2D62A0'
+                    size={ 44 }
+                    onPress={ () => {
+                      const { locations } = this.state
+                      const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+                      setTransportMode(transportMode)
+                      this.updateLocationIsochrons(true, position)
+                    } }
+                  >
+                    <Ionicons name={ transportModeInfo[transportMode].icon } style={styles.actionModeButton}/>
+                  </ActionButton.Item>
+                )
+              }
+            </ActionButton>
+          )
         }
 
         {/* Center Map Button */}
-        { this.state.centerButtonVisible && (<ActionButton
-          buttonColor='#58cbf4'
-          icon={<Icon name='crosshairs' style={styles.actionButton}></Icon>}
-          spacing={ 10 }
-          position='center'
-          offsetY={ 45 }
-          size={ 35 }
-          verticalOrientation='up'
-          // Center map on GPS
-          onPress={ () => {
-            this.updateLocationIsochrons(true, undefined, true)
-            this.setState({ centerButtonVisible: false, centerButtonMask: true })
-          } }
-          // Center map on current isochron
-          onLongPress={ () => {
-            // Get current isochron location
-            const locations = this.state.locations
-            const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-            this.updateLocationIsochrons(true, position, true)
-            this.setState({ centerButtonVisible: false, centerButtonMask: true })
-          } }
-        >
-        </ActionButton>) }
+        { this.state.centerButtonVisible && (
+            <ActionButton
+              key='center-map'
+              buttonColor='#58cbf4'
+              icon={<Icon name='crosshairs' style={styles.actionButton}></Icon>}
+              spacing={ 10 }
+              position='center'
+              offsetY={ 45 }
+              size={ 35 }
+              verticalOrientation='up'
+              onPress={ () => { // center map on GPS location
+                this.updateLocationIsochrons(true, undefined, true)
+                this.setState({ centerButtonVisible: false, centerButtonMask: true })
+              } }
+              onLongPress={ () => { // center map on isochrone center
+                // Get current isochron location
+                const locations = this.state.locations
+                const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
+                this.updateLocationIsochrons(true, position, true)
+                this.setState({ centerButtonVisible: false, centerButtonMask: true })
+              } }
+            >
+            </ActionButton>
+          )
+        }
 
         {/* Search Bar */}
 
@@ -658,7 +660,7 @@ TravContainer.propTypes = {
   travelTimeName: PropTypes.string,
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     traffic: state.map.traffic,
     mapBrand: state.map.mapBrand,
@@ -673,8 +675,8 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => { return {
-  setTransportMode: (transportModeName) => dispatch(MapActions.setTransportMode(transportModeName))
+const mapDispatchToProps = dispatch => { return {
+  setTransportMode: transportModeName => dispatch(MapActions.setTransportMode(transportModeName))
 } }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TravContainer)
