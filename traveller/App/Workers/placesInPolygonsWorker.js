@@ -1,6 +1,6 @@
 import { self } from 'react-native-workers'
-import turfHelpers from '@turf/helpers'
-import turfInside from '@turf/inside'
+import turfHelpers from './turf/helpers'
+import turfInside from './turf/inside'
 
 const debug = false // set to true to enable log messages for debug
 
