@@ -2,18 +2,70 @@ import { create } from 'apisauce'
 import { encode } from 'base-64'
 import Secrets from 'react-native-config'
 import { Worker } from 'react-native-workers'
-import { isochronsState, savedPolygonsFeature, ISOCHRON_LOADED, ISOCHRON_ERROR,
-         polygonsState, POLYGONS_LOADED } from './isochron'
+import { isochronsState, polygonsState, savedPolygonsFeature, doneWithSavedPolygonsFeature,
+         ISOCHRON_LOADED, ISOCHRON_ERROR, POLYGONS_LOADED } from './isochron'
 
 const debug = false // set to true to enable log messages for debug
+
+export const PLACES_NOT_LOADED = 'PLACES_NOT_LOADED'
+export const PLACES_LOADING = 'PLACES_LOADING'
+export const PLACES_LOADED = 'PLACES_LOADED'
+export const PLACES_INDEXED = 'PLACES_INDEXED'
+export const PLACES_ERROR = 'PLACES_ERROR'
 
 const key = process.env.GOOGLE_KEY || Secrets.GOOGLE_KEY // google API key
 const serverUrl = process.env.PLACES_SERVER_URL || Secrets.PLACES_SERVER_URL
 const api = create({ baseURL: serverUrl })
 
+let workers = {}
+let updatePlacesState = null
+
 export let savedPlaces = {}
 
-export const getPlaces = params => {
+export const setUpdatePlacesStateFn = updateFn => {
+  updatePlacesState = updateFn
+}
+
+export const loadPlaces = args => {
+  if (!savedPolygonsFeature) { return } // do not update places if we don't have a new set of polygons
+  const params = args.params
+
+  updatePlacesState && updatePlacesState(PLACES_LOADING)
+  const placesInfo = params.placesInfo
+
+  let counter = 0, length = Object.keys(placesInfo).length
+  return Promise.all(
+    Object.keys(placesInfo).map(type => {
+      if (!placesInfo[type].enabled) {
+        (length === ++counter) && updatePlacesState && updatePlacesState(PLACES_LOADED)
+        return new Promise((resolve, reject) => resolve(`getPlaces ${type} disabled`))
+      } else {
+        return getPlaces({
+          ...params,
+          type,
+          size: placesInfo[type].size,
+        })
+        .then(() => {
+          (length === ++counter) && updatePlacesState && updatePlacesState(PLACES_LOADED)
+          return placesInPolygonsUpdate(type)
+        })
+        .catch(err => console.error(err)) // we should never get here
+      }
+    })
+  )
+  .then(messages => {
+    updatePlacesState && updatePlacesState(PLACES_INDEXED)
+    doneWithSavedPolygonsFeature()
+    messages.map(message => { message.match(/error/i) && console.tron.error(message) })
+  })
+  .catch(err => { // we should never get here
+    updatePlacesState && updatePlacesState(PLACES_ERROR)
+    doneWithSavedPolygonsFeature()
+    console.error(err)
+  })
+}
+
+const getPlaces = params => {
   const { type, position, mode, radius, date, size } = params
   return new Promise((resolve, reject) => {
     if (debug) console.tron.display({ name: `getPlaces fetching [${type}], transport mode: ${mode}`, value: position })
@@ -45,8 +97,6 @@ export const convertDayHourMinToSeconds = duration => {
   return seconds
 }
 
-let workers = {}
-
 export const terminatePlacesInPolygonsWorker = type => {
   if (workers[type]) {
     if (debug) console.tron.display({ name: `terminatePlacesInPolygonsWorker [${type}]`, value: `terminating places in polygons worker [${type}]` })
@@ -55,7 +105,7 @@ export const terminatePlacesInPolygonsWorker = type => {
   }
 }
 
-export const placesInPolygonsUpdate = type => {
+const placesInPolygonsUpdate = type => {
   return new Promise((resolve, reject) => {
     if (debug) console.tron.display({ name: `placesInPolygonsUpdate [${type}] ${isochronsState}`, value: '' })
     if (isochronsState !== ISOCHRON_LOADED) { resolve('ERROR - no isochrones'); return } // no isochrones, abort
