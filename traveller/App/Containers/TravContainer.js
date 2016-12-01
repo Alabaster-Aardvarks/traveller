@@ -697,9 +697,9 @@ class TravContainer extends React.Component {
         }
 
         {/* Tutorial Overlay */}
-        {/* <View style={styles.tutorialContainer} key={3}>
+        <View style={styles.tutorialContainer} key={3}>
           <Text>Sample Text</Text>
-        </View> */}
+        </View>
 
       </View>
     )
