@@ -464,6 +464,7 @@ class TravContainer extends React.Component {
             <ActionButton
               key='search'
               buttonColor={ Colors.watermelonLight }
+              btnOutRange={ Colors.watermelonDark }
               degrees={ 0 }
               icon={<Icon name='search' style={styles.actionButton}></Icon>}
               spacing={ 10 }
@@ -537,7 +538,8 @@ class TravContainer extends React.Component {
         {/* Duration Button */}
         { !this.state.uiElementsVisible && (
             <ActionButton
-              buttonColor={ Colors.forestGreenLight }
+              buttonColor={ Colors.skyBlueLight }
+              btnOutRange={ Colors.skyBlueDark }
               degrees={ 0 }
               icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
               spacing={ 10 }
@@ -553,11 +555,11 @@ class TravContainer extends React.Component {
                   return (
                     <ActionButton.Item
                       size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
-                      buttonColor={ index === 0 ? '#006631' : isochronFillColor(index / this.state.durations.length, null, true) }
-                      btnOutRange='#004B24'
+                      buttonColor={ index === 0 ? Colors.skyBlueLight : isochronFillColor(index / this.state.durations.length, null, true) }
+                      btnOutRange={ Colors.skyBlueDark }
                       onPress={() => this.polygonsFillColorUpdate.call(this, index)}
                       key={ `duration-${index}` }
-                      style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: '#fff' } : undefined }
+                      style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: Colors.whiteLight } : undefined }
                     >
                       <Text style={styles.durationButtonText}>
                         { (index === 0) ? (this.state.polygonsFillColor.indexOf(2) !== -1 ? 'all\noff' : 'all\non') : (duration / 60).toString() + '\nmin' }
@@ -574,7 +576,7 @@ class TravContainer extends React.Component {
         { !this.state.uiElementsVisible && (
             <ActionButton
               key='settings'
-              buttonColor='#58cbf4'
+              buttonColor={ Colors.skyBlueLight }
               icon={<Icon name='cog' style={styles.actionButton}></Icon>}
               spacing={ 10 }
               degrees={ 0 }
@@ -590,8 +592,8 @@ class TravContainer extends React.Component {
         { !this.state.uiElementsVisible && (
             <ActionButton
               key='transport-mode'
-              buttonColor='#2D62A0'
-              btnOutRange='#214875'
+              buttonColor={ Colors.skyBlueLight }
+              btnOutRange={ Colors.skyBlueDark }
               icon={<Ionicons name={ transportIcon } style={ styles.actionButton } />}
               spacing={ 10 }
               degrees={ 0 }
@@ -603,7 +605,7 @@ class TravContainer extends React.Component {
               { Object.keys(transportModeInfo).map(transportMode =>
                   <ActionButton.Item
                     key={`transport-mode-${transportMode}`}
-                    buttonColor='#2D62A0'
+                    buttonColor={ Colors.skyBlueLight }
                     size={ 44 }
                     onPress={ () => {
                       setTransportMode(transportMode)
@@ -623,8 +625,8 @@ class TravContainer extends React.Component {
         { this.state.centerButtonVisible && (
             <ActionButton
               key='center-map'
-              buttonColor='#58cbf4'
-              icon={<Icon name='crosshairs' style={styles.actionButton}></Icon>}
+              buttonColor={ Colors.whiteLight }
+              icon={<Icon name='crosshairs' style={styles.actionButtonReverse}></Icon>}
               spacing={ 10 }
               position='center'
               offsetY={ 45 }
@@ -694,7 +696,7 @@ class TravContainer extends React.Component {
         {/* Spinner */}
         { this.state.spinnerVisible && (
             <View style={styles.spinnerContainer} key={2}>
-              <Spinner style={styles.spinner} size={75} type={'Circle'} color={'#ffffff'} />
+              <Spinner style={styles.spinner} size={75} type={'Circle'} color={ Colors.whiteLight } />
               <Text style={styles.spinnerText}>Refreshing Map</Text>
             </View>
           )

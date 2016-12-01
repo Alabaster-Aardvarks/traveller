@@ -23,7 +23,7 @@ class MaxDurationScreen extends React.Component {
               <Picker
                 selectedValue={duration}
                 onValueChange={setMaxDuration}
-                style={{backgroundColor: 'white'}}
+                style={{backgroundColor: Colors.whiteLight}}
                 >
                 {[30, 60, 90, 120, 150].map((time, index) => <Picker.Item label={time + "min"} value={time} key={index} />)}
               </Picker>

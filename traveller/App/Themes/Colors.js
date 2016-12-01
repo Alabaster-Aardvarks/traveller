@@ -1,7 +1,7 @@
 // @flow
 
 const colors = {
-  background: '#58cbf4',
+  background: '#3B9AD9',
   clear: 'rgba(0,0,0,0)',
   facebook: '#3b5998',
   transparent: 'rgba(0,0,0,0)',
@@ -17,7 +17,7 @@ const colors = {
   coal: '#2d2d2d',
   bloodOrange: '#fb5f26',
   snow: 'white',
-  ember: 'rgba(93, 216, 255, 0.5)',
+  ember: 'rgba(59, 154, 217, 0.5)',
   fire: '#e73536',
   drawer: 'rgba(30, 30, 29, 0.95)',
 
