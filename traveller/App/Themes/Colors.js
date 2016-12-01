@@ -21,7 +21,7 @@ const colors = {
   fire: '#e73536',
   drawer: 'rgba(30, 30, 29, 0.95)',
 
-  redlight: '#E64E42',
+  redLight: '#E64E42',
   redDark: '#BF3A31',
   orangeLight: '#E57F31',
   orangeDark: '#D25519',
