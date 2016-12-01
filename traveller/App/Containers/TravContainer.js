@@ -7,17 +7,19 @@ import ActionButton from 'react-native-action-button'
 import Spinner from 'react-native-spinkit'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { BlurView } from 'react-native-blur'
+import moment from 'moment'
 import AlertMessage from '../Components/AlertMessage'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
-import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons, savedPolygonsFeature,
-         terminateIsochronWorker, doneWithSavedPolygonsFeature, isochronFillColor,
+import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
+         terminateIsochronWorker, isochronFillColor, getIsochronDurations,
          ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
-import { getPlaces, savedPlaces, convertDayHourMinToSeconds, placesInPolygonsUpdate } from './places'
+import { loadPlaces, savedPlaces, convertDayHourMinToSeconds, setUpdatePlacesStateFn,
+         PLACES_NOT_LOADED, PLACES_LOADING, PLACES_LOADED, PLACES_INDEXED } from './places'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
-// import { Container, Header, InputGroup, Input, NBIcon, Button } from 'native-base'; Disabled for now
 
 const debug = false // set to true to enable log messages for debug
 
@@ -59,8 +61,8 @@ const transportModeInfo = {
   // isochrone provider: [navitia,here,route360,graphhopper]
   // radius in meters
   'walk'    : { provider: 'here',    radius: 15000, icon: 'md-walk'    },
-  'car'     : { provider: 'here',    radius: 50000, icon: 'md-car'     },
   'bike'    : { provider: 'navitia', radius: 25000, icon: 'md-bicycle' },
+  'car'     : { provider: 'here',    radius: 50000, icon: 'md-car'     },
   'transit' : { provider: 'navitia', radius: 50000, icon: 'md-train'   },
 }
 
@@ -71,12 +73,16 @@ const placesInfo = {
   'health'  : { enabled: true, visible: false, size: 25, buttonColor: '#ff6b6b', buttonTitle: 'Medical', icon: 'ambulance'  },
 }
 
+const getPosition = l => {
+  return { coords: { latitude: roundCoordinate(l.latitude), longitude: roundCoordinate(l.longitude) } }
+}
+
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
 
 class TravContainer extends React.Component {
   constructor (props: Object) {
     super(props)
-    const durations = this.getIsochronDurations(props.duration)
+    const durations = getIsochronDurations(props.duration)
     this.state = {
       initialPosition: 'unknown',
       lastPosition: 'unknown',
@@ -90,6 +96,7 @@ class TravContainer extends React.Component {
       showUserLocation: true,
       polygonsState: ISOCHRON_NOT_LOADED,
       polygonsFillColor: [...Array(durations.length - 1)].map(() => 1),
+      placesState: PLACES_NOT_LOADED,
       dateTime: DATETIME,
       durations: durations,
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
@@ -106,6 +113,7 @@ class TravContainer extends React.Component {
 
   componentDidMount() {
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
+    setUpdatePlacesStateFn(this.updatePlacesState.bind(this))
     // load isochrones, animate to region,  isochrones reload, update date to now
     this.updateLocationIsochrons(true, undefined, true, true)
   }
@@ -116,11 +124,13 @@ class TravContainer extends React.Component {
       savedDuration = duration
       // reload isochrones when duration changes, no animate to region, no position change, isochrones reload, update date to now
       this.updateLocationIsochrons(false, 'current', true, true)
+      this.polygonsFillColorUpdate()
     }
   }
 
   componentWillUnmount () {
     setUpdateIsochronsStateFn(null)
+    setUpdatePlacesStateFn(null)
     terminateIsochronWorker()
   }
 
@@ -132,7 +142,7 @@ class TravContainer extends React.Component {
     }
     if (newPosition === 'current') {
       const { locations } = this.state
-      newPosition = { coords: { latitude: locations[0].latitude, longitude: locations[0].longitude } }
+      newPosition = getPosition(locations[0])
     }
 
     return new Promise((resolve, reject) => {
@@ -144,7 +154,7 @@ class TravContainer extends React.Component {
       if (debug) console.tron.display({ name: 'current position', value: currentPosition })
 
       const locations = [ {
-        title: 'Center Location',
+        title: 'Center Location', // isochron center location
         latitude: currentPosition.latitude,
         longitude: currentPosition.longitude,
       } ]
@@ -155,8 +165,8 @@ class TravContainer extends React.Component {
         longitudeDelta: LONGITUDE_DELTA,
       }
       const { duration } = this.props
-      const durations = this.getIsochronDurations(duration)
-      savedDuration = duration
+      const durations = getIsochronDurations(duration)
+      savedDuration = duration // update saved duration
       if (isochronsUpdate) {
         const initialPosition = JSON.stringify(position)
         this.setState({ initialPosition })
@@ -172,10 +182,11 @@ class TravContainer extends React.Component {
         // Isochrone parameters
         const { transportMode, travelTimeName } = this.props
         const isochronProvider = transportModeInfo[transportMode].provider
+        const p = getPosition(locations[0])
         const params = {
           provider: isochronProvider,
-          latitude: roundCoordinate(locations[0].latitude),
-          longitude: roundCoordinate(locations[0].longitude),
+          latitude: p.coords.latitude,
+          longitude: p.coords.longitude,
           durations: durations,
           dateTime: dateTime,
           downSamplingCoordinates: this.state.downSamplingCoordinates[isochronProvider],
@@ -185,37 +196,11 @@ class TravContainer extends React.Component {
           skip: skipIsochrons,
         }
         this.updatePolygons({ isochrons: params })
-        this.polygonsFillColorUpdate()
       }
     },
     error => console.error(error),
     { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
   )}
-
-  getIsochronDurations(duration) {
-    //return [ 0, 600, 1200, 1800 ]
-    duration = duration || this.props.duration
-    let durations = []
-
-    // divide duration into 4 to 6 intervals (interval is a multiple of 5min)
-    let interval
-    for (let i = 5; i < duration; i += 5) {
-      if (duration % i === 0 && (duration / i <= 6) && (duration / i >= 4)) {
-        interval = i
-        break
-      }
-    }
-    if (!interval) {
-      durations = [ 0, duration * 60 ]
-    } else {
-      for (let i = 0; i <= duration; i += interval) {
-        durations.push(i * 60)
-      }
-    }
-
-    if (debug) { console.tron.display({ name: 'getIsochronDurations', value: durations }) }
-    return durations
-  }
 
   updatePolygons (params) {
     this.setState({ networkActivityIndicatorVisible: true, spinnerVisible: true })
@@ -223,40 +208,23 @@ class TravContainer extends React.Component {
   }
 
   updatePlaces () {
-    if (!savedPolygonsFeature) { return } // do not update places if we don't have a new set of polygons
-    const { placesInfo } = this.state
-    Promise.all(
-      Object.keys(placesInfo).map(type => {
-        if (!placesInfo[type].enabled) {
-          return new Promise((resolve, reject) => resolve(`getPlaces ${type} disabled`))
-        } else {
-          const { transportMode } = this.props
-          const locations = this.state.locations
-          const position = { coords: { latitude: roundCoordinate(locations[0].latitude), longitude: roundCoordinate(locations[0].longitude) } }
-          const params = {
-            type,
-            position,
-            mode: transportMode,
-            radius: transportModeInfo[transportMode].radius,
-            date: roundDateTime(this.state.dateTime),
-            size: placesInfo[type].size,
-          }
-          return getPlaces(params)
-          .then(() => placesInPolygonsUpdate(type))
-          .catch(err => console.error(err)) // we should never get here
-        }
-      })
-    )
-    .then(messages => {
-      doneWithSavedPolygonsFeature()
-      messages.map(message => { message.match(/error/i) && console.tron.error(message) })
-    })
-    .catch(err => { doneWithSavedPolygonsFeature(); console.error(err) }) // we should never get here
+    this.setState({ networkActivityIndicatorVisible: true })
+    const { placesInfo, locations } = this.state
+    const { transportMode } = this.props
+    const position = getPosition(locations[0])
+    const params = {
+      placesInfo,
+      position,
+      mode: transportMode,
+      radius: transportModeInfo[transportMode].radius,
+      date: roundDateTime(this.state.dateTime),
+    }
+    loadPlaces({ params })
   }
 
   updatePolygonsState (state) {
     this.setState({ polygonsState: state })
-    this.setState({ networkActivityIndicatorVisible: (state === ISOCHRON_LOADING) ? true : false })
+    this.updateNetworkActivityIndicator(state === ISOCHRON_LOADING)
     if (state === ISOCHRON_ERROR) {
       this.setState({ spinnerVisible: false })
       alert('Could not generate isochrons for this location.')
@@ -267,28 +235,39 @@ class TravContainer extends React.Component {
       setTimeout(() => { context.setState({ spinnerVisible: false }) }, 150)
     } else {
       this.setState({ spinnerVisible: true })
+      this.updatePlacesState(PLACES_NOT_LOADED)
     }
+  }
+
+  updatePlacesState (state) {
+    this.setState({ placesState: state })
+    this.updateNetworkActivityIndicator(state === PLACES_LOADING)
+  }
+
+  updateNetworkActivityIndicator (value) {
+    const { polygonsState, placesState } = this.state
+    const loading = value || polygonsState === ISOCHRON_LOADING || placesState === PLACES_LOADING
+    this.setState({ networkActivityIndicatorVisible: loading ? true : false })
   }
 
   calloutPress (location) {
     if (debug) console.tron.display({ name: 'calloutPress location', value: location })
-    console.log('PRESSED')
+    //console.log('PRESSED')
   }
 
-  searchTogglePressed () {
-    console.tron.log('Pressed!');
+  // searchTogglePressed () {
+  //   if (debug) console.tron.log('Pressed!');
+  //   return (
+  //     <SearchBar
+  //       placeholder='Search'
+  //       textFieldBackgroundColor='blue'
+  //     />
+  //   )
+  // }
 
-    return (
-      <SearchBar
-        placeholder='Search'
-        textFieldBackgroundColor='blue'
-      />
-    )
-  }
-
-  renderMapMarkers (place, index, type) {
+  renderMapMarkers (place, index, type, keyTag) {
     let location = {}
-    let pinColor = 'rgba(21, 107, 254, 0.9)'
+    let pinColor = 'rgba(21, 107, 254, 1)'
     if (!type) {
       location = place
     } else {
@@ -296,23 +275,19 @@ class TravContainer extends React.Component {
       location.latitude = place.location.lat
       location.longitude = place.location.lng
       if (place.polygonIndex === undefined) {
-        return undefined
+        return undefined // skip places which do not have a polygon index
       }
       if (this.state.polygonsFillColor.indexOf(2) !== -1) {
         if (place.polygonIndex !== undefined && this.state.polygonsFillColor[place.polygonIndex] !== 2) { return undefined }
       }
-      let a = 0.9
-      // FIXME: put colors in a table
-      pinColor = type === 'bank'    ? `rgba(160, 57, 175, ${a})` :
-                 type === 'transit' ? `rgba(6, 142, 219, ${a})`  :
-                 type === 'health'  ? `rgba(255, 71, 87, ${a})`  : `rgba(100, 100, 100, ${a})`
+      pinColor = placesInfo[type].buttonColor
     }
 
     return (
       <MapView.Marker
         pinColor={pinColor}
         draggable={ type || index !== 0 ? false : true} // Not friendly with MapView long-press refresh
-        key={`${location.title} ${index}`}
+        key={`${location.title}-${index}${keyTag}`}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
         onDragEnd={ type || index !== 0 ? undefined : e => {
           let newRegion = this.state.region
@@ -330,6 +305,8 @@ class TravContainer extends React.Component {
     const { mapBrand } = this.props
     if (savedMapBrand && savedMapBrand !== mapBrand) {
       this.refs.map && this.refs.map.animateToRegion(this.state.region, 0)
+      // hack to avoid region change when changing map brand
+      //   a map brand change triggers two onRegionChangeComplete events
       onRegionChangeCompleteCounter++
       if (onRegionChangeCompleteCounter > 1) {
         onRegionChangeCompleteCounter = 0
@@ -350,16 +327,13 @@ class TravContainer extends React.Component {
   polygonsFillColorUpdate (index) {
     let polygonsFillColor = this.state.polygonsFillColor
 
-    if (index === undefined) {
-      // reset all colors
+    if (index === undefined) { // reset all colors
       polygonsFillColor = [...Array(this.state.durations.length - 1)].map(() => 1)
     } else {
-      if (index === 0) {
-        // if any color is highlighted, disable all, otherwise enable all
+      if (index === 0) { // if any color is highlighted, disable all, otherwise enable all
         const v = (polygonsFillColor.indexOf(2) !== -1) ? 1 : 2
         polygonsFillColor = [...Array(this.state.durations.length - 1)].map(() => v)
-      } else {
-        // switch the corresponding isochron
+      } else { // switch the corresponding isochron
         polygonsFillColor[index - 1] = (polygonsFillColor[index - 1] === 1) ? 2 : 1
       }
     }
@@ -386,9 +360,13 @@ class TravContainer extends React.Component {
     //console.log('render')
     const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName,
             transportIcon, setTransportMode, transportMode } = this.props
+    const { polygonsState, placesState, placesInfo } = this.state
     // wait for all polygons to be loaded
-    const polygonsCount = (!savedPolygons || this.state.polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
-    const { placesInfo } = this.state
+    const polygonsCount = (!savedPolygons || polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
+    // places indexed
+    const placesReady = placesState === PLACES_INDEXED
+    // make sure we re-render when all places have been indexed
+    const placesKeyTag = placesState === PLACES_INDEXED ? '-indexed' : undefined
 
     return (
       <View style={styles.container}>
@@ -423,9 +401,9 @@ class TravContainer extends React.Component {
 
           {/* Places Markers */}
           { Object.keys(placesInfo).map(type => {
-              return (!placesInfo[type].visible || !savedPlaces[type] || savedPlaces[type].length === 0) ?
+              return (!placesReady || !placesInfo[type].visible || !savedPlaces[type] || savedPlaces[type].length === 0) ?
                 undefined :
-                savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type))
+                savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type, placesKeyTag))
             })
           }
 
@@ -471,16 +449,24 @@ class TravContainer extends React.Component {
               icon={<Icon name='search' style={styles.actionButton}></Icon>}
               spacing={ 10 }
               outRangeScale={ 1.2 }
+              backdrop={ 1 ? false : <BlurView blurType='dark' blurAmount={1} style={styles.container}></BlurView> }
             >
               { Object.keys(placesInfo).concat([ 'refresh' ]).map(type => {
                   if (type === 'refresh') {
+                    // if (roundDateTime('now') === this.state.dateTime) {
+                    //   return undefined
+                    // }
                     // animate to region, no position change, isochrones reload, update date to now
                     return (
                       <ActionButton.Item
                         key='search-refresh'
                         buttonColor='#1abc9c'
-                        title={ `Refresh Map (${this.state.dateTime})` }
-                        onPress={ () => this.updateLocationIsochrons(true, 'current', true, true) }
+                        title={ `refreshed ${ moment(this.state.dateTime).fromNow() }` }
+                        size={ 44 }
+                        onPress={ () => { // give time for the button to close
+                          const context = this
+                          setTimeout(() => context.updateLocationIsochrons.call(this, true, 'current', true, true), 150)
+                        } }
                       >
                         <Icon name='refresh' style={styles.actionButtonIcon}/>
                       </ActionButton.Item>
@@ -491,6 +477,7 @@ class TravContainer extends React.Component {
                         key={`search-${type}`}
                         buttonColor={ placesInfo[type].buttonColor }
                         title={ placesInfo[type].buttonTitle }
+                        size={ 44 }
                         onPress={ () => this.changePlacesInfo.call(this, type) }
                       >
                         <Icon name={ placesInfo[type].icon } style={styles.actionButtonIcon}/>
@@ -514,6 +501,8 @@ class TravContainer extends React.Component {
               position='center'
               verticalOrientation='down'
               key='duration'
+              autoInactive={ false }
+              backdrop={ 1 ? false : <BlurView blurType='dark' blurAmount={1} style={styles.container}></BlurView> }
             >
               { this.state.durations.map((duration, index) => {
                   let buttonEnabled = index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)
