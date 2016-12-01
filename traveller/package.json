@@ -46,6 +46,7 @@
     "react-native": "^0.36.1",
     "react-native-action-button": "git+https://github.com/therealgilles/react-native-action-button.git#feature/downDirectionFix",
     "react-native-animatable": "^0.6.0",
+    "react-native-app-intro": "^1.1.5",
     "react-native-blur": "^1.2.0",
     "react-native-cache": "^1.0.2",
     "react-native-config": "^0.1.0",
