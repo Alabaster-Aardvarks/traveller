@@ -102,23 +102,34 @@ const getGoogleData = (req, res, keyword) => {
   radius = req.query.radius || 50000;
   mode = req.query.mode || 'transit';
   date = req.query.date || 'now';
-  size = req.query.size || 200;   
+  size = req.query.size || 200; 
+  let finalResults = [];
   //grab ids from radar search    
   getRadarData(keyword, lat, long, radius)
   .then(data => {
-    let radarResults = [];
+    console.log(data);
     if (!data.results.length) {
       console.error(`No google places data found for ${keyword}`);
       return;
     }
     data.results.forEach(place => {
-      radarResults.push({
+      //radar search gives us place_id, which we use in the distance matrix
+      // results array, each array element is a place
+      //  [ 
+      //   { id: 
+      //     place_id:  *we use this in the distance matrix*
+      //     reference: 
+      //     geometry:{ location:{lat: long:} }  *we grab location as our coordinates*
+      //   } 
+      //  ]
+      console.log(place);
+      finalResults.push({
         id: place.place_id,
-        coordinates: place.geometry.location
+        coordinates: place.geometry.location //should we call it location? what does the client want
       });
     }); 
-    radarResults = radarResults.splice(0, size);
-    return radarResults;
+    finalResults = finalResults.splice(0, size);
+    return finalResults;
   }) //take radar results and throttle them into distance matrix api
   .then(results => {  
     const divider = 25;
@@ -131,9 +142,25 @@ const getGoogleData = (req, res, keyword) => {
       })
     )
     .then(dataArray => {
-      dataArray.forEach(result => console.log(result.destination_addresses.length));
+      // dataArray, each element of dataArray is one of the returned promises
+      //  [ 
+      //   { 
+      //     destination_addresses: [ *array of addresses*] 
+      //     origin_address: [ *our origin point, only one element in this array UNNEEDED*] 
+      //     rows: [ *there is only one 'row', row[0]*
+      //            elements: [   *there is an element which corresponds to each of the destination_addresses*
+      //              {
+      //               distance: { text: value:}
+      //               duration: { text: value:}
+      //               fare:{value:}
+      //               status:
+      //              }
+      //            ]
+      //           ] 
+      //   } 
+      //  ]
       let googleStuff = [].concat(...dataArray);
-      res.status(200).json(dataArray);
+      res.status(200).json(dataArray[0]);
     });
   })
   .catch(error =>console.error(error));
