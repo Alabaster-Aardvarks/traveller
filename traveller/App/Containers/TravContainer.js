@@ -698,35 +698,37 @@ class TravContainer extends React.Component {
           )
         }
 
-        {/* Tutorial Overlay */}
-        {/* <View style={styles.tutorialContainer} key={3}> // Full-screen blur
-          <BlurView blurType="dark" blurAmount={5} style={styles.tutorialContainer} >
-          </BlurView>
-        </View> */}
-
-        <AppIntro showSkipButton={ false }>
+        {/* First Launch Tutorial */}
+        { !this.state.tutorialHasRun && (<AppIntro
+          showSkipButton={ false }
+          doneBtnLabel="Go!"
+          onDoneBtnClick={ () => this.setState({ tutorialHasRun: true }) }
+          >
         <View style={[styles.slide,{ backgroundColor: '#2F81B8' }]}>
-          <View><Image source={ Images.walkMarker } /></View>
+          <View><Image source={ Images.walkMarker }/></View>
           <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
-          <View level={15}><Text style={styles.text}>Make the best</Text></View>
+          <View level={15}><Text style={styles.text}>Make the most</Text></View>
           <View level={8}><Text style={styles.text}>of your travels</Text></View>
         </View>
-        <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
-          <View level={-10}><Text style={styles.textTitle}>Second Slide</Text></View>
-          <View level={5}><Text style={styles.text}>Traveller is</Text></View>
-          <View level={20}><Text style={styles.text}>AWESOME</Text></View>
+        <View style={[styles.slide, { backgroundColor: '#39CB75' }]}>
+          <View><Image source={ Images.travMarker }/></View>
+          <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
+          <View><Text style={styles.text}></Text></View>
+          <View level={5}><Text style={styles.text}>How far you can get...</Text></View>
+          <View><Text style={styles.text}></Text></View>
+          <View level={25}><Text style={styles.text}>...with the time you have</Text></View>
         </View>
-        <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
+        {/* <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
           <View level={8}><Text style={styles.textTitle}>Third Slide</Text></View>
           <View level={0}><Text style={styles.text}>Traveller is</Text></View>
           <View level={-10}><Text style={styles.text}>still AWESOME!</Text></View>
-        </View>
-        <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
+        </View> */}
+        {/* <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
           <View level={5}><Text style={styles.textTitle}>Fourth Slide</Text></View>
           <View level={10}><Text style={styles.text}>Oy m8</Text></View>
           <View level={15}><Text style={styles.text}>Traveller is dope.</Text></View>
-        </View>
-      </AppIntro>
+        </View> */}
+      </AppIntro>) }
 
       </View>
     )
