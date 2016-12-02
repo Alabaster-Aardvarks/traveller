@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation, VibrationIOS, Image } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation,
+         VibrationIOS, Image, TouchableOpacity, Linking } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
@@ -13,6 +14,7 @@ import AlertMessage from '../Components/AlertMessage'
 import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
+import ReduxPersist from '../Config/ReduxPersist'
 import styles from './Styles/TravContainerStyle'
 import { Images , Colors } from '../Themes'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
@@ -59,6 +61,8 @@ let savedDuration = null
 let savedFromTo = null
 let onRegionChangeCompleteCounter = 0
 let refreshMomentInterval = null
+let isochronsNeedToLoad = true
+let delayTutorial = true
 
 // temporary position until we get the current location
 let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
@@ -66,19 +70,19 @@ let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
 const transportModeInfo = {
   // isochrone provider: [navitia,here,route360,graphhopper]
   // radius in meters
-  'walk'    : { provider: 'here',    radius: 15000, icon: 'md-walk'    },
-  'bike'    : { provider: 'navitia', radius: 25000, icon: 'md-bicycle' },
-  'car'     : { provider: 'here',    radius: 50000, icon: 'car'     },
-  'transit' : { provider: 'navitia', radius: 50000, icon: 'bus'   },
+  'walk'    : { provider: 'here',    radius: 15000, icon: 'md-walk',    appleMaps: 'w', googleMaps: 'walking'   },
+  'bike'    : { provider: 'navitia', radius: 25000, icon: 'md-bicycle', appleMaps: 'w', googleMaps: 'bicycling' },
+  'car'     : { provider: 'here',    radius: 50000, icon: 'car',        appleMaps: 'd', googleMaps: 'driving'   },
+  'transit' : { provider: 'navitia', radius: 50000, icon: 'train',      appleMaps: 'r', googleMaps: 'transit'   },
 }
 
 const placesInfo = {
   // size: how many places are requested (fewer or equal to 200)
-  'food'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.purpleLight, buttonTitle: 'Food', icon: 'cutlery', image: Images.food},
-  'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.watermelonLight, buttonTitle: 'Medical', icon: 'ambulance', image: Images.medical},
-  'museums'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.yellowLight, buttonTitle: 'Museums', icon: 'bank', image: Images.museums},
-  'park'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.greenLight, buttonTitle: 'Parks',   icon: 'tree', image: Images.park},
-  'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.orangeLight, buttonTitle: 'Transit', icon: 'bus', image: Images.transit},
+  'food'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.purpleLight,     buttonTitle: 'Food',    icon: 'cutlery',   image: Images.food    },
+  'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.watermelonLight, buttonTitle: 'Medical', icon: 'ambulance', image: Images.medical },
+  'museums' : { enabled: true, visible: false, size: 25, buttonColor: Colors.yellowLight,     buttonTitle: 'Museums', icon: 'bank',      image: Images.museums },
+  'park'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.greenLight,      buttonTitle: 'Parks',   icon: 'tree',      image: Images.park    },
+  'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.orangeLight,     buttonTitle: 'Transit', icon: 'bus',       image: Images.transit },
 }
 
 const getPosition = l => {
@@ -123,12 +127,15 @@ class TravContainer extends React.Component {
   componentDidMount() {
     setUpdateIsochronsStateFn(this.updatePolygonsState.bind(this))
     setUpdatePlacesStateFn(this.updatePlacesState.bind(this))
-    // load isochrones, animate to region,  isochrones reload, update date to now
-    this.updateLocationIsochrons(true, undefined, true, true)
   }
 
   componentDidUpdate() {
-    const { duration, travelTimeName } = this.props
+    //console.log('componentDidUpdate')
+    if (!ReduxPersist.active) { return }
+    //console.log('componentDidUpdate in')
+
+    const { duration, travelTimeName, tutorialHasRun } = this.props
+
     //console.log('componentDidUpdate', this.state.refreshEnabled, this.state.refreshMoment)
     if ((savedDuration && duration !== savedDuration) || (savedFromTo && travelTimeName !== savedFromTo)) {
       // NOTE: savedDuration and savedFromTo are updated inside updateLocationIsochrons, but they need to be updated here
@@ -139,6 +146,12 @@ class TravContainer extends React.Component {
       this.updateLocationIsochrons(false, 'current', true, true)
       this.polygonsFillColorUpdate()
     }
+
+    if (tutorialHasRun && isochronsNeedToLoad) {
+      isochronsNeedToLoad = false
+      // load isochrones, animate to region,  isochrones reload, update date to now
+      this.updateLocationIsochrons(true, undefined, true, true)
+    }
   }
 
   componentWillUnmount () {
@@ -147,6 +160,7 @@ class TravContainer extends React.Component {
     terminateIsochronWorker()
   }
 
+  // use 'undefined' for newPosition to center on GPS location
   updateLocationIsochrons (animateToRegion, newPosition, isochronsUpdate, dateUpdate) {
     let dateTime = this.state.dateTime
     if (dateUpdate) {
@@ -267,9 +281,22 @@ class TravContainer extends React.Component {
     this.setState({ networkActivityIndicatorVisible: loading ? true : false })
   }
 
-  calloutPress (location) {
+  calloutPress (location, event) {
+    //console.log('calloutPress', location)
     if (debug) console.tron.display({ name: 'calloutPress location', value: location })
-    //console.log('PRESSED')
+    if (location.url) {
+      if (location.url.match(/apple/) && event) { return }
+      const testUrl = location.url.replace(/^(comgooglemaps:\/\/).*/, '$1')
+      //console.log('testUrl', testUrl)
+      Linking.canOpenURL(testUrl).then(supported => {
+        if (!supported) {
+          if (debug) console.tron.display('Cannot handle url: ' + location.url)
+        } else {
+          return Linking.openURL(location.url)
+        }
+      })
+      .catch(err => console.error('An error occurred', err))
+    }
   }
 
   // searchTogglePressed () {
@@ -283,14 +310,27 @@ class TravContainer extends React.Component {
   // }
 
   renderMapMarkers (place, index, type, keyTag) {
+    const { unitOfMeasurement, mapBrand, transportMode } = this.props
     let location = {}
     let pinImage = Images.main
     if (!type) {
       location = place
     } else {
-      location.title = `${place.name} - ${place.time}`
+      const distance = unitOfMeasurement === 'Miles' ? place['distance'] : (Math.round(place['metric distance'] / 100) / 10 ) + ' km'
+      const name = place.name.replace(/^([^,]*),.*$/, '$1')
+      location.title = name
+      location.subtitle = `${place.time} - ${distance}`
       location.latitude = place.location.lat
       location.longitude = place.location.lng
+      location.url = (mapBrand === 'Google Maps' ?
+                       'comgooglemaps://?q=' + place.name
+                       + '&directionsmode=' + transportModeInfo[transportMode].googleMaps
+                       + '&center=' :
+                       'http://maps.apple.com/?q=' + place.name
+                       + '&dirflg=' + transportModeInfo[transportMode].appleMaps
+                       + '&ll='
+                     )
+                     + `${location.latitude},${location.longitude}`
       if (place.polygonIndex === undefined) {
         return undefined // skip places which do not have a polygon index
       }
@@ -307,7 +347,7 @@ class TravContainer extends React.Component {
         anchor={{ x: 0.5, y: 1 }}
         centerOffset={{ x: 0, y: -18 }}
         draggable={ type || index !== 0 ? false : true} // Not friendly with MapView long-press refresh
-        key={`${location.title}-${index}${keyTag}`}
+        key={`${location.title}-${index}${keyTag}-${unitOfMeasurement}`}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
         onDragEnd={ type || index !== 0 ? undefined : e => {
           let newRegion = this.state.region
@@ -377,7 +417,11 @@ class TravContainer extends React.Component {
   }
 
   render () {
-    //console.log('render')
+    //console.log('render in')
+    if (!ReduxPersist.active) { return null }
+    delayTutorial && setTimeout( () => { delayTutorial = false }, 150) // FIXME: hack
+    //console.log('render in')
+
     const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName,
             transportIcon, setTransportMode, transportMode, tutorialHasRun, toggleTutorialHasRun } = this.props
     const { polygonsState, placesState, placesInfo, refreshMoment, refreshEnabled } = this.state
@@ -387,6 +431,7 @@ class TravContainer extends React.Component {
     const placesReady = placesState === PLACES_INDEXED
     // make sure we re-render when all places have been indexed
     const placesKeyTag = placesState === PLACES_INDEXED ? '-indexed' : undefined
+    //console.log('render', tutorialHasRun)
 
     return (
       <View style={styles.container}>
@@ -505,7 +550,7 @@ class TravContainer extends React.Component {
                     return (
                       <ActionButton.Item
                         key={ `search-refresh-${refreshEnabled}-${refreshMoment}` }
-                        buttonColor={ `rgba(26, 188, 156, ${ refreshEnabled ? 1 : 0.2 })` }
+                        buttonColor={ `rgba(26, 188, 156, ${ refreshEnabled ? 1 : 0.4 })` }
                         title={ `refreshed ${refreshMoment}` }
                         titleColor={ refreshEnabled ? '#444' : '#888' }
                         size={ 44 }
@@ -557,10 +602,10 @@ class TravContainer extends React.Component {
                   let buttonEnabled = index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)
                   return (
                     <ActionButton.Item
-                      size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
+                      size={ 44 }
                       buttonColor={ index === 0 ? Colors.skyBlueLight : isochronFillColor(index / this.state.durations.length, null, true) }
                       btnOutRange={ Colors.skyBlueDark }
-                      onPress={() => this.polygonsFillColorUpdate.call(this, index)}
+                      onPress={ () => this.polygonsFillColorUpdate.call(this, index) }
                       key={ `duration-${index}` }
                       style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: Colors.whiteLight } : undefined }
                     >
@@ -631,14 +676,15 @@ class TravContainer extends React.Component {
               key='center-map'
               buttonColor={ Colors.whiteLight }
               icon={<Icon name='crosshairs' style={styles.actionButtonReverse}></Icon>}
-              style={{ borderWidth: 4, borderColor: Colors.skyBlueLight }}
+              style={ /* FIXME: style is not supported by ActionButton, could fix */
+                      { borderWidth: StyleSheet.hairlineWidth * 2, borderColor: Colors.skyBlueLight } }
               spacing={ 10 }
               position='center'
               offsetY={ 45 }
               size={ 35 }
               verticalOrientation='up'
               onPress={ () => { // center map on GPS location
-                this.updateLocationIsochrons(true, 'current', false, false)
+                this.updateLocationIsochrons(true, undefined, false, false)
                 this.setState({ centerButtonVisible: false, centerButtonMask: true })
               } }
               onLongPress={ () => { // center map on isochrone center
@@ -708,36 +754,38 @@ class TravContainer extends React.Component {
         }
 
         {/* First Launch Tutorial */}
-        { !tutorialHasRun && (<AppIntro
-          showSkipButton={ false }
-          doneBtnLabel="Go!"
-          onDoneBtnClick={ toggleTutorialHasRun }
-          >
-            <View style={[styles.slide,{ backgroundColor: Colors.skyBlueLight }]}>
-              <View><Image source={ Images.walkMarker }/></View>
-              <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
-              <View level={15}><Text style={styles.text}>Make the most</Text></View>
-              <View level={8}><Text style={styles.text}>of your travels</Text></View>
-            </View>
-            <View style={[styles.slide, { backgroundColor: Colors.greenLight }]}>
-              <View><Image source={ Images.travMarker }/></View>
-              <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
-              <View><Text style={styles.text}></Text></View>
-              <View level={5}><Text style={styles.text}>How far you can get</Text></View>
-              <View><Text style={styles.text}></Text></View>
-              <View level={25}><Text style={styles.text}>with the time you have</Text></View>
-            </View>
-            {/* <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
-              <View level={8}><Text style={styles.textTitle}>Third Slide</Text></View>
-              <View level={0}><Text style={styles.text}>Traveller is</Text></View>
-              <View level={-10}><Text style={styles.text}>still AWESOME!</Text></View>
-            </View> */}
-            {/* <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
-              <View level={5}><Text style={styles.textTitle}>Fourth Slide</Text></View>
-              <View level={10}><Text style={styles.text}>Oy m8</Text></View>
-              <View level={15}><Text style={styles.text}>Traveller is dope.</Text></View>
-            </View> */}
-          </AppIntro>)
+        { (delayTutorial ? false : !tutorialHasRun) && (
+            <AppIntro
+              showSkipButton={ false }
+              doneBtnLabel="Go!"
+              onDoneBtnClick={ toggleTutorialHasRun }
+            >
+              <View style={[styles.slide,{ backgroundColor: Colors.skyBlueLight }]}>
+                <View><Image source={ Images.walkMarker }/></View>
+                <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
+                <View level={15}><Text style={styles.text}>Make the most</Text></View>
+                <View level={8}><Text style={styles.text}>of your travels</Text></View>
+              </View>
+              <View style={[styles.slide, { backgroundColor: Colors.greenLight }]}>
+                <View><Image source={ Images.travMarker }/></View>
+                <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
+                <View><Text style={styles.text}></Text></View>
+                <View level={5}><Text style={styles.text}>How far you can get</Text></View>
+                <View><Text style={styles.text}></Text></View>
+                <View level={25}><Text style={styles.text}>with the time you have</Text></View>
+              </View>
+              {/* <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
+                <View level={8}><Text style={styles.textTitle}>Third Slide</Text></View>
+                <View level={0}><Text style={styles.text}>Traveller is</Text></View>
+                <View level={-10}><Text style={styles.text}>still AWESOME!</Text></View>
+              </View> */}
+              {/* <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
+                <View level={5}><Text style={styles.textTitle}>Fourth Slide</Text></View>
+                <View level={10}><Text style={styles.text}>Oy m8</Text></View>
+                <View level={15}><Text style={styles.text}>Traveller is dope.</Text></View>
+              </View> */}
+            </AppIntro>
+          )
         }
 
       </View>
@@ -759,6 +807,7 @@ TravContainer.propTypes = {
   travelTimeName: PropTypes.string,
   toggleTutorialHasRun: PropTypes.func,
   tutorialHasRun: PropTypes.bool,
+  unitOfMeasurement: PropTypes.string,
 }
 
 const mapStateToProps = state => {
@@ -773,7 +822,8 @@ const mapStateToProps = state => {
     transportMode: state.map.transportMode,
     transportIcon: state.map.transportIcon,
     travelTimeName: state.map.travelTimeName,
-    tutorialHasRun: state.map.tutorialHasRun,
+    tutorialHasRun: state.map.tutorialHasRun === undefined ? true : state.map.tutorialHasRun,
+    unitOfMeasurement: state.map.unitOfMeasurement,
   }
 }
 
