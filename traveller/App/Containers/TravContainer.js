@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation, VibrationIOS, Image } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation,
+         VibrationIOS, Image, TouchableOpacity, Linking } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
@@ -66,10 +67,10 @@ let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
 const transportModeInfo = {
   // isochrone provider: [navitia,here,route360,graphhopper]
   // radius in meters
-  'walk'    : { provider: 'here',    radius: 15000, icon: 'md-walk'    },
-  'bike'    : { provider: 'navitia', radius: 25000, icon: 'md-bicycle' },
-  'car'     : { provider: 'here',    radius: 50000, icon: 'md-car'     },
-  'transit' : { provider: 'navitia', radius: 50000, icon: 'md-train'   },
+  'walk'    : { provider: 'here',    radius: 15000, icon: 'md-walk',    appleMaps: 'w', googleMaps: 'walking'   },
+  'bike'    : { provider: 'navitia', radius: 25000, icon: 'md-bicycle', appleMaps: 'w', googleMaps: 'bicycling' },
+  'car'     : { provider: 'here',    radius: 50000, icon: 'md-car',     appleMaps: 'd', googleMaps: 'driving'   },
+  'transit' : { provider: 'navitia', radius: 50000, icon: 'md-train',   appleMaps: 'r', googleMaps: 'transit'   },
 }
 
 const placesInfo = {
@@ -266,9 +267,21 @@ class TravContainer extends React.Component {
     this.setState({ networkActivityIndicatorVisible: loading ? true : false })
   }
 
-  calloutPress (location) {
+  calloutPress (location, event) {
+    //console.log('calloutPress', location)
+    if (location.url.match(/apple/) && event) { return }
     if (debug) console.tron.display({ name: 'calloutPress location', value: location })
-    //console.log('PRESSED')
+    if (location.url) {
+      const testUrl = location.url.replace(/^(comgooglemaps:\/\/).*/, '$1')
+      Linking.canOpenURL(testUrl).then(supported => {
+        if (!supported) {
+          if (debug) console.tron.display('Cannot handle url: ' + location.url)
+        } else {
+          return Linking.openURL(location.url)
+        }
+      })
+      .catch(err => console.error('An error occurred', err))
+    }
   }
 
   // searchTogglePressed () {
@@ -282,14 +295,27 @@ class TravContainer extends React.Component {
   // }
 
   renderMapMarkers (place, index, type, keyTag) {
+    const { unitOfMeasurement, mapBrand, transportMode } = this.props
     let location = {}
     let pinColor = 'rgba(21, 107, 254, 1)'
     if (!type) {
       location = place
     } else {
-      location.title = `${place.name} - ${place.time}`
+      const distance = unitOfMeasurement === 'Miles' ? place['distance'] : (Math.round(place['metric distance'] / 100) / 10 ) + ' km'
+      const name = place.name.replace(/^([^,]*),.*$/, '$1')
+      location.title = name
+      location.subtitle = `${place.time} - ${distance}`
       location.latitude = place.location.lat
       location.longitude = place.location.lng
+      location.url = (mapBrand === 'Google Maps' ?
+                       'comgooglemaps://?q=' + place.name
+                       + '&directionsmode=' + transportModeInfo[transportMode].googleMaps
+                       + '&center=' :
+                       'http://maps.apple.com/?q=' + place.name
+                       + '&dirflg=' + transportModeInfo[transportMode].appleMaps
+                       + '&ll='
+                     )
+                     + `${location.latitude},${location.longitude}`
       if (place.polygonIndex === undefined) {
         return undefined // skip places which do not have a polygon index
       }
@@ -303,7 +329,7 @@ class TravContainer extends React.Component {
       <MapView.Marker
         pinColor={pinColor}
         draggable={ type || index !== 0 ? false : true} // Not friendly with MapView long-press refresh
-        key={`${location.title}-${index}${keyTag}`}
+        key={`${location.title}-${index}${keyTag}-${unitOfMeasurement}`}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
         onDragEnd={ type || index !== 0 ? undefined : e => {
           let newRegion = this.state.region
@@ -551,7 +577,7 @@ class TravContainer extends React.Component {
                   let buttonEnabled = index === 0 ? false : (this.state.polygonsFillColor[index - 1] === 1 ? false : true)
                   return (
                     <ActionButton.Item
-                      size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
+                      size={ 44 }
                       buttonColor={ index === 0 ? '#006631' : isochronFillColor(index / this.state.durations.length, null, true) }
                       btnOutRange='#004B24'
                       onPress={() => this.polygonsFillColorUpdate.call(this, index)}
@@ -748,6 +774,7 @@ TravContainer.propTypes = {
   transportIcon: PropTypes.string,
   setTransportMode: PropTypes.func,
   travelTimeName: PropTypes.string,
+  unitOfMeasurement: PropTypes.string,
 }
 
 const mapStateToProps = state => {
@@ -762,6 +789,7 @@ const mapStateToProps = state => {
     transportMode: state.map.transportMode,
     transportIcon: state.map.transportIcon,
     travelTimeName: state.map.travelTimeName,
+    unitOfMeasurement: state.map.unitOfMeasurement,
   }
 }
 
