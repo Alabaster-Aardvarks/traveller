@@ -25,8 +25,8 @@ export default Creators
 const transportIconList = {
   'walk'    : 'md-walk',
   'bike'    : 'md-bicycle',
-  'car'     : 'md-car',
-  'transit' : 'md-train',
+  'car'     : 'car',
+  'transit' : 'bus',
 }
 
 export const INITIAL_STATE = Immutable({

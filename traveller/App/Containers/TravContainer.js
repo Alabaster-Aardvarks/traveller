@@ -69,8 +69,8 @@ const transportModeInfo = {
   // radius in meters
   'walk'    : { provider: 'here',    radius: 15000, icon: 'md-walk'    },
   'bike'    : { provider: 'navitia', radius: 25000, icon: 'md-bicycle' },
-  'car'     : { provider: 'here',    radius: 50000, icon: 'md-car'     },
-  'transit' : { provider: 'navitia', radius: 50000, icon: 'md-train'   },
+  'car'     : { provider: 'here',    radius: 50000, icon: 'car'     },
+  'transit' : { provider: 'navitia', radius: 50000, icon: 'bus'   },
 }
 
 const placesInfo = {
@@ -596,7 +596,7 @@ class TravContainer extends React.Component {
               key='transport-mode'
               buttonColor={ Colors.skyBlueLight }
               btnOutRange={ Colors.skyBlueDark }
-              icon={<Ionicons name={ transportIcon } style={ styles.actionButton } />}
+              icon={ (transportIcon === 'md-walk' || transportIcon === 'md-bicycle') ? <Ionicons name={ transportIcon } style={ styles.actionModeButton } /> : <Icon name={ transportIcon } style={ styles.actionButton } /> }
               spacing={ 10 }
               degrees={ 0 }
               position='right'
@@ -615,7 +615,8 @@ class TravContainer extends React.Component {
                       this.updateLocationIsochrons(false, 'current', true, true)
                     } }
                   >
-                    <Ionicons name={ transportModeInfo[transportMode].icon } style={styles.actionModeButton}/>
+                    { (transportModeInfo[transportMode].icon === 'md-walk' || transportModeInfo[transportMode].icon === 'md-bicycle') ? <Ionicons name={ transportModeInfo[transportMode].icon } style={ styles.actionModeButton } /> : <Icon name={ transportModeInfo[transportMode].icon } style={ styles.actionButton } /> }
+                    {/* <Ionicons name={ transportModeInfo[transportMode].icon } style={styles.actionModeButton}/> */}
                   </ActionButton.Item>
                 )
               }
