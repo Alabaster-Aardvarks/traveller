@@ -28,7 +28,7 @@ class MapSelectScreen extends React.Component {
                 title={mapName}
                 key={index}
                 onPress={() => setMapBrand(mapName)}
-                arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapBrand === mapName) ? "#0079fe" : "rgba(255,255,255,0)"} /> ) }
+                arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapBrand === mapName) ? Colors.skyBlueLight : "rgba(255,255,255,0)"} /> ) }
               />
             )}
             <SettingsList.Header headerText='Tiles' headerStyle={{color:'#68676d', marginTop:50}}/>
@@ -44,7 +44,7 @@ class MapSelectScreen extends React.Component {
                 title={tileName}
                 key={index}
                 onPress={() => setMapTile(tileName)}
-                arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapTileName === tileName) ? "#0079fe" : "rgba(255,255,255,0)"} /> ) }
+                arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapTileName === tileName) ? Colors.skyBlueLight : "rgba(255,255,255,0)"} /> ) }
               />
             ) : undefined}
           </SettingsList>

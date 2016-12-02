@@ -65,6 +65,7 @@ class SettingsScreen extends React.Component {
                 <SettingsList.Header headerStyle={{marginTop:50}}/>
                 <SettingsList.Item hasNavArrow={ false }
                   title='Run Tutorial'
+                  titleStyle={ { color: Colors.skyBlueLight} }
                   onPress={ () => {
                      toggleTutorialHasRun()
                      alert('Tutorial will run when you leave settings')
