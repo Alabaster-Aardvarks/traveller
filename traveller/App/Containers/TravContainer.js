@@ -16,7 +16,7 @@ import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
          terminateIsochronWorker, isochronFillColor, getIsochronDurations,
-         ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR } from './isochron'
+         ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR, ISOCHRON_ABORT } from './isochron'
 import { loadPlaces, savedPlaces, convertDayHourMinToSeconds, setUpdatePlacesStateFn,
          PLACES_NOT_LOADED, PLACES_LOADING, PLACES_LOADED, PLACES_INDEXED } from './places'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
@@ -28,18 +28,20 @@ const DATETIME_PRECISION = 60 // seconds
 const roundCoordinate = coord => {
   return ( Math.round( Math.abs(coord) / COORDINATE_PRECISION ) * COORDINATE_PRECISION ) * Math.sign(coord)
 }
+const getDateTime = dateTime => {
+  let date = (dateTime === 'now') ? new Date() : new Date(dateTime)
+  return date.toISOString()
+}
 const roundDateTime = dateTime => {
   let date = (dateTime === 'now') ? new Date() : new Date(dateTime)
   // getTime() gives us milliseconds
   date.setTime( Math.round( date.getTime() / (DATETIME_PRECISION * 1000) ) * (1000 * DATETIME_PRECISION) )
   return date.toISOString()
 }
-const DATETIME = roundDateTime('now') // '2016-11-09T18:49:27.000Z'
+const DATETIME = getDateTime('now') // '2016-11-09T18:49:27.000Z'
 const LATITUDE_DELTA = roundCoordinate(0.1)
 const DURATIONS = [ 0, 600, 1200, 1800, 2400, 3000, 3600 ] // equitemporal intervals in seconds
 const DOWNSAMPLING_COORDINATES = { 'navitia': 5, 'here': 0, 'graphhopper': 5, 'route360': 5 } // keep 1 point out of every N
-const FROM_TO_MODE = 'from' // [from,to]
-const TRANSPORT_MODE = 'car' // [car,bike,walk,transit]
 const TRAFFIC_MODE = 'enabled' // [enabled,disabled] HERE API only, enable always
 
 const { width, height } = Dimensions.get('window');
@@ -52,7 +54,9 @@ const workPlace = {description: 'Work', geometry: { location: { lat: 37.783697, 
 
 let savedMapBrand = null
 let savedDuration = null
+let savedFromTo = null
 let onRegionChangeCompleteCounter = 0
+let refreshMomentInterval = null
 
 // temporary position until we get the current location
 let currentPosition = { latitude: 37.7825177, longitude: -122.4106772 }
@@ -98,9 +102,9 @@ class TravContainer extends React.Component {
       polygonsFillColor: [...Array(durations.length - 1)].map(() => 1),
       placesState: PLACES_NOT_LOADED,
       dateTime: DATETIME,
+      refreshMoment: moment(DATETIME).fromNow(),
       durations: durations,
       downSamplingCoordinates: DOWNSAMPLING_COORDINATES,
-      fromTo: FROM_TO_MODE,
       networkActivityIndicatorVisible: false,
       spinnerVisible: true,
       placesInfo: placesInfo,
@@ -108,6 +112,7 @@ class TravContainer extends React.Component {
       centerButtonVisible: false,
       centerButtonMask: true,
       uiElementsVisible: false,
+      refreshEnabled: false,
     }
   }
 
@@ -119,9 +124,13 @@ class TravContainer extends React.Component {
   }
 
   componentDidUpdate() {
-    const { duration } = this.props
-    if (savedDuration && duration !== savedDuration) {
+    const { duration, travelTimeName } = this.props
+    //console.log('componentDidUpdate', this.state.refreshEnabled, this.state.refreshMoment)
+    if ((savedDuration && duration !== savedDuration) || (savedFromTo && travelTimeName !== savedFromTo)) {
+      // NOTE: savedDuration and savedFromTo are updated inside updateLocationIsochrons, but they need to be updated here
+      //       to avoid infinite loops when getting subsequent componentDidUpdate calls
       savedDuration = duration
+      savedFromTo = travelTimeName
       // reload isochrones when duration changes, no animate to region, no position change, isochrones reload, update date to now
       this.updateLocationIsochrons(false, 'current', true, true)
       this.polygonsFillColorUpdate()
@@ -137,7 +146,7 @@ class TravContainer extends React.Component {
   updateLocationIsochrons (animateToRegion, newPosition, isochronsUpdate, dateUpdate) {
     let dateTime = this.state.dateTime
     if (dateUpdate) {
-      dateTime = roundDateTime('now')
+      dateTime = getDateTime('now')
       this.setState({ dateTime })
     }
     if (newPosition === 'current') {
@@ -164,9 +173,10 @@ class TravContainer extends React.Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       }
-      const { duration } = this.props
+      const { duration, travelTimeName } = this.props
       const durations = getIsochronDurations(duration)
       savedDuration = duration // update saved duration
+      savedFromTo = travelTimeName // updated saved fromTo
       if (isochronsUpdate) {
         const initialPosition = JSON.stringify(position)
         this.setState({ initialPosition })
@@ -184,14 +194,14 @@ class TravContainer extends React.Component {
         const isochronProvider = transportModeInfo[transportMode].provider
         const p = getPosition(locations[0])
         const params = {
-          provider: isochronProvider,
+          provider: isochronProvider || 'here', // default to 'here' if not provided
           latitude: p.coords.latitude,
           longitude: p.coords.longitude,
           durations: durations,
-          dateTime: dateTime,
+          dateTime: roundDateTime(dateTime),
           downSamplingCoordinates: this.state.downSamplingCoordinates[isochronProvider],
-          fromTo: travelTimeName,
-          transportMode: transportMode,
+          fromTo: travelTimeName || 'from', // default to 'from' if not provided
+          transportMode: transportMode || 'walk', // default to 'walk' if not provided
           trafficMode: TRAFFIC_MODE,
           skip: skipIsochrons,
         }
@@ -227,7 +237,10 @@ class TravContainer extends React.Component {
     this.updateNetworkActivityIndicator(state === ISOCHRON_LOADING)
     if (state === ISOCHRON_ERROR) {
       this.setState({ spinnerVisible: false })
-      alert('Could not generate isochrons for this location.')
+      alert('Could not load isochrones for this location')
+    } else if (state === ISOCHRON_ABORT) {
+        this.setState({ spinnerVisible: false })
+        alert('Loading isochrones for this location timed out')
     } else if (state === ISOCHRON_LOADED) {
       this.updatePlaces() // update places
       // delay the removal of the spinner overlay to give time for the isochrons to appear
@@ -360,7 +373,7 @@ class TravContainer extends React.Component {
     //console.log('render')
     const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName,
             transportIcon, setTransportMode, transportMode } = this.props
-    const { polygonsState, placesState, placesInfo } = this.state
+    const { polygonsState, placesState, placesInfo, refreshMoment, refreshEnabled } = this.state
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
     // places indexed
@@ -373,7 +386,8 @@ class TravContainer extends React.Component {
         <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
-          provider={mapBrand === 'Google Maps' ? MapView.PROVIDER_GOOGLE : MapView.PROVIDER_DEFAULT}
+          key={ `${mapBrand}-${mapStyle}` + (mapTile ? `-${mapTileName}` : '') }
+          provider={ mapBrand === 'Google Maps' ? MapView.PROVIDER_GOOGLE : MapView.PROVIDER_DEFAULT }
           showsTraffic={ traffic }
           style={ styles.map }
           initialRegion={ this.state.region }
@@ -399,14 +413,6 @@ class TravContainer extends React.Component {
             : undefined
           }
 
-          {/* Places Markers */}
-          { Object.keys(placesInfo).map(type => {
-              return (!placesReady || !placesInfo[type].visible || !savedPlaces[type] || savedPlaces[type].length === 0) ?
-                undefined :
-                savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type, placesKeyTag))
-            })
-          }
-
           {/* Isochrones */}
           { polygonsCount === 0 ? undefined : savedPolygons.map((pArray, arrayIndex) => {
               return (pArray.length === 0) ? undefined : pArray.map((p, index) => {
@@ -424,8 +430,16 @@ class TravContainer extends React.Component {
             })
           }
 
+          {/* Places Markers */}
+          { Object.keys(placesInfo).map(type => {
+              return (!placesReady || !placesInfo[type].visible || !savedPlaces[type] || savedPlaces[type].length === 0) ?
+                undefined :
+                savedPlaces[type].map((place, index) => this.renderMapMarkers.call(this, place, index, type, placesKeyTag))
+            })
+          }
+
           {/* Isochrone Center Marker */}
-          { this.state.locations.map((location, index) => this.renderMapMarkers.call(this, location, index)) }
+          { this.state.locations.map((location, index) => this.renderMapMarkers.call(this, location, index, undefined, placesKeyTag)) }
         </MapView>
 
         { this.state.sliderVisible && (
@@ -450,20 +464,45 @@ class TravContainer extends React.Component {
               spacing={ 10 }
               outRangeScale={ 1.2 }
               backdrop={ 1 ? false : <BlurView blurType='dark' blurAmount={1} style={styles.container}></BlurView> }
+              onPress={ () => {
+                const enabled = ((polygonsCount !== 0) && (new Date().getTime() - new Date(this.state.dateTime).getTime()) < (1000 * 45)) ? false : true
+                let m = moment(this.state.dateTime).fromNow()
+                if (m !== refreshMoment || enabled != refreshEnabled) {
+                  this.setState({ refreshMoment: m, refreshEnabled: enabled })
+                }
+                const context = this
+                //console.log('clear refreshMomentInterval')
+                refreshMomentInterval && clearInterval(refreshMomentInterval)
+                //console.log('start refreshMomentInterval')
+                refreshMomentInterval = setInterval(() => {
+                  const enabled = ((polygonsCount !== 0) && (new Date().getTime() - new Date(context.state.dateTime).getTime()) < (1000 * 45)) ? false : true
+                  let m = moment(this.state.dateTime).fromNow()
+                  if (m !== refreshMoment || enabled != refreshEnabled) {
+                    context.setState({ refreshMoment: m, refreshEnabled: enabled })
+                  }},
+                  30000
+                )
+              } }
+              onReset={ () => {
+                //console.log('clear refreshMomentInterval')
+                refreshMomentInterval && clearInterval(refreshMomentInterval)
+                refreshMomentInterval = null
+              } }
             >
               { Object.keys(placesInfo).concat([ 'refresh' ]).map(type => {
                   if (type === 'refresh') {
-                    // if (roundDateTime('now') === this.state.dateTime) {
-                    //   return undefined
-                    // }
+                    //console.log('refresh', refreshEnabled)
                     // animate to region, no position change, isochrones reload, update date to now
                     return (
                       <ActionButton.Item
-                        key='search-refresh'
-                        buttonColor='#1abc9c'
-                        title={ `refreshed ${ moment(this.state.dateTime).fromNow() }` }
+                        key={ `search-refresh-${refreshEnabled}-${refreshMoment}` }
+                        buttonColor={ `rgba(26, 188, 156, ${ refreshEnabled ? 1 : 0.2 })` }
+                        title={ `refreshed ${refreshMoment}` }
+                        titleColor={ refreshEnabled ? '#444' : '#888' }
                         size={ 44 }
-                        onPress={ () => { // give time for the button to close
+                        onPress={ () => {
+                          if (!refreshEnabled) { return }
+                          // give time for the button to close
                           const context = this
                           setTimeout(() => context.updateLocationIsochrons.call(this, true, 'current', true, true), 150)
                         } }
