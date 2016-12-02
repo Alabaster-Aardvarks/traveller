@@ -14,13 +14,14 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
+import Images from '../Themes/Images'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
          terminateIsochronWorker, isochronFillColor, getIsochronDurations,
          ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR, ISOCHRON_ABORT } from './isochron'
 import { loadPlaces, savedPlaces, convertDayHourMinToSeconds, setUpdatePlacesStateFn,
          PLACES_NOT_LOADED, PLACES_LOADING, PLACES_LOADED, PLACES_INDEXED } from './places'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
-import { Overlay } from 'react-native-overlay'
+import AppIntro from 'react-native-app-intro'
 
 const debug = false // set to true to enable log messages for debug
 
@@ -381,6 +382,25 @@ class TravContainer extends React.Component {
     const placesReady = placesState === PLACES_INDEXED
     // make sure we re-render when all places have been indexed
     const placesKeyTag = placesState === PLACES_INDEXED ? '-indexed' : undefined
+    // Tutorial Screen Content
+    const tutorialContent = [
+      {
+        title: 'Traveller',
+        description: 'Make the best of your travels.',
+        img: Images.travMarker,
+        backgroundColor: '#2F81B8',
+        fontColor: '#fff',
+        level: 10,
+      },
+      {
+        title: 'What are Isochrones?',
+        description: 'They are dope.',
+        img: 'http://i.imgur.com/TZW5xjL.png',
+        backgroundColor: '#2F81B8',
+        fontColor: '#fff',
+        level: 10,
+      },
+    ]
 
     return (
       <View style={styles.container}>
@@ -698,9 +718,35 @@ class TravContainer extends React.Component {
         }
 
         {/* Tutorial Overlay */}
-        <View style={styles.tutorialContainer} key={3}>
-          <Text>Sample Text</Text>
+        {/* <View style={styles.tutorialContainer} key={3}> // Full-screen blur
+          <BlurView blurType="dark" blurAmount={5} style={styles.tutorialContainer} >
+          </BlurView>
+        </View> */}
+
+        {/* <AppIntro>
+        <View style={[styles.slide,{ backgroundColor: '#2F81B8' }]}>
+          <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
+          <View level={15}><Text style={styles.text}>Make the best</Text></View>
+          <View level={8}><Text style={styles.text}>of your travels.</Text></View>
         </View>
+        <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
+          <View level={-10}><Text style={styles.textTitle}>Second Slide</Text></View>
+          <View level={5}><Text style={styles.text}>Traveller is</Text></View>
+          <View level={20}><Text style={styles.text}>AWESOME</Text></View>
+        </View>
+        <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
+          <View level={8}><Text style={styles.textTitle}>Third Slide</Text></View>
+          <View level={0}><Text style={styles.text}>Traveller is</Text></View>
+          <View level={-10}><Text style={styles.text}>still AWESOME!</Text></View>
+        </View>
+        <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
+          <View level={5}><Text style={styles.textTitle}>Fourth Slide</Text></View>
+          <View level={10}><Text style={styles.text}>Oy m8</Text></View>
+          <View level={15}><Text style={styles.text}>Traveller is dope.</Text></View>
+        </View>
+      </AppIntro> */}
+
+      <AppIntro pageArray={tutorialContent} />
 
       </View>
     )

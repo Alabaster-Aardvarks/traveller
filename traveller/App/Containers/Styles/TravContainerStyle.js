@@ -64,4 +64,21 @@ export default StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
+  slide: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#9DD6EB',
+    padding: 15,
+  },
+  textTitle: {
+    color: '#fff',
+    fontSize: 50,
+    fontWeight: 'bold',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
 })
