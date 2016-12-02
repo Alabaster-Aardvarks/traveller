@@ -14,7 +14,8 @@ const { Types, Creators } = createActions({
   setUnitOfMeasurement: ['unitOfMeasurement'],
   setMapTile: ['mapTileName'],
   setTransportMode: ['transportMode'],
-  toggleTravelTime: null
+  toggleTravelTime: null,
+  toggleTutorialHasRun: null,
 })
 
 export const MapTypes = Types
@@ -41,7 +42,8 @@ export const INITIAL_STATE = Immutable({
   transportMode: 'walk',
   travelTime: false,
   travelTimeName: 'from',
-  transportIcon: transportIconList['walk']
+  transportIcon: transportIconList['walk'],
+  tutorialHasRun: false,
 })
 
 /* ------------- Reducers ------------- */
@@ -106,6 +108,14 @@ export const toggleTravelTime = (state: Object) => {
   }
 }
 
+export const toggleTutorialHasRun = (state: Object) => {
+  if (state.tutorialHasRun === false) {
+    return state.merge({ tutorialHasRun: true })
+  } else {
+    return state.merge({ tutorialHasRun: false })
+  }
+}
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
@@ -117,5 +127,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_UNIT_OF_MEASUREMENT]: setUnitOfMeasurement,
   [Types.SET_MAP_TILE]: setMapTile,
   [Types.SET_TRANSPORT_MODE]: setTransportMode,
-  [Types.TOGGLE_TRAVEL_TIME]: toggleTravelTime
+  [Types.TOGGLE_TRAVEL_TIME]: toggleTravelTime,
+  [Types.TOGGLE_TUTORIAL_HAS_RUN]: toggleTutorialHasRun
 })

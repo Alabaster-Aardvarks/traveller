@@ -14,8 +14,7 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
-import Images from '../Themes/Images'
-import Colors from '../Themes/Colors'
+import { Images , Colors } from '../Themes'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
          terminateIsochronWorker, isochronFillColor, getIsochronDurations,
          ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR, ISOCHRON_ABORT } from './isochron'
@@ -378,7 +377,7 @@ class TravContainer extends React.Component {
   render () {
     //console.log('render')
     const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName,
-            transportIcon, setTransportMode, transportMode } = this.props
+            transportIcon, setTransportMode, transportMode, tutorialHasRun, toggleTutorialHasRun } = this.props
     const { polygonsState, placesState, placesInfo, refreshMoment, refreshEnabled } = this.state
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
@@ -754,6 +753,8 @@ TravContainer.propTypes = {
   transportIcon: PropTypes.string,
   setTransportMode: PropTypes.func,
   travelTimeName: PropTypes.string,
+  toggleTutorialHasRun: PropTypes.func,
+  tutorialHasRun: PropTypes.bool,
 }
 
 const mapStateToProps = state => {
@@ -768,11 +769,13 @@ const mapStateToProps = state => {
     transportMode: state.map.transportMode,
     transportIcon: state.map.transportIcon,
     travelTimeName: state.map.travelTimeName,
+    tutorialHasRun: state.map.tutorialHasRun,
   }
 }
 
 const mapDispatchToProps = dispatch => { return {
-  setTransportMode: transportModeName => dispatch(MapActions.setTransportMode(transportModeName))
+  setTransportMode: transportModeName => dispatch(MapActions.setTransportMode(transportModeName)),
+  toggleTutorialHasRun: () => dispatch(MapActions.toggleTutorialHasRun())
 } }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TravContainer)
