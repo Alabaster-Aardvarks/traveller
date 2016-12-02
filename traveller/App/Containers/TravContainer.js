@@ -713,31 +713,32 @@ class TravContainer extends React.Component {
           doneBtnLabel="Go!"
           onDoneBtnClick={ toggleTutorialHasRun }
           >
-        <View style={[styles.slide,{ backgroundColor: Colors.skyBlueLight }]}>
-          <View><Image source={ Images.walkMarker }/></View>
-          <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
-          <View level={15}><Text style={styles.text}>Make the most</Text></View>
-          <View level={8}><Text style={styles.text}>of your travels</Text></View>
-        </View>
-        <View style={[styles.slide, { backgroundColor: Colors.greenLight }]}>
-          <View><Image source={ Images.travMarker }/></View>
-          <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
-          <View><Text style={styles.text}></Text></View>
-          <View level={5}><Text style={styles.text}>How far you can get</Text></View>
-          <View><Text style={styles.text}></Text></View>
-          <View level={25}><Text style={styles.text}>with the time you have</Text></View>
-        </View>
-        {/* <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
-          <View level={8}><Text style={styles.textTitle}>Third Slide</Text></View>
-          <View level={0}><Text style={styles.text}>Traveller is</Text></View>
-          <View level={-10}><Text style={styles.text}>still AWESOME!</Text></View>
-        </View> */}
-        {/* <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
-          <View level={5}><Text style={styles.textTitle}>Fourth Slide</Text></View>
-          <View level={10}><Text style={styles.text}>Oy m8</Text></View>
-          <View level={15}><Text style={styles.text}>Traveller is dope.</Text></View>
-        </View> */}
-      </AppIntro>) }
+            <View style={[styles.slide,{ backgroundColor: Colors.skyBlueLight }]}>
+              <View><Image source={ Images.walkMarker }/></View>
+              <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
+              <View level={15}><Text style={styles.text}>Make the most</Text></View>
+              <View level={8}><Text style={styles.text}>of your travels</Text></View>
+            </View>
+            <View style={[styles.slide, { backgroundColor: Colors.greenLight }]}>
+              <View><Image source={ Images.travMarker }/></View>
+              <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
+              <View><Text style={styles.text}></Text></View>
+              <View level={5}><Text style={styles.text}>How far you can get</Text></View>
+              <View><Text style={styles.text}></Text></View>
+              <View level={25}><Text style={styles.text}>with the time you have</Text></View>
+            </View>
+            {/* <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
+              <View level={8}><Text style={styles.textTitle}>Third Slide</Text></View>
+              <View level={0}><Text style={styles.text}>Traveller is</Text></View>
+              <View level={-10}><Text style={styles.text}>still AWESOME!</Text></View>
+            </View> */}
+            {/* <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
+              <View level={5}><Text style={styles.textTitle}>Fourth Slide</Text></View>
+              <View level={10}><Text style={styles.text}>Oy m8</Text></View>
+              <View level={15}><Text style={styles.text}>Traveller is dope.</Text></View>
+            </View> */}
+          </AppIntro>)
+        }
 
       </View>
     )

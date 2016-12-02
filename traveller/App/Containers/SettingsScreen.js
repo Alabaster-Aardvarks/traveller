@@ -26,7 +26,7 @@ class SettingsScreen extends React.Component {
   }
 
   render () {
-    const { capitalizeFirstLetter, mapBrand, mapStyle, traffic, toggleTraffic, duration, unitOfMeasurement, transportMode, travelTime, travelTimeName, toggleTravelTime } = this.props
+    const { capitalizeFirstLetter, mapBrand, mapStyle, traffic, toggleTraffic, duration, unitOfMeasurement, transportMode, travelTime, travelTimeName, toggleTravelTime, toggleTutorialHasRun } = this.props
 
     return (
       <View style={styles.mainContainer}>
@@ -63,7 +63,14 @@ class SettingsScreen extends React.Component {
                   title={ 'Travel time ' + travelTimeName }
                 />
                 <SettingsList.Header headerStyle={{marginTop:50}}/>
-                <SettingsList.Item title='About' onPress={() => NavigationActions.deviceInfo()} />
+                <SettingsList.Item hasNavArrow={ false }
+                  title='Run Tutorial'
+                  onPress={ () => {
+                     toggleTutorialHasRun()
+                     alert('Tutorial will run when you leave settings')
+                   } }
+                />
+                <SettingsList.Item title='About' onPress={ () => NavigationActions.deviceInfo() } />
               </SettingsList>
             </View>
           </View>
@@ -83,7 +90,8 @@ SettingsScreen.propTypes = {
   transportMode: PropTypes.string,
   travelTime: PropTypes.bool,
   travelTimeName: PropTypes.string,
-  toggleTravelTime: PropTypes.func
+  toggleTravelTime: PropTypes.func,
+  toggleTutorialHasRun: PropTypes.func,
 }
 
 const mapStateToProps = state => {
@@ -103,7 +111,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     toggleTraffic: () => dispatch(MapActions.toggleTraffic()),
-    toggleTravelTime: () => dispatch(MapActions.toggleTravelTime())
+    toggleTravelTime: () => dispatch(MapActions.toggleTravelTime()),
+    toggleTutorialHasRun: () => dispatch(MapActions.toggleTutorialHasRun()),
   }
 }
 
