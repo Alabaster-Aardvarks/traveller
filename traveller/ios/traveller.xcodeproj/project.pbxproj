@@ -480,11 +480,7 @@
 				525D325FD1624FF58EC2F13D /* libRNVectorIcons.a in Frameworks */,
 				A35099DA714446759FFC0A47 /* libRNSpinkit.a in Frameworks */,
 				92A0A8381A804DBE8B5BF12E /* libWorkers.a in Frameworks */,
-<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
 				34507BC723A34A4EAF1C2602 /* libRNBlur.a in Frameworks */,
-=======
-				1CD8E4701E8A4F8DA124EEE4 /* libRNBlur.a in Frameworks */,
->>>>>>> Add sizes of map pins
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -674,11 +670,7 @@
 				85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */,
 				E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */,
 				0BD16B5FBF3548B9B8BA3F39 /* Workers.xcodeproj */,
-<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
 				4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */,
-=======
-				DFB4174031544DFC8D575205 /* RNBlur.xcodeproj */,
->>>>>>> Add sizes of map pins
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -988,13 +980,8 @@
 					ProjectRef = 91C6B186D0CD45F4BE96BCAA /* ReactNativeConfig.xcodeproj */;
 				},
 				{
-<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
 					ProductGroup = E76E02BC1DF0B5360010663D /* Products */;
 					ProjectRef = 4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */;
-=======
-					ProductGroup = 36EFBE5E1DF0B50A000C6244 /* Products */;
-					ProjectRef = DFB4174031544DFC8D575205 /* RNBlur.xcodeproj */;
->>>>>>> Add sizes of map pins
 				},
 				{
 					ProductGroup = CAAB21071DD6FEBA008F7E60 /* Products */;
@@ -1480,10 +1467,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
-=======
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
->>>>>>> Add sizes of map pins
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1503,10 +1486,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-<<<<<<< 0a53f11c99bbb7025fb49cc5436a4f18cd99a748
-=======
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
->>>>>>> Add sizes of map pins
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1524,11 +1503,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-<<<<<<< HEAD
 				DEVELOPMENT_TEAM = TYXC29FT67;
-=======
-				DEVELOPMENT_TEAM = 5B5SX74NB8;
->>>>>>> b10dff756723f0eeca4e0c39ca0d84857a709bc8
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1572,11 +1547,7 @@
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-<<<<<<< HEAD
 				DEVELOPMENT_TEAM = TYXC29FT67;
-=======
-				DEVELOPMENT_TEAM = 5B5SX74NB8;
->>>>>>> b10dff756723f0eeca4e0c39ca0d84857a709bc8
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,

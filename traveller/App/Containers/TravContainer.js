@@ -74,11 +74,11 @@ const transportModeInfo = {
 
 const placesInfo = {
   // size: how many places are requested (fewer or equal to 200)
-  'park'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.greenLight, buttonTitle: 'Parks',   icon: 'tree', image: Images.park},
-  'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.watermelonLight, buttonTitle: 'Transit', icon: 'bus', image: Images.transit},
-  'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.redLight, buttonTitle: 'Medical', icon: 'ambulance', image: Images.medical},
   'food'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.purpleLight, buttonTitle: 'Food', icon: 'cutlery', image: Images.food},
+  'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.watermelonLight, buttonTitle: 'Medical', icon: 'ambulance', image: Images.medical},
   'museums'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.yellowLight, buttonTitle: 'Museums', icon: 'bank', image: Images.museums},
+  'park'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.greenLight, buttonTitle: 'Parks',   icon: 'tree', image: Images.park},
+  'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.orangeLight, buttonTitle: 'Transit', icon: 'bus', image: Images.transit},
 }
 
 const getPosition = l => {
@@ -464,8 +464,8 @@ class TravContainer extends React.Component {
         { !this.state.uiElementsVisible && (
             <ActionButton
               key='search'
-              buttonColor={ Colors.orangeLight }
-              btnOutRange={ Colors.orangeDark }
+              buttonColor={ Colors.redLight }
+              btnOutRange={ Colors.redDark }
               degrees={ 0 }
               icon={<Icon name='search' style={styles.actionButton}></Icon>}
               spacing={ 10 }
