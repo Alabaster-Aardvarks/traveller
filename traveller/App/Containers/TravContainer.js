@@ -75,9 +75,11 @@ const transportModeInfo = {
 
 const placesInfo = {
   // size: how many places are requested (fewer or equal to 200)
-  'park'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.greenLight, buttonTitle: 'Parks',   icon: 'tree', image: Images.park3},
+  'park'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.greenLight, buttonTitle: 'Parks',   icon: 'tree', image: Images.park},
   'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.orangeLight, buttonTitle: 'Transit', icon: 'bus', image: Images.transit},
   'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.redLight, buttonTitle: 'Medical', icon: 'ambulance', image: Images.medical},
+  'food'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.purpleLight, buttonTitle: 'Food', icon: 'cutlery', image: Images.food},
+  'museums'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.yellowLight, buttonTitle: 'Museums', icon: 'bank', image: Images.museums},
 }
 
 const getPosition = l => {
@@ -283,7 +285,7 @@ class TravContainer extends React.Component {
 
   renderMapMarkers (place, index, type, keyTag) {
     let location = {}
-    let pinColor = 'rgba(21, 107, 254, 1)'
+    let pinImage = Images.main
     if (!type) {
       location = place
     } else {
@@ -296,13 +298,13 @@ class TravContainer extends React.Component {
       if (this.state.polygonsFillColor.indexOf(2) !== -1) {
         if (place.polygonIndex !== undefined && this.state.polygonsFillColor[place.polygonIndex] !== 2) { return undefined }
       }
-      pinColor = placesInfo[type].buttonColor
+      pinImage = placesInfo[type].image
     }
 
     return (
       <MapView.Marker
         // pinColor={pinColor}
-        image={Images.mainpin}
+        image={pinImage}
         draggable={ type || index !== 0 ? false : true} // Not friendly with MapView long-press refresh
         key={`${location.title}-${index}${keyTag}`}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
