@@ -12,7 +12,7 @@ const error = debug('navitiaController:error');
 let auth;
 
 const setKey = key => {
-  auth = base64.encode(key);
+  auth = 'Basic ' + base64.encode(key);
 };
 
 const getIso = (url) => {
