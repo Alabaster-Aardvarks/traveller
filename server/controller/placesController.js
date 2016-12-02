@@ -20,7 +20,11 @@ const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?&radiu
 const radar = 'https://maps.googleapis.com/maps/api/place/radarsearch/json?';
 const distance = 'https://maps.googleapis.com/maps/api/distancematrix/json?';
 
-const key = process.env.GOOGLE_KEY || GOOGLE_KEY;
+let key;
+
+const setKey = k => {
+  key = k;
+};
 
 //how to use google places nearby search *unused*
 const getData = (place, lat, long) => {
@@ -103,11 +107,10 @@ const getGoogleData = (req, res, keyword) => {
   mode = req.query.mode || 'transit';
   date = req.query.date || 'now';
   size = req.query.size || 200; 
-  let finalResults = [];
+  let radarResults = [];
   //grab ids from radar search    
   getRadarData(keyword, lat, long, radius)
   .then(data => {
-    console.log(data);
     if (!data.results.length) {
       console.error(`No google places data found for ${keyword}`);
       return;
@@ -122,14 +125,13 @@ const getGoogleData = (req, res, keyword) => {
       //     geometry:{ location:{lat: long:} }  *we grab location as our coordinates*
       //   } 
       //  ]
-      console.log(place);
-      finalResults.push({
+      radarResults.push({
         id: place.place_id,
         coordinates: place.geometry.location //should we call it location? what does the client want
       });
     }); 
-    finalResults = finalResults.splice(0, size);
-    return finalResults;
+    radarResults = radarResults.splice(0, size);
+    return radarResults;
   }) //take radar results and throttle them into distance matrix api
   .then(results => {  
     const divider = 25;
@@ -142,6 +144,7 @@ const getGoogleData = (req, res, keyword) => {
       })
     )
     .then(dataArray => {
+      let finalResults = [];
       // dataArray, each element of dataArray is one of the returned promises
       //  [ 
       //   { 
@@ -160,14 +163,45 @@ const getGoogleData = (req, res, keyword) => {
       //   } 
       //  ]
       let googleStuff = [].concat(...dataArray);
-      res.status(200).json(dataArray[0]);
+      let index = 0;
+      googleStuff.map((distanceResult, distanceResultIndex) => {
+        log('distance result ', distanceResult);
+        distanceResult.destination_addresses.map((destinationAddress, destinationAddressIndex) => {
+          log('destinationaddress ', destinationAddress);
+          const element = distanceResult.rows[0].elements[destinationAddressIndex];
+          log('element ', element);
+          if (element.status !== 'ZERO_RESULTS') {
+            finalResults.push({
+              'name': destinationAddress,
+              // 'time': distanceResult.rows[0].elements[destination_addressIndex].duration.text,
+              'time': element.duration.text,
+              'location': radarResults[index].coordinates,
+              'distance': element.distance.text,
+              'metric distance': element.distance.value
+            });
+            index++;
+          }
+        });
+      });
+      log(finalResults);
+      log(finalResults.length);
+      // client get an an array of the following place objects
+      // {
+      //   'name': *from destination_addresses 
+      //   'time': *duration.text
+      //   'location': *finalResults.coordinates
+      //   'distance': *distance.text
+      //   'metric distance': *distance.value
+      // } 
+      // distanceResultIndex 0 to 8 (max)
+      // chunkIndex 0 to 25 (max)
+      // index 0 to 199 (max)
+      res.status(200).json(finalResults);
     });
   })
-  .catch(error =>console.error(error));
+  .catch(error => res.status(500).json({error: 'server error, check request endpoint'}));
 };
 
 module.exports = {
-  getData, getRadarData, getDistanceData, getGoogleData, getDetailData
-};
-    
-   
+  getData, getRadarData, getDistanceData, getGoogleData, getDetailData, setKey
+}; 
