@@ -11,6 +11,10 @@ const log = debug('navitiaRouter:log');
 const info = debug('navitiaRouter:info');
 const error = debug('navitiaRouter:error');
 
+navitiaRouter.setKey = key => {
+  navitiaController.setKey(key);
+};
+
 navitiaRouter.get('*', (req, res) => {
   redis.getRedisIso(req.query.url)
   .then(result => {
@@ -18,7 +22,7 @@ navitiaRouter.get('*', (req, res) => {
       log('found in redis');
       res.status(200).json(JSON.parse(result));
     } else {
-      navitiaController.getIso(req.query.url, req.headers.authorization)
+      navitiaController.getIso(req.query.url)
       .then(data => {
         log('saving to redis');
         redis.setRedisIso(req.query.url, data);

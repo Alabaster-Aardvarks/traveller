@@ -119,6 +119,7 @@
 		DD2860D5DDB5428B845B8C34 /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9069028EDC374FD69076A619 /* Roboto.ttf */; };
 		EB5404D33E0843009F7E4EA9 /* SF-UI-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 09BFD0562694494DB1F317A2 /* SF-UI-Text-Regular.otf */; };
 		ECC798A507DE498D9D963272 /* Skia.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4936D877D1BA46828C0AF22D /* Skia.ttf */; };
+		31AF8FBF957E4FED971A3B4E /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D90D33B0D524B6B93F3C328 /* libRNBlur.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -437,6 +438,8 @@
 		E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSpinkit.xcodeproj; path = "../node_modules/react-native-spinkit/ios/RNSpinkit.xcodeproj"; sourceTree = "<group>"; };
 		EB599D84221ED8A541DA88D0 /* Pods_travellerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_travellerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBE1107756484A4A9D3720D7 /* Comic Sans MS.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Comic Sans MS.ttf"; path = "../node_modules/native-base/Fonts/Comic Sans MS.ttf"; sourceTree = "<group>"; };
+		E16D5AFD8B914E4ABA2771B6 /* RNBlur.xcodeproj */ = {isa = PBXFileReference; name = "RNBlur.xcodeproj"; path = "../node_modules/react-native-blur/ios/RNBlur.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		5D90D33B0D524B6B93F3C328 /* libRNBlur.a */ = {isa = PBXFileReference; name = "libRNBlur.a"; path = "libRNBlur.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -470,7 +473,7 @@
 				525D325FD1624FF58EC2F13D /* libRNVectorIcons.a in Frameworks */,
 				A35099DA714446759FFC0A47 /* libRNSpinkit.a in Frameworks */,
 				92A0A8381A804DBE8B5BF12E /* libWorkers.a in Frameworks */,
-				34507BC723A34A4EAF1C2602 /* libRNBlur.a in Frameworks */,
+				31AF8FBF957E4FED971A3B4E /* libRNBlur.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,7 +655,7 @@
 				85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */,
 				E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */,
 				0BD16B5FBF3548B9B8BA3F39 /* Workers.xcodeproj */,
-				4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */,
+				E16D5AFD8B914E4ABA2771B6 /* RNBlur.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1442,6 +1445,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1461,6 +1465,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
