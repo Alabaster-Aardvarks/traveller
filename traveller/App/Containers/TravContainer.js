@@ -629,6 +629,7 @@ class TravContainer extends React.Component {
               key='center-map'
               buttonColor={ Colors.whiteLight }
               icon={<Icon name='crosshairs' style={styles.actionButtonReverse}></Icon>}
+              style={{ borderWidth: 4, borderColor: Colors.skyBlueLight }}
               spacing={ 10 }
               position='center'
               offsetY={ 45 }

@@ -64,7 +64,6 @@ class SettingsScreen extends React.Component {
                 />
                 <SettingsList.Header headerStyle={{marginTop:50}}/>
                 <SettingsList.Item title='About' onPress={() => NavigationActions.deviceInfo()} />
-                <SettingsList.Header headerStyle={{marginTop:50}}/>
               </SettingsList>
             </View>
           </View>
