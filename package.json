@@ -23,6 +23,9 @@
   "homepage": "https://github.com/Alabaster-Aardvarks/Traveller#readme",
   "dependencies": {
     "axios": "^0.15.2",
+    "axios-retry": "^1.1.0",
+    "base-64": "^0.1.0",
+    "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
     "debug": "^2.3.3",
@@ -30,8 +33,7 @@
     "express": "^4.14.0",
     "ioredis": "^2.4.0",
     "qs": "^6.3.0",
-    "redis-server": "0.0.3",
-    "request": "^2.78.0"
+    "redis-server": "0.0.3"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
