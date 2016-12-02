@@ -75,9 +75,9 @@ const transportModeInfo = {
 
 const placesInfo = {
   // size: how many places are requested (fewer or equal to 200)
-  'bank'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.yellowLight, buttonTitle: 'Banks',   icon: 'university' },
-  'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.orangeLight, buttonTitle: 'Transit', icon: 'bus'        },
-  'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.redLight, buttonTitle: 'Medical', icon: 'ambulance'  },
+  'park'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.greenLight, buttonTitle: 'Parks',   icon: 'tree', image: Images.park3},
+  'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.orangeLight, buttonTitle: 'Transit', icon: 'bus', image: Images.transit},
+  'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.redLight, buttonTitle: 'Medical', icon: 'ambulance', image: Images.medical},
 }
 
 const getPosition = l => {
