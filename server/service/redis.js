@@ -19,7 +19,7 @@ const getRedisIso = (url) => {
   return redis.get(url)
   .then(result => {
     if (result === null) {
-      console.log('this place is not in the db, fall to navitia');
+      console.log('this place is not in the db, fall to iso provider');
       return result;
     } else {
       console.log('here is the cached result');
