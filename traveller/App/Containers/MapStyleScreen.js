@@ -29,7 +29,7 @@ class MapStyleScreen extends React.Component {
                   title={mapStyleName}
                   key={index}
                   onPress={() => setMapStyle(mapStyleName)}
-                  arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapStyle === mapStyleName) ? "#0079fe" : "rgba(255,255,255,0)"} /> ) }
+                  arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(mapStyle === mapStyleName) ? Colors.skyBlueLight : "rgba(255,255,255,0)"} /> ) }
                 />
               )}
           </SettingsList>

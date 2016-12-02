@@ -26,7 +26,7 @@ class MeasurementScreen extends React.Component {
                 title={unit}
                 key={index}
                 onPress={() => setUnitOfMeasurement(unit)}
-                arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(unitOfMeasurement === unit) ? "#0079fe" : "rgba(255,255,255,0)"} /> ) }
+                arrowIcon={ ( <Icon name="check" size={14} style={{ paddingRight: 20, paddingTop: 20 }} color={(unitOfMeasurement === unit) ? Colors.skyBlueLight : "rgba(255,255,255,0)"} /> ) }
               />
             )}
           </SettingsList>
