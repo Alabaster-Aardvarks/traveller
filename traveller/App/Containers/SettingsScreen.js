@@ -55,19 +55,12 @@ class SettingsScreen extends React.Component {
                 />
                 <SettingsList.Header headerText='Isochrones' headerStyle={{color:'#68676d', marginTop:50}}/>
                 <SettingsList.Item title='Max duration' titleInfo={duration.toString() + 'min'} titleInfoStyle={{color: '#828186'}} onPress={() => NavigationActions.maxDuration()} />
-                <SettingsList.Item title='Transport mode' titleInfo={ this.capitalizeFirstLetter(transportMode) } titleInfoStyle={{color: '#828186'}} onPress={() => NavigationActions.transportMode()} />
                 <SettingsList.Item
                   hasNavArrow={false}
                   switchState={ travelTime }
                   switchOnValueChange={ toggleTravelTime }
                   hasSwitch={ true }
                   title={ 'Travel time ' + travelTimeName }
-                />
-                <SettingsList.Item
-                  title='Clear map cache'
-                  hasNavArrow={false}
-                  titleStyle={{color: '#ff3b30'}}
-                  onPress={() => console.tron.log(this.props)}
                 />
                 <SettingsList.Header headerStyle={{marginTop:50}}/>
                 <SettingsList.Item title='About' onPress={() => NavigationActions.deviceInfo()} />
