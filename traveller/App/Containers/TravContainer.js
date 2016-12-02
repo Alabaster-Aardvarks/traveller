@@ -714,9 +714,9 @@ class TravContainer extends React.Component {
           <View><Image source={ Images.travMarker }/></View>
           <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
           <View><Text style={styles.text}></Text></View>
-          <View level={5}><Text style={styles.text}>How far you can get...</Text></View>
+          <View level={5}><Text style={styles.text}>How far you can get</Text></View>
           <View><Text style={styles.text}></Text></View>
-          <View level={25}><Text style={styles.text}>...with the time you have</Text></View>
+          <View level={25}><Text style={styles.text}>with the time you have</Text></View>
         </View>
         {/* <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
           <View level={8}><Text style={styles.textTitle}>Third Slide</Text></View>
