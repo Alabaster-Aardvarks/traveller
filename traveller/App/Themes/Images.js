@@ -8,6 +8,7 @@ const images = {
   logo: require('../Images/Logo.png'),
   checkmark: require('../Images/checkmark.png'),
   travMarker: require('../Images/trav-marker.png'),
+  walkMarker: require('../Images/walk-marker.png'),
 }
 
 export default images

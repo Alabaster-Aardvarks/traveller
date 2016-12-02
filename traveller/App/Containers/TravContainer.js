@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation, VibrationIOS } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation, VibrationIOS, Image } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
@@ -382,25 +382,6 @@ class TravContainer extends React.Component {
     const placesReady = placesState === PLACES_INDEXED
     // make sure we re-render when all places have been indexed
     const placesKeyTag = placesState === PLACES_INDEXED ? '-indexed' : undefined
-    // Tutorial Screen Content
-    const tutorialContent = [
-      {
-        title: 'Traveller',
-        description: 'Make the best of your travels.',
-        img: Images.travMarker,
-        backgroundColor: '#2F81B8',
-        fontColor: '#fff',
-        level: 10,
-      },
-      {
-        title: 'What are Isochrones?',
-        description: 'They are dope.',
-        img: 'http://i.imgur.com/TZW5xjL.png',
-        backgroundColor: '#2F81B8',
-        fontColor: '#fff',
-        level: 10,
-      },
-    ]
 
     return (
       <View style={styles.container}>
@@ -723,11 +704,12 @@ class TravContainer extends React.Component {
           </BlurView>
         </View> */}
 
-        {/* <AppIntro>
+        <AppIntro showSkipButton={ false }>
         <View style={[styles.slide,{ backgroundColor: '#2F81B8' }]}>
+          <View><Image source={ Images.walkMarker } /></View>
           <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
           <View level={15}><Text style={styles.text}>Make the best</Text></View>
-          <View level={8}><Text style={styles.text}>of your travels.</Text></View>
+          <View level={8}><Text style={styles.text}>of your travels</Text></View>
         </View>
         <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
           <View level={-10}><Text style={styles.textTitle}>Second Slide</Text></View>
@@ -744,9 +726,7 @@ class TravContainer extends React.Component {
           <View level={10}><Text style={styles.text}>Oy m8</Text></View>
           <View level={15}><Text style={styles.text}>Traveller is dope.</Text></View>
         </View>
-      </AppIntro> */}
-
-      <AppIntro pageArray={tutorialContent} />
+      </AppIntro>
 
       </View>
     )
