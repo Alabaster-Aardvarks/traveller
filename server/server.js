@@ -18,6 +18,8 @@ const error = debug('server:error');
 
 const app = express();
 
+placesRouter.setKey(process.env.GOOGLE_KEY);
+
 // Don't enable CORS in production.
 if (/^(dev|test)$/.test(process.env.NODE_ENV)) {
   app.use(cors());

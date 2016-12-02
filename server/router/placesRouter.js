@@ -10,6 +10,10 @@ const log = debug('placesRouter:log');
 const info = debug('placesRouter:info');
 const error = debug('placesRouter:error');
 
+placesRouter.setKey = key => {
+  placesController.setKey(key);
+};
+
 placesRouter.get('/:places', (req, res) => {
   placesController.getGoogleData(req, res, `${req.params.places}`);
 });

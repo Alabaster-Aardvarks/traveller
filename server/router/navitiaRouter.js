@@ -11,6 +11,10 @@ const log = debug('navitiaRouter:log');
 const info = debug('navitiaRouter:info');
 const error = debug('navitiaRouter:error');
 
+navitiaRouter.setKey = key => {
+  navitiaController.setKey(key);
+};
+
 navitiaRouter.get('*', (req, res) => {
   redis.getRedisIso(req.query.url)
   .then(result => {
