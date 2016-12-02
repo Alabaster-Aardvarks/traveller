@@ -629,7 +629,6 @@ class TravContainer extends React.Component {
               key='center-map'
               buttonColor={ Colors.whiteLight }
               icon={<Icon name='crosshairs' style={styles.actionButtonReverse}></Icon>}
-              style={{ borderWidth: 4, borderColor: Colors.skyBlueLight }}
               spacing={ 10 }
               position='center'
               offsetY={ 45 }
@@ -706,18 +705,18 @@ class TravContainer extends React.Component {
         }
 
         {/* First Launch Tutorial */}
-        { !tutorialHasRun && (<AppIntro
+        { !this.state.tutorialHasRun && (<AppIntro
           showSkipButton={ false }
           doneBtnLabel="Go!"
-          onDoneBtnClick={ toggleTutorialHasRun }
+          onDoneBtnClick={ () => this.setState({ tutorialHasRun: true }) }
           >
-        <View style={[styles.slide,{ backgroundColor: Colors.skyBlueLight }]}>
+        <View style={[styles.slide,{ backgroundColor: '#2F81B8' }]}>
           <View><Image source={ Images.walkMarker }/></View>
           <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
           <View level={15}><Text style={styles.text}>Make the most</Text></View>
           <View level={8}><Text style={styles.text}>of your travels</Text></View>
         </View>
-        <View style={[styles.slide, { backgroundColor: Colors.greenLight }]}>
+        <View style={[styles.slide, { backgroundColor: '#39CB75' }]}>
           <View><Image source={ Images.travMarker }/></View>
           <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
           <View><Text style={styles.text}></Text></View>
