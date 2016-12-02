@@ -147,6 +147,7 @@ class TravContainer extends React.Component {
     terminateIsochronWorker()
   }
 
+  // use 'undefined' for newPosition to center on GPS location
   updateLocationIsochrons (animateToRegion, newPosition, isochronsUpdate, dateUpdate) {
     let dateTime = this.state.dateTime
     if (dateUpdate) {
@@ -505,7 +506,7 @@ class TravContainer extends React.Component {
                     return (
                       <ActionButton.Item
                         key={ `search-refresh-${refreshEnabled}-${refreshMoment}` }
-                        buttonColor={ `rgba(26, 188, 156, ${ refreshEnabled ? 1 : 0.2 })` }
+                        buttonColor={ `rgba(26, 188, 156, ${ refreshEnabled ? 1 : 0.4 })` }
                         title={ `refreshed ${refreshMoment}` }
                         titleColor={ refreshEnabled ? '#444' : '#888' }
                         size={ 44 }
@@ -638,7 +639,7 @@ class TravContainer extends React.Component {
               size={ 35 }
               verticalOrientation='up'
               onPress={ () => { // center map on GPS location
-                this.updateLocationIsochrons(true, 'current', false, false)
+                this.updateLocationIsochrons(true, undefined, false, false)
                 this.setState({ centerButtonVisible: false, centerButtonMask: true })
               } }
               onLongPress={ () => { // center map on isochrone center
