@@ -58,4 +58,21 @@ export default StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.9)',
     fontWeight: '700',
   },
+  slide: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#9DD6EB',
+    padding: 15,
+  },
+  textTitle: {
+    color: '#fff',
+    fontSize: 50,
+    fontWeight: 'bold',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 20,
+    // fontWeight: 'bold',
+  },
 })
