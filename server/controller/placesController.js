@@ -40,9 +40,6 @@ const getData = (place, lat, long) => {
 
 //how to use google radar search
 const getRadarData = (place, lat, long, radius) => {
-  lat = lat || 37.7825177;
-  long = long || -122.4106772;
-  radius = radius || 50000;
   return axios({
     method: 'get',
     url: `${radar}location=${lat},${long}&radius=${radius}&type=${place}&key=${key}` // FIXME: distance needs to be sent by client
@@ -81,9 +78,6 @@ const throttledDistanceAPI = debounce.promiseDebounce(axios, 1000, 4);
 
 //google distance matrix api
 const getDistanceData = (arrayOfPlaces, lat, long, mode) => {
-  lat = lat || 37.7825177;
-  long = long || -122.4106772;
-  mode = modeKeys[mode] || 'transit';
   let destinationString = 'place_id:';
   for (let i = 0; i < arrayOfPlaces.length; i++) {
     destinationString += arrayOfPlaces[i].id;
@@ -104,7 +98,7 @@ const getGoogleData = (req, res, keyword) => {
   lat = req.query.lat || 37.7825177;
   long = req.query.long || -122.4106772;
   radius = req.query.radius || 50000;
-  mode = req.query.mode || 'transit';
+  mode = modeKeys[req.query.mode] || 'transit';
   date = req.query.date || 'now';
   size = req.query.size || 200; 
   let radarResults = [];
