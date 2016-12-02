@@ -7,14 +7,18 @@ export const ISOCHRON_NOT_LOADED = 'ISOCHRON_NOT_LOADED'
 export const ISOCHRON_LOADING = 'ISOCHRON_LOADING'
 export const ISOCHRON_LOADED = 'ISOCHRON_LOADED'
 export const ISOCHRON_ERROR = 'ISOCHRON_ERROR'
+export const ISOCHRON_ABORT = 'ISOCHRON_ABORT'
 
 export const POLYGONS_NOT_LOADED = 'POLYGONS_NOT_LOADED'
 export const POLYGONS_LOADING = 'POLYGONS_LOADING'
 export const POLYGONS_LOADED = 'POLYGONS_LOADED'
 
+const isochronTimeout = 15000 // 15-second time out
+
 let worker = null
 let savedArgString = ''
 let updateIsochronsState = null
+let isochronSetTimeout = null
 
 export let isochronsState = ISOCHRON_NOT_LOADED
 export let polygonsState = POLYGONS_NOT_LOADED
@@ -72,7 +76,16 @@ export const terminateIsochronWorker = () => {
   }
 }
 
-// FIXME: add time-out if isochrons are not loaded after N seconds
+const checkIsochrons = () => {
+  if (isochronsState === ISOCHRON_LOADING) {
+    terminateIsochronWorker()
+    console.tron.error('Loading isochron aborted')
+    isochronsState = ISOCHRON_ABORT
+    updateIsochronsState && updateIsochronsState(isochronsState)
+    isochronSetTimeout && clearTimeout(isochronSetTimeout)
+    isochronSetTimeout = null
+  }
+}
 
 export const updateIsochrons = args => {
   const params = args.params
@@ -102,6 +115,7 @@ export const updateIsochrons = args => {
 
   isochronsState = ISOCHRON_LOADING
   updateIsochronsState && updateIsochronsState(isochronsState)
+  isochronSetTimeout = setTimeout(() => checkIsochrons(), isochronTimeout)
   // create worker and send it some work
   worker = new Worker(`App/Workers/isochronWorker_${params.provider}.js`)
 
@@ -113,6 +127,8 @@ export const updateIsochrons = args => {
     } else if (message.id === 'done') {
       isochronsState = ISOCHRON_LOADED
       updateIsochronsState && updateIsochronsState(isochronsState)
+      isochronSetTimeout && clearTimeout(isochronSetTimeout)
+      isochronSetTimeout = null
       terminateIsochronWorker()
     } else if (message.id === 'log') {
       console.tron.display({ name: 'Isochron worker ' + message.name, value: message.log })
@@ -134,6 +150,7 @@ export const updateIsochrons = args => {
 
 export const getIsochronDurations = duration => {
   //return [ 0, 600, 1200, 1800 ]
+  duration = duration || 30 // default to 30min if not provided
   let durations = []
 
   // divide duration into 4 to 6 intervals (interval is a multiple of 5min)
