@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation, VibrationIOS } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation, VibrationIOS, Image } from 'react-native'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import MapView from 'react-native-maps'
 import ActionButton from 'react-native-action-button'
@@ -14,12 +14,14 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
+import Images from '../Themes/Images'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
          terminateIsochronWorker, isochronFillColor, getIsochronDurations,
          ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR, ISOCHRON_ABORT } from './isochron'
 import { loadPlaces, savedPlaces, convertDayHourMinToSeconds, setUpdatePlacesStateFn,
          PLACES_NOT_LOADED, PLACES_LOADING, PLACES_LOADED, PLACES_INDEXED } from './places'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+import AppIntro from 'react-native-app-intro'
 
 const debug = false // set to true to enable log messages for debug
 
@@ -383,6 +385,7 @@ class TravContainer extends React.Component {
 
     return (
       <View style={styles.container}>
+
         <StatusBar networkActivityIndicatorVisible={this.state.networkActivityIndicatorVisible} />
         <MapView
           ref='map'
@@ -694,6 +697,38 @@ class TravContainer extends React.Component {
             </View>
           )
         }
+
+        {/* First Launch Tutorial */}
+        { !this.state.tutorialHasRun && (<AppIntro
+          showSkipButton={ false }
+          doneBtnLabel="Go!"
+          onDoneBtnClick={ () => this.setState({ tutorialHasRun: true }) }
+          >
+        <View style={[styles.slide,{ backgroundColor: '#2F81B8' }]}>
+          <View><Image source={ Images.walkMarker }/></View>
+          <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
+          <View level={15}><Text style={styles.text}>Make the most</Text></View>
+          <View level={8}><Text style={styles.text}>of your travels</Text></View>
+        </View>
+        <View style={[styles.slide, { backgroundColor: '#39CB75' }]}>
+          <View><Image source={ Images.travMarker }/></View>
+          <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
+          <View><Text style={styles.text}></Text></View>
+          <View level={5}><Text style={styles.text}>How far you can get</Text></View>
+          <View><Text style={styles.text}></Text></View>
+          <View level={25}><Text style={styles.text}>with the time you have</Text></View>
+        </View>
+        {/* <View style={[styles.slide,{ backgroundColor: '#fa931d' }]}>
+          <View level={8}><Text style={styles.textTitle}>Third Slide</Text></View>
+          <View level={0}><Text style={styles.text}>Traveller is</Text></View>
+          <View level={-10}><Text style={styles.text}>still AWESOME!</Text></View>
+        </View> */}
+        {/* <View style={[styles.slide, { backgroundColor: '#a4b602' }]}>
+          <View level={5}><Text style={styles.textTitle}>Fourth Slide</Text></View>
+          <View level={10}><Text style={styles.text}>Oy m8</Text></View>
+          <View level={15}><Text style={styles.text}>Traveller is dope.</Text></View>
+        </View> */}
+      </AppIntro>) }
 
       </View>
     )

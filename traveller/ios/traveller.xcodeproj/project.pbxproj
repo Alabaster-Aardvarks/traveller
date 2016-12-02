@@ -5,7 +5,6 @@
 	};
 	objectVersion = 48;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -27,6 +26,7 @@
 		26640C540AA44D01A56E9521 /* Courier New.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0455BC766F6943F390BA3D75 /* Courier New.ttf */; };
 		2C669524864243C7AA560DFE /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F8E13CF1DDF4303A48F552F /* Entypo.ttf */; };
 		2CA7D23BF90D43D78BC950F4 /* Georgia.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 582D488A94CA414CB943037F /* Georgia.ttf */; };
+		34507BC723A34A4EAF1C2602 /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4172E9C0FE624B009857EFEE /* libRNBlur.a */; };
 		382AD20097FC46FE98751CA2 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0511278884344AABAA95264C /* EvilIcons.ttf */; };
 		4E27B876EBA657CFD4FAE968 /* Pods_traveller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D93ED48AD4D0AF41F9338500 /* Pods_traveller.framework */; };
 		505DD6011F194F63B053F299 /* Microsoft Sans Serif.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BAB81954B26D444A8A4A863B /* Microsoft Sans Serif.ttf */; };
@@ -297,6 +297,13 @@
 			remoteGlobalIDString = 9F97656B1CDC87F00091EE06;
 			remoteInfo = Workers;
 		};
+		E76E02D11DF0B5360010663D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A68BD7BC1BC31318005F02DF;
+			remoteInfo = RNBlur;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -334,7 +341,9 @@
 		36B394BEF77E45C98A03A1B0 /* Times New Roman.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Times New Roman.ttf"; path = "../node_modules/native-base/Fonts/Times New Roman.ttf"; sourceTree = "<group>"; };
 		3F8E13CF1DDF4303A48F552F /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		415B4DC650CC400CBAF4EF98 /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
+		4172E9C0FE624B009857EFEE /* libRNBlur.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNBlur.a; sourceTree = "<group>"; };
 		4936D877D1BA46828C0AF22D /* Skia.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Skia.ttf; path = "../node_modules/native-base/Fonts/Skia.ttf"; sourceTree = "<group>"; };
+		4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBlur.xcodeproj; path = "../node_modules/react-native-blur/ios/RNBlur.xcodeproj"; sourceTree = "<group>"; };
 		5285637E202C43B49A962FD6 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		582D488A94CA414CB943037F /* Georgia.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Georgia.ttf; path = "../node_modules/native-base/Fonts/Georgia.ttf"; sourceTree = "<group>"; };
 		62BB19241D606932341DA580 /* Pods-traveller.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-traveller.release.xcconfig"; path = "Pods/Target Support Files/Pods-traveller/Pods-traveller.release.xcconfig"; sourceTree = "<group>"; };
@@ -461,6 +470,7 @@
 				525D325FD1624FF58EC2F13D /* libRNVectorIcons.a in Frameworks */,
 				A35099DA714446759FFC0A47 /* libRNSpinkit.a in Frameworks */,
 				92A0A8381A804DBE8B5BF12E /* libWorkers.a in Frameworks */,
+				34507BC723A34A4EAF1C2602 /* libRNBlur.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,6 +652,7 @@
 				85A9C827803B43B1A282D103 /* RNVectorIcons.xcodeproj */,
 				E927EE8183AC43AFB9B17054 /* RNSpinkit.xcodeproj */,
 				0BD16B5FBF3548B9B8BA3F39 /* Workers.xcodeproj */,
+				4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -823,6 +834,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E76E02BC1DF0B5360010663D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E76E02D21DF0B5360010663D /* libRNBlur.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -941,6 +960,10 @@
 				{
 					ProductGroup = CAAB20F01DD6FEBA008F7E60 /* Products */;
 					ProjectRef = 91C6B186D0CD45F4BE96BCAA /* ReactNativeConfig.xcodeproj */;
+				},
+				{
+					ProductGroup = E76E02BC1DF0B5360010663D /* Products */;
+					ProjectRef = 4B95DEB51ACF4A3793B1F9A5 /* RNBlur.xcodeproj */;
 				},
 				{
 					ProductGroup = CAAB21071DD6FEBA008F7E60 /* Products */;
@@ -1138,6 +1161,13 @@
 			fileType = archive.ar;
 			path = libWorkers.a;
 			remoteRef = E7528DD71DDE940200750036 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E76E02D21DF0B5360010663D /* libRNBlur.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNBlur.a;
+			remoteRef = E76E02D11DF0B5360010663D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1410,7 +1440,9 @@
 				INFOPLIST_FILE = travellerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/traveller.app/traveller";
@@ -1427,7 +1459,9 @@
 				INFOPLIST_FILE = travellerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/traveller.app/traveller";
@@ -1460,6 +1494,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-blur/ios",
 				);
 				INFOPLIST_FILE = traveller/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
@@ -1503,6 +1538,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-blur/ios",
 				);
 				INFOPLIST_FILE = traveller/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
@@ -1576,6 +1612,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-blur/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1633,6 +1670,7 @@
 					"$(SRCROOT)/../node_modules/react-native-workers/ios/Workers",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-blur/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
