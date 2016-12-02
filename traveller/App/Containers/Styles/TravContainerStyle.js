@@ -58,12 +58,6 @@ export default StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.9)',
     fontWeight: '700',
   },
-  tutorialContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-  },
   slide: {
     flex: 1,
     justifyContent: 'center',
