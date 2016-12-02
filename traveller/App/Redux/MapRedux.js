@@ -38,10 +38,10 @@ export const INITIAL_STATE = Immutable({
   mapTile: false,
   mapTileName: 'Basic',
   mapTileUrl: 'https://stamen-tiles-d.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png',
-  transportMode: 'transit',
+  transportMode: 'walk',
   travelTime: false,
   travelTimeName: 'from',
-  transportIcon: transportIconList['transit']
+  transportIcon: transportIconList['walk']
 })
 
 /* ------------- Reducers ------------- */
