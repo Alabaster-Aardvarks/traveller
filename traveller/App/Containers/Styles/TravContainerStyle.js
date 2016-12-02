@@ -12,20 +12,24 @@ export default StyleSheet.create({
   },
   actionButton: {
     fontSize: 20,
-    color: 'white',
+    color: Colors.whiteLight,
+  },
+  actionButtonReverse: {
+    fontSize: 20,
+    color: Colors.skyBlueLight,
   },
   actionButtonIcon: {
     fontSize: 17,
-    color: 'white',
+    color: Colors.whiteLight,
   },
   actionModeButton: {
     fontSize: 25,
-    color: 'white',
+    color: Colors.whiteLight,
   },
   durationButtonText: {
     textAlign: 'center',
     fontSize: 12,
-    color: 'white',
+    color: Colors.whiteLight,
     fontWeight: '700',
   },
   container: {
@@ -55,7 +59,7 @@ export default StyleSheet.create({
     marginVertical: 40,
   },
   spinnerText: {
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: 'rgba(237, 241, 242, 0.9)',
     fontWeight: '700',
   },
   slide: {

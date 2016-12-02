@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Scene, Router } from 'react-native-router-flux'
 import Styles from './Styles/NavigationContainerStyle'
+import Colors from '../Themes/Colors'
 import NavigationDrawer from './NavigationDrawer'
 import NavItems from './NavItems'
 
@@ -25,7 +26,7 @@ class NavigationRouter extends Component {
           <Scene key='drawerChildrenWrapper' navigationBarStyle={Styles.navBar} titleStyle={Styles.title} leftButtonIconStyle={Styles.leftButton} rightButtonTextStyle={Styles.rightButton}>
             <Scene initial key='travContainer' component={TravContainer} hideNavBar />
             <Scene key='deviceInfo' component={DeviceInfoScreen} title='Device Info' />
-            <Scene key='settings' component={SettingsScreen} title='Settings' hideNavBar={ false } direction='vertical' backTitle='Done' hideBackImage={ true } backButtonTextStyle={{color: 'white'}} />
+            <Scene key='settings' component={SettingsScreen} title='Settings' hideNavBar={ false } direction='vertical' backTitle='Done' hideBackImage={ true } backButtonTextStyle={{color: Colors.whiteLight}} />
             <Scene key='mapSelect' component={MapSelectScreen} title='Map Type' />
             <Scene key='mapStyle' component={MapStyleScreen} title='Map Style' />
             <Scene key='maxDuration' component={MaxDurationScreen} title='Max Duration' />

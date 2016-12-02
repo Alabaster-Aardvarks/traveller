@@ -14,7 +14,7 @@ import { calculateRegion } from '../Lib/MapHelpers'
 import MapCallout from '../Components/MapCallout'
 import MapActions from '../Redux/MapRedux'
 import styles from './Styles/TravContainerStyle'
-import Images from '../Themes/Images'
+import { Images , Colors } from '../Themes'
 import { updateIsochrons, setUpdateIsochronsStateFn, savedPolygons,
          terminateIsochronWorker, isochronFillColor, getIsochronDurations,
          ISOCHRON_NOT_LOADED, ISOCHRON_LOADING, ISOCHRON_LOADED, ISOCHRON_ERROR, ISOCHRON_ABORT } from './isochron'
@@ -68,15 +68,17 @@ const transportModeInfo = {
   // radius in meters
   'walk'    : { provider: 'here',    radius: 15000, icon: 'md-walk'    },
   'bike'    : { provider: 'navitia', radius: 25000, icon: 'md-bicycle' },
-  'car'     : { provider: 'here',    radius: 50000, icon: 'md-car'     },
-  'transit' : { provider: 'navitia', radius: 50000, icon: 'md-train'   },
+  'car'     : { provider: 'here',    radius: 50000, icon: 'car'     },
+  'transit' : { provider: 'navitia', radius: 50000, icon: 'bus'   },
 }
 
 const placesInfo = {
   // size: how many places are requested (fewer or equal to 200)
-  'bank'    : { enabled: true, visible: false, size: 25, buttonColor: '#9b59b6', buttonTitle: 'Banks',   icon: 'university' },
-  'transit' : { enabled: true, visible: false, size: 25, buttonColor: '#3498db', buttonTitle: 'Transit', icon: 'bus'        },
-  'health'  : { enabled: true, visible: false, size: 25, buttonColor: '#ff6b6b', buttonTitle: 'Medical', icon: 'ambulance'  },
+  'food'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.purpleLight, buttonTitle: 'Food', icon: 'cutlery', image: Images.food},
+  'health'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.watermelonLight, buttonTitle: 'Medical', icon: 'ambulance', image: Images.medical},
+  'museums'  : { enabled: true, visible: false, size: 25, buttonColor: Colors.yellowLight, buttonTitle: 'Museums', icon: 'bank', image: Images.museums},
+  'park'    : { enabled: true, visible: false, size: 25, buttonColor: Colors.greenLight, buttonTitle: 'Parks',   icon: 'tree', image: Images.park},
+  'transit' : { enabled: true, visible: false, size: 25, buttonColor: Colors.orangeLight, buttonTitle: 'Transit', icon: 'bus', image: Images.transit},
 }
 
 const getPosition = l => {
@@ -282,7 +284,7 @@ class TravContainer extends React.Component {
 
   renderMapMarkers (place, index, type, keyTag) {
     let location = {}
-    let pinColor = 'rgba(21, 107, 254, 1)'
+    let pinImage = Images.main
     if (!type) {
       location = place
     } else {
@@ -295,12 +297,13 @@ class TravContainer extends React.Component {
       if (this.state.polygonsFillColor.indexOf(2) !== -1) {
         if (place.polygonIndex !== undefined && this.state.polygonsFillColor[place.polygonIndex] !== 2) { return undefined }
       }
-      pinColor = placesInfo[type].buttonColor
+      pinImage = placesInfo[type].image
     }
 
     return (
       <MapView.Marker
-        pinColor={pinColor}
+        // pinColor={pinColor}
+        image={pinImage}
         draggable={ type || index !== 0 ? false : true} // Not friendly with MapView long-press refresh
         key={`${location.title}-${index}${keyTag}`}
         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
@@ -374,7 +377,7 @@ class TravContainer extends React.Component {
   render () {
     //console.log('render')
     const { traffic, mapBrand, mapStyle, mapTile, mapTileName, mapTileUrl, travelTimeName,
-            transportIcon, setTransportMode, transportMode } = this.props
+            transportIcon, setTransportMode, transportMode, tutorialHasRun, toggleTutorialHasRun } = this.props
     const { polygonsState, placesState, placesInfo, refreshMoment, refreshEnabled } = this.state
     // wait for all polygons to be loaded
     const polygonsCount = (!savedPolygons || polygonsState !== ISOCHRON_LOADED) ? 0 : savedPolygons.length
@@ -461,7 +464,8 @@ class TravContainer extends React.Component {
         { !this.state.uiElementsVisible && (
             <ActionButton
               key='search'
-              buttonColor='#E74C3C'
+              buttonColor={ Colors.redLight }
+              btnOutRange={ Colors.redDark }
               degrees={ 0 }
               icon={<Icon name='search' style={styles.actionButton}></Icon>}
               spacing={ 10 }
@@ -535,7 +539,8 @@ class TravContainer extends React.Component {
         {/* Duration Button */}
         { !this.state.uiElementsVisible && (
             <ActionButton
-              buttonColor='rgba(0,101,85,1)'
+              buttonColor={ Colors.skyBlueLight }
+              btnOutRange={ Colors.skyBlueDark }
               degrees={ 0 }
               icon={<Icon name='clock-o' style={styles.actionButton}></Icon>}
               spacing={ 10 }
@@ -551,11 +556,11 @@ class TravContainer extends React.Component {
                   return (
                     <ActionButton.Item
                       size={ 44 + (buttonEnabled ? StyleSheet.hairlineWidth * 4 : 0) }
-                      buttonColor={ index === 0 ? '#006631' : isochronFillColor(index / this.state.durations.length, null, true) }
-                      btnOutRange='#004B24'
+                      buttonColor={ index === 0 ? Colors.skyBlueLight : isochronFillColor(index / this.state.durations.length, null, true) }
+                      btnOutRange={ Colors.skyBlueDark }
                       onPress={() => this.polygonsFillColorUpdate.call(this, index)}
                       key={ `duration-${index}` }
-                      style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: '#fff' } : undefined }
+                      style={ buttonEnabled ? { borderWidth: StyleSheet.hairlineWidth * 4, borderColor: Colors.whiteLight } : undefined }
                     >
                       <Text style={styles.durationButtonText}>
                         { (index === 0) ? (this.state.polygonsFillColor.indexOf(2) !== -1 ? 'all\noff' : 'all\non') : (duration / 60).toString() + '\nmin' }
@@ -572,7 +577,7 @@ class TravContainer extends React.Component {
         { !this.state.uiElementsVisible && (
             <ActionButton
               key='settings'
-              buttonColor='#58cbf4'
+              buttonColor={ Colors.skyBlueLight }
               icon={<Icon name='cog' style={styles.actionButton}></Icon>}
               spacing={ 10 }
               degrees={ 0 }
@@ -588,9 +593,9 @@ class TravContainer extends React.Component {
         { !this.state.uiElementsVisible && (
             <ActionButton
               key='transport-mode'
-              buttonColor='#2D62A0'
-              btnOutRange='#214875'
-              icon={<Ionicons name={ transportIcon } style={ styles.actionButton } />}
+              buttonColor={ Colors.skyBlueLight }
+              btnOutRange={ Colors.skyBlueDark }
+              icon={ (transportIcon === 'md-walk' || transportIcon === 'md-bicycle') ? <Ionicons name={ transportIcon } style={ styles.actionModeButton } /> : <Icon name={ transportIcon } style={ styles.actionButton } /> }
               spacing={ 10 }
               degrees={ 0 }
               position='right'
@@ -601,7 +606,7 @@ class TravContainer extends React.Component {
               { Object.keys(transportModeInfo).map(transportMode =>
                   <ActionButton.Item
                     key={`transport-mode-${transportMode}`}
-                    buttonColor='#2D62A0'
+                    buttonColor={ Colors.skyBlueLight }
                     size={ 44 }
                     onPress={ () => {
                       setTransportMode(transportMode)
@@ -609,7 +614,8 @@ class TravContainer extends React.Component {
                       this.updateLocationIsochrons(false, 'current', true, true)
                     } }
                   >
-                    <Ionicons name={ transportModeInfo[transportMode].icon } style={styles.actionModeButton}/>
+                    { (transportModeInfo[transportMode].icon === 'md-walk' || transportModeInfo[transportMode].icon === 'md-bicycle') ? <Ionicons name={ transportModeInfo[transportMode].icon } style={ styles.actionModeButton } /> : <Icon name={ transportModeInfo[transportMode].icon } style={ styles.actionButton } /> }
+                    {/* <Ionicons name={ transportModeInfo[transportMode].icon } style={styles.actionModeButton}/> */}
                   </ActionButton.Item>
                 )
               }
@@ -621,8 +627,9 @@ class TravContainer extends React.Component {
         { this.state.centerButtonVisible && (
             <ActionButton
               key='center-map'
-              buttonColor='#58cbf4'
-              icon={<Icon name='crosshairs' style={styles.actionButton}></Icon>}
+              buttonColor={ Colors.whiteLight }
+              icon={<Icon name='crosshairs' style={styles.actionButtonReverse}></Icon>}
+              style={{ borderWidth: 4, borderColor: Colors.skyBlueLight }}
               spacing={ 10 }
               position='center'
               offsetY={ 45 }
@@ -692,25 +699,25 @@ class TravContainer extends React.Component {
         {/* Spinner */}
         { this.state.spinnerVisible && (
             <View style={styles.spinnerContainer} key={2}>
-              <Spinner style={styles.spinner} size={75} type={'Circle'} color={'#ffffff'} />
+              <Spinner style={styles.spinner} size={75} type={'Circle'} color={ Colors.whiteLight } />
               <Text style={styles.spinnerText}>Refreshing Map</Text>
             </View>
           )
         }
 
         {/* First Launch Tutorial */}
-        { !this.state.tutorialHasRun && (<AppIntro
+        { !tutorialHasRun && (<AppIntro
           showSkipButton={ false }
           doneBtnLabel="Go!"
-          onDoneBtnClick={ () => this.setState({ tutorialHasRun: true }) }
+          onDoneBtnClick={ toggleTutorialHasRun }
           >
-        <View style={[styles.slide,{ backgroundColor: '#2F81B8' }]}>
+        <View style={[styles.slide,{ backgroundColor: Colors.skyBlueLight }]}>
           <View><Image source={ Images.walkMarker }/></View>
           <View level={10}><Text style={styles.textTitle}>Traveller</Text></View>
           <View level={15}><Text style={styles.text}>Make the most</Text></View>
           <View level={8}><Text style={styles.text}>of your travels</Text></View>
         </View>
-        <View style={[styles.slide, { backgroundColor: '#39CB75' }]}>
+        <View style={[styles.slide, { backgroundColor: Colors.greenLight }]}>
           <View><Image source={ Images.travMarker }/></View>
           <View level={-10}><Text style={styles.textTitle}>Isochrones</Text></View>
           <View><Text style={styles.text}></Text></View>
@@ -747,6 +754,8 @@ TravContainer.propTypes = {
   transportIcon: PropTypes.string,
   setTransportMode: PropTypes.func,
   travelTimeName: PropTypes.string,
+  toggleTutorialHasRun: PropTypes.func,
+  tutorialHasRun: PropTypes.bool,
 }
 
 const mapStateToProps = state => {
@@ -761,11 +770,13 @@ const mapStateToProps = state => {
     transportMode: state.map.transportMode,
     transportIcon: state.map.transportIcon,
     travelTimeName: state.map.travelTimeName,
+    tutorialHasRun: state.map.tutorialHasRun,
   }
 }
 
 const mapDispatchToProps = dispatch => { return {
-  setTransportMode: transportModeName => dispatch(MapActions.setTransportMode(transportModeName))
+  setTransportMode: transportModeName => dispatch(MapActions.setTransportMode(transportModeName)),
+  toggleTutorialHasRun: () => dispatch(MapActions.toggleTutorialHasRun())
 } }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TravContainer)
