@@ -127,9 +127,10 @@ class TravContainer extends React.Component {
     const { duration, travelTimeName } = this.props
     //console.log('componentDidUpdate', this.state.refreshEnabled, this.state.refreshMoment)
     if ((savedDuration && duration !== savedDuration) || (savedFromTo && travelTimeName !== savedFromTo)) {
+      // NOTE: savedDuration and savedFromTo are updated inside updateLocationIsochrons, but they need to be updated here
+      //       to avoid infinite loops when getting subsequent componentDidUpdate calls
       savedDuration = duration
       savedFromTo = travelTimeName
-      // savedDuration and savedFromTo updated inside updateLocationIsochrons
       // reload isochrones when duration changes, no animate to region, no position change, isochrones reload, update date to now
       this.updateLocationIsochrons(false, 'current', true, true)
       this.polygonsFillColorUpdate()
