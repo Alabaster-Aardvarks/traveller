@@ -2,7 +2,7 @@
 const express = require('express');
 const hereController = require('../controller/hereController');
 const hereRouter = express.Router(); 
-// const redis = require('../service/redis');
+const redis = require('../service/redis');
 
 // debug ====================================================================
 const debug = require('debug');
