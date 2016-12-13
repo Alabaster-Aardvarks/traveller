@@ -1,12 +1,12 @@
 version: "2"
 services:
   traveller-redis-cache:
-    container_name: traveller-redis-cache
+    container_name: redis-cache
     hostname: redis-cache
     image: redis:3
     restart: always
-    ports:
-      - 6379:6379
+    expose:
+      - 6379
   traveller-node:
     container_name: traveller-node
     hostname: traveller
@@ -18,3 +18,4 @@ services:
       - /app:/app:ro
     ports:
       - 80:3000
+      - 443:443
