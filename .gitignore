@@ -47,3 +47,6 @@ dump.rdb
 
 # Vagrant #
 .vagrant
+
+# Misc #
+*.swp
