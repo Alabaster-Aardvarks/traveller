@@ -1,5 +1,6 @@
 //controller for all Navitia API requests
 const axios = require('axios');
+const base64 = require('base-64');
 
 // debug ====================================================================
 const debug = require('debug');
@@ -8,7 +9,13 @@ const log = debug('navitiaController:log');
 const info = debug('navitiaController:info');
 const error = debug('navitiaController:error');
 
-const getIso = (url, auth) => {
+let auth;
+
+const setKey = key => {
+  auth = 'Basic ' + base64.encode(key);
+};
+
+const getIso = (url) => {
   log('navitia', url);
   return axios({
     method: 'get',
@@ -23,5 +30,5 @@ const getIso = (url, auth) => {
 };
 
 module.exports = {
-  getIso
+  getIso, setKey
 };

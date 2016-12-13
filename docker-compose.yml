@@ -1,6 +1,6 @@
 version: "2"
 services:
-  redis-cache:
+  traveller-redis-cache:
     container_name: redis-cache
     hostname: redis-cache
     image: redis:3
@@ -13,7 +13,7 @@ services:
     image: mhart/alpine-node:6
     restart: always
     command: node /app/server/server.js
-    env_file: traveller/.env
+    env_file: /app/traveller/.env
     volumes:
       - /app:/app:ro
     ports:

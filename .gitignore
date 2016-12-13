@@ -47,3 +47,9 @@ dump.rdb
 
 # Vagrant #
 .vagrant
+
+# Production # Prevent Client-side code from being checked in
+traveller/
+
+# Misc #
+*.swp
