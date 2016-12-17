@@ -1,0 +1,10 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "rules": {
+    "semi": "off",
+    "react/sort-comp": "off",
+    "no-console": "off",
+    "no-alert": "off"
+  }
+}
