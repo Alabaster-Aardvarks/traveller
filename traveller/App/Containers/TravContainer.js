@@ -1,3 +1,5 @@
+// @flow
+
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { ScrollView, View, StyleSheet, Text, Dimensions, Slider, StatusBar, LayoutAnimation,
@@ -92,6 +94,7 @@ const getPosition = l => {
 let skipIsochrons = false // set to true to disable loading isochrons [for debug]
 
 class TravContainer extends React.Component {
+  state: Object;
   constructor (props: Object) {
     super(props)
     const durations = getIsochronDurations(props.duration)
@@ -494,18 +497,6 @@ class TravContainer extends React.Component {
           {/* Isochrone Center Marker */}
           { this.state.locations.map((location, index) => this.renderMapMarkers.call(this, location, index, undefined, placesKeyTag)) }
         </MapView>
-
-        { this.state.sliderVisible && (
-            <Slider
-              minimumValue={ 0 }
-              maximumValue={ Math.max(1, this.state.durations.length - 1) }
-              step={ 1 }
-              style={{ position: 'absolute', right: 200, left: -125, top: 250, bottom: 100, height: 50, transform: [{ rotate: '270deg' }] }}
-              value={ this.state.sliderValue }
-              onValueChange={this.sliderValueChange.bind(this)}
-            />
-          )
-        }
 
         {/* Search Menu */}
         { !this.state.uiElementsVisible && (
